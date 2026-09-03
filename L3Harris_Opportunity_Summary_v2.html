@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L3Harris — Cleanroom Consumables | Opportunity Summary</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-sec: #f7f6f3;
+    --bg-ter: #f0efe9;
+    --text: #1a1a18;
+    --text-sec: #6b6b66;
+    --text-ter: #9a9994;
+    --border: rgba(0,0,0,0.10);
+    --border-med: rgba(0,0,0,0.18);
+    --border-strong: rgba(0,0,0,0.30);
+    --t1: #185FA5; --t1-bg: #E6F1FB; --t1-text: #0C447C;
+    --t2: #0F6E56; --t2-bg: #E1F5EE; --t2-text: #085041;
+    --t3: #888780; --t3-bg: #F1EFE8; --t3-text: #444441;
+    --sav: #0F6E56;
+    --edit-bg: #fffbe6;
+    --edit-border: #e6c84a;
+    --radius: 10px; --radius-sm: 6px;
+  }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg-ter); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+
+  /* ── Header ── */
+  .header { background: var(--text); color: #fff; padding: 20px 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-mark { width: 36px; height: 36px; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--text); flex-shrink: 0; }
+  .header-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.50); margin-top: 2px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .header-date { font-size: 12px; color: rgba(255,255,255,0.40); }
+
+  /* ── Edit mode toggle ── */
+  .edit-toggle {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.10); border: 0.5px solid rgba(255,255,255,0.25);
+    border-radius: 20px; padding: 5px 14px; cursor: pointer;
+    font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.80);
+    transition: all .15s; user-select: none;
+  }
+  .edit-toggle:hover { background: rgba(255,255,255,0.18); color: #fff; }
+  .edit-toggle.active { background: var(--edit-bg); border-color: var(--edit-border); color: #7a5c00; }
+  .edit-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.40); flex-shrink: 0; }
+  .edit-toggle.active .edit-dot { background: var(--edit-border); }
+
+  /* ── Edit banner ── */
+  .edit-banner {
+    display: none; background: var(--edit-bg); border-bottom: 1px solid var(--edit-border);
+    padding: 10px 32px; font-size: 12px; color: #7a5c00;
+    align-items: center; gap: 12px;
+  }
+  .edit-banner.show { display: flex; }
+  .edit-banner strong { font-weight: 600; }
+  .banner-actions { display: flex; gap: 8px; margin-left: auto; }
+  .banner-btn {
+    background: #fff; border: 0.5px solid var(--edit-border); border-radius: var(--radius-sm);
+    padding: 4px 12px; font-size: 12px; font-weight: 500; cursor: pointer; color: #7a5c00;
+    transition: all .15s;
+  }
+  .banner-btn:hover { background: var(--edit-border); color: #fff; }
+  .banner-btn.add-btn { background: #0F6E56; color: #fff; border-color: #0F6E56; }
+  .banner-btn.add-btn:hover { background: #085041; }
+
+  /* ── Layout ── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  /* ── Scorecard ── */
+  .scorecard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+  .sc-card { background: var(--bg); border-radius: var(--radius); border: 0.5px solid var(--border); padding: 18px 20px; }
+  .sc-tier { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 10px; }
+  .sc-tier.t1 { color: var(--t1); } .sc-tier.t2 { color: var(--t2); } .sc-tier.t3 { color: var(--t3); }
+  .sc-num { font-size: 28px; font-weight: 600; letter-spacing: -.02em; color: var(--text); }
+  .sc-lbl { font-size: 11px; color: var(--text-sec); margin-top: 2px; margin-bottom: 10px; }
+  .sc-sav { font-size: 14px; font-weight: 600; }
+  .sc-sav.t1 { color: var(--t1); } .sc-sav.t2 { color: var(--t2); } .sc-sav.t3 { color: var(--t3); }
+  .sc-desc { font-size: 11px; color: var(--text-ter); margin-top: 5px; }
+
+  /* ── Section label ── */
+  .section-label { font-size: 11px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--text-sec); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-label::after { content: ''; flex: 1; height: 0.5px; background: var(--border); }
+
+  /* ── Controls ── */
+  .controls { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .controls-label { font-size: 12px; color: var(--text-sec); margin-right: 4px; }
+  .filter-btn { background: var(--bg); border: 0.5px solid var(--border-med); border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text-sec); transition: all .15s; }
+  .filter-btn:hover { border-color: var(--border-strong); color: var(--text); }
+  .filter-btn.active.f-all { background: var(--text); color: #fff; border-color: var(--text); }
+  .filter-btn.active.f-t1 { background: var(--t1-bg); color: var(--t1-text); border-color: var(--t1); }
+  .filter-btn.active.f-t2 { background: var(--t2-bg); color: var(--t2-text); border-color: var(--t2); }
+  .filter-btn.active.f-t3 { background: var(--t3-bg); color: var(--t3-text); border-color: var(--t3); }
+
+  /* ── Line cards ── */
+  .lines-wrap { display: flex; flex-direction: column; gap: 8px; }
+  .line-card { background: var(--bg); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color .15s; }
+  .line-card:hover { border-color: var(--border-med); }
+  .line-card.expanded { border-color: var(--border-strong); }
+  .line-card.edit-mode-card { border-color: var(--edit-border); background: var(--edit-bg); }
+
+  .line-top { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; user-select: none; }
+  .tier-pill { font-size: 9px; font-weight: 700; letter-spacing: .07em; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; }
+  .pill-t1 { background: var(--t1-bg); color: var(--t1-text); }
+  .pill-t2 { background: var(--t2-bg); color: var(--t2-text); }
+  .pill-t3 { background: var(--t3-bg); color: var(--t3-text); }
+
+  .cat-tag { font-size: 10px; color: var(--text-ter); background: var(--bg-sec); padding: 2px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; border: 0.5px solid var(--border); }
+  .line-desc { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .line-right { display: flex; gap: 20px; align-items: center; flex-shrink: 0; }
+  .line-spend { font-size: 13px; color: var(--text-sec); }
+  .line-sav { font-size: 13px; font-weight: 600; min-width: 90px; text-align: right; }
+  .line-sav.pos { color: var(--sav); } .line-sav.none { color: var(--t3); }
+
+  .chevron { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-ter); transition: transform .2s; display: flex; align-items: center; justify-content: center; }
+  .chevron svg { width: 10px; height: 10px; }
+  .chevron.open { transform: rotate(90deg); }
+
+  .delete-btn { width: 24px; height: 24px; border-radius: 50%; border: 0.5px solid #f09595; background: #fcebeb; color: #a32d2d; cursor: pointer; font-size: 14px; display: none; align-items: center; justify-content: center; flex-shrink: 0; line-height: 1; }
+  .edit-mode .delete-btn { display: flex; }
+
+  /* ── Detail panel ── */
+  .line-detail { display: none; padding: 0 16px 16px; border-top: 0.5px solid var(--border); }
+  .line-detail.show { display: block; }
+  .detail-inner { padding-top: 14px; }
+  .detail-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px 20px; margin-bottom: 14px; }
+  .detail-field { display: flex; flex-direction: column; gap: 4px; }
+  .detail-lbl { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-ter); }
+
+  /* ── Editable fields ── */
+  .ef {
+    font-size: 13px; color: var(--text); background: transparent;
+    border: none; outline: none; width: 100%; font-family: inherit;
+    padding: 0; border-radius: 0;
+  }
+  .ef.num { text-align: left; }
+  .edit-mode .ef {
+    background: #fff; border: 0.5px solid var(--edit-border);
+    border-radius: var(--radius-sm); padding: 4px 8px; cursor: text;
+  }
+  .ef.sav-val { color: var(--sav); font-weight: 600; }
+  .ef.gap-val { color: var(--t3); }
+
+  .ef-select {
+    font-size: 13px; color: var(--text); background: transparent;
+    border: none; outline: none; font-family: inherit;
+    cursor: default; appearance: none; -webkit-appearance: none; padding: 0; width: 100%;
+  }
+  .edit-mode .ef-select {
+    background: #fff; border: 0.5px solid var(--edit-border);
+    border-radius: var(--radius-sm); padding: 4px 8px; cursor: pointer;
+    appearance: auto; -webkit-appearance: auto;
+  }
+
+  .ef-action {
+    font-size: 12px; color: var(--text-sec); background: transparent;
+    border: none; outline: none; width: 100%; font-family: inherit;
+    resize: none; padding: 0; line-height: 1.6;
+  }
+  .edit-mode .ef-action {
+    background: #fff; border: 0.5px solid var(--edit-border);
+    border-radius: var(--radius-sm); padding: 6px 8px; cursor: text; min-height: 60px;
+  }
+
+  .action-box { background: var(--bg-sec); border-radius: var(--radius-sm); padding: 10px 14px; border-left: 3px solid var(--border-med); }
+  .action-box.t1 { border-left-color: var(--t1); }
+  .action-box.t2 { border-left-color: var(--t2); }
+  .action-box.t3 { border-left-color: var(--t3); }
+  .action-lbl { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-ter); margin-bottom: 4px; }
+  .edit-mode .action-box { background: #fff; }
+
+  /* ── Totals bar ── */
+  .tot-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg); border: 0.5px solid var(--border-med); border-radius: var(--radius); padding: 14px 20px; margin-top: 16px; }
+  .tot-group { display: flex; flex-direction: column; gap: 2px; }
+  .tot-lbl { font-size: 11px; color: var(--text-sec); text-transform: uppercase; letter-spacing: .05em; }
+  .tot-num { font-size: 18px; font-weight: 600; color: var(--text); }
+  .tot-sav-num { font-size: 18px; font-weight: 600; color: var(--sav); }
+
+  /* ── Add row form ── */
+  .add-form { display: none; background: var(--edit-bg); border: 1px solid var(--edit-border); border-radius: var(--radius); padding: 20px; margin-top: 10px; }
+  .add-form.show { display: block; }
+  .add-form-title { font-size: 12px; font-weight: 600; color: #7a5c00; margin-bottom: 14px; text-transform: uppercase; letter-spacing: .05em; }
+  .add-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 16px; margin-bottom: 14px; }
+  .add-field { display: flex; flex-direction: column; gap: 4px; }
+  .add-lbl { font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-sec); }
+  .add-input { font-size: 13px; font-family: inherit; background: #fff; border: 0.5px solid var(--edit-border); border-radius: var(--radius-sm); padding: 6px 10px; outline: none; width: 100%; color: var(--text); }
+  .add-input:focus { border-color: #7a5c00; }
+  .add-actions { display: flex; gap: 8px; }
+  .add-action-full { grid-column: 1 / -1; }
+  .add-textarea { min-height: 60px; resize: vertical; }
+
+  /* ── Footer ── */
+  .footer { text-align: center; font-size: 11px; color: var(--text-ter); margin-top: 40px; padding-top: 20px; border-top: 0.5px solid var(--border); }
+
+  /* ── Empty state ── */
+  .empty { text-align: center; padding: 40px; color: var(--text-sec); font-size: 13px; }
+
+  @media print {
+    body { background: white; }
+    .header { background: #1a1a18 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .edit-toggle, .edit-banner, .controls, .delete-btn { display: none !important; }
+    .line-detail { display: block !important; }
+    .chevron { display: none; }
+    .line-card { break-inside: avoid; margin-bottom: 8px; }
+    .main { padding: 16px; }
+    .ef, .ef-select, .ef-action { border: none !important; background: transparent !important; padding: 0 !important; }
+  }
+
+  @media (max-width: 700px) {
+    .scorecard { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: repeat(2, 1fr); }
+    .add-grid { grid-template-columns: 1fr 1fr; }
+    .line-right { gap: 10px; }
+    .header { padding: 16px; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo-mark">VT</div>
+    <div>
+      <div class="header-title">L3Harris Technologies — Cleanroom Consumables</div>
+      <div class="header-sub">Valutek via Fastenal &nbsp;·&nbsp; Opportunity Summary &nbsp;·&nbsp; All spend at Fastenal cost to customer</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="header-date">April 2026</div>
+    <div class="edit-toggle" id="editToggle" onclick="toggleEditMode()">
+      <span class="edit-dot"></span>
+      <span id="editToggleLabel">Edit mode</span>
+    </div>
+  </div>
+</div>
+
+<div class="edit-banner" id="editBanner">
+  <strong>Edit mode on</strong> — Click any field to update it. Changes update the scorecard instantly.
+  <div class="banner-actions">
+    <button class="banner-btn add-btn" onclick="showAddForm()">+ Add line</button>
+    <button class="banner-btn" onclick="exportData()">Export JSON</button>
+    <button class="banner-btn" onclick="toggleEditMode()">Done editing</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="scorecard">
+    <div class="sc-card">
+      <div class="sc-tier t1">Tier 1 — Act now</div>
+      <div class="sc-num" id="sc1-spend">—</div>
+      <div class="sc-lbl">Incumbent spend · matched lines</div>
+      <div class="sc-sav t1" id="sc1-sav">—</div>
+      <div class="sc-desc">Direct spec match · no substitution conversation needed</div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-tier t2">Tier 2 — Evaluate</div>
+      <div class="sc-num" id="sc2-spend">—</div>
+      <div class="sc-lbl">Incumbent spend · alternative lines</div>
+      <div class="sc-sav t2" id="sc2-sav">—</div>
+      <div class="sc-desc">Comparable spec · brief trial or evaluation recommended</div>
+    </div>
+    <div class="sc-card">
+      <div class="sc-tier t3">Tier 3 — Hold</div>
+      <div class="sc-num" id="sc3-spend">—</div>
+      <div class="sc-lbl">Incumbent spend · gap lines</div>
+      <div class="sc-sav t3" id="sc3-sav">—</div>
+      <div class="sc-desc">Do not compete today · revisit in 90 days</div>
+    </div>
+  </div>
+
+  <div class="section-label">Opportunity detail</div>
+
+  <div class="controls">
+    <span class="controls-label">Filter:</span>
+    <button class="filter-btn active f-all" onclick="filterTier('all', this)">All tiers</button>
+    <button class="filter-btn f-t1" onclick="filterTier('1', this)">Tier 1 — Act now</button>
+    <button class="filter-btn f-t2" onclick="filterTier('2', this)">Tier 2 — Evaluate</button>
+    <button class="filter-btn f-t3" onclick="filterTier('3', this)">Tier 3 — Hold</button>
+  </div>
+
+  <div class="lines-wrap" id="lines"></div>
+
+  <div class="add-form" id="addForm">
+    <div class="add-form-title">Add new line</div>
+    <div class="add-grid">
+      <div class="add-field">
+        <label class="add-lbl">Tier</label>
+        <select class="add-input" id="af-tier">
+          <option value="1">Tier 1 — Act now</option>
+          <option value="2">Tier 2 — Evaluate</option>
+          <option value="3">Tier 3 — Hold</option>
+        </select>
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Category</label>
+        <input class="add-input" id="af-cat" placeholder="e.g. SWAB, WIPE, PPE / Gloves">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Incumbent brand</label>
+        <input class="add-input" id="af-brand" placeholder="e.g. Berkshire">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Incumbent PN</label>
+        <input class="add-input" id="af-incPN" placeholder="e.g. LTP1465.10">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Description</label>
+        <input class="add-input" id="af-desc" placeholder="Short product description">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Location(s)</label>
+        <input class="add-input" id="af-loc" placeholder="e.g. NH009">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Incumbent spend ($)</label>
+        <input class="add-input" id="af-spend" type="number" placeholder="0">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Savings opportunity ($)</label>
+        <input class="add-input" id="af-sav" type="number" placeholder="0">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Valutek PN</label>
+        <input class="add-input" id="af-vtPN" placeholder="e.g. VTSWMDMPH-163">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Fastenal SKU</label>
+        <input class="add-input" id="af-fskSKU" placeholder="e.g. 925682468">
+      </div>
+      <div class="add-field">
+        <label class="add-lbl">Valutek case price</label>
+        <input class="add-input" id="af-vtCase" placeholder="e.g. $286.00">
+      </div>
+      <div class="add-field add-action-full" style="grid-column: 1 / -1;">
+        <label class="add-lbl">Next step / action note</label>
+        <textarea class="add-input add-textarea" id="af-action" placeholder="What happens next with this line?"></textarea>
+      </div>
+    </div>
+    <div class="add-actions">
+      <button class="banner-btn add-btn" onclick="addLine()">Add line</button>
+      <button class="banner-btn" onclick="cancelAdd()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="tot-bar" id="totbar">
+    <div class="tot-group">
+      <span class="tot-lbl">Incumbent spend shown</span>
+      <span class="tot-num" id="tot-spend">—</span>
+    </div>
+    <div class="tot-group" style="text-align:center;">
+      <span class="tot-lbl">Lines shown</span>
+      <span class="tot-num" id="tot-count">—</span>
+    </div>
+    <div class="tot-group" style="text-align:right;">
+      <span class="tot-lbl">Total savings opportunity</span>
+      <span class="tot-sav-num" id="tot-sav">—</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Valutek via Fastenal &nbsp;·&nbsp; Cleanroom Consumables &nbsp;·&nbsp; Confidential — For discussion purposes only<br>
+    Click any row to expand detail &nbsp;·&nbsp; Use <strong>Edit mode</strong> to update fields, add or remove lines
+  </div>
+</div>
+
+<script>
+let lines = [
+  { tier:1, cat:'SWAB', brand:'Berkshire', incPN:'LTP1465.10', desc:'162mm Knitted Polyester Flexible Cleanroom Swab', loc:'NH009 (100% of volume)', spend:599464, sav:258933, vtPN:'VTSWMDMPH-163', fskSKU:'925682468', vtCase:'$286.00', action:'Primary target. NH009 owns all volume. One SKU decision = $259K in annual savings. Lead every conversation with this line — the math does the selling.' },
+  { tier:1, cat:'PAPER', brand:'Berkshire', incPN:'BB85081110B', desc:'8.5"×11" Blue Letter 24 lb Cleanroom Copy Paper (250 ct)', loc:'OH409 / AZP13', spend:10902, sav:9746, vtPN:'VTCRPS23B-8511', fskSKU:'924872231', vtCase:'$115.56', action:'89% savings on a direct spec match. Clean, easy close — price is the story. Bundle with other Ohio paper lines.' },
+  { tier:1, cat:'WIPE', brand:'Texwipe', incPN:'TX1010', desc:'9"×9" Vectra Alpha 10 Polyester Sealed Border Cleanroom Wipes', loc:'AZP13 / OH409', spend:22826, sav:5294, vtPN:'VTPNWPHS-99', fskSKU:'924869944', vtCase:'$212.30', action:'Direct match. 23% savings across two locations. Strong bundling opportunity alongside the swab win at NH009.' },
+  { tier:1, cat:'WIPE', brand:'Texwipe', incPN:'TX1009', desc:'9"×9" AlphaWipe TX1009 Polyester Cleanroom Wipers (150 ct)', loc:'AZP13 / NH009', spend:11827, sav:370, vtPN:'VTPNW-99', fskSKU:'923058039', vtCase:'$181.50', action:'Small savings but a direct match. Include in a Tier 1 bundle — strengthens the overall value story across both locations.' },
+  { tier:1, cat:'WIPE', brand:'Berkshire', incPN:'MSVP.0909.8', desc:'9"×9" MicroSeal VP Flat Sheet Polyester Cleanroom Wiper', loc:'NH009', spend:5488, sav:1263, vtPN:'VTPNWUS-99', fskSKU:'924871565', vtCase:'$202.40', action:'23% savings on a direct match at NH009. Pair this with the swab conversation — same location, same buyer.' },
+  { tier:2, cat:'PPE / Gloves', brand:'Ansell', incPN:'56830 / 56829 / 56828 / 56831 / 56832', desc:'Sterile 12" Natural Latex G3 Cleanroom Gloves — all sizes (XS–L)', loc:'AZP13 (primary)', spend:145361, sav:60613, vtPN:'VTGLPFB12 series', fskSKU:'924870778 / 924870711', vtCase:'$195.11', action:'Trial evaluation recommended. Valutek alternative is not hand-specific — requires brief spec conversation. 42% savings across 5 size variants makes a compelling trial business case. Request a one-location evaluation at AZP13.' },
+  { tier:2, cat:'PPE / Gloves', brand:'Ansell', incPN:'62992–62990 (all sizes)', desc:'Nitrile G3 NxT 12" White Cleanroom Gloves — all sizes (XS–XL)', loc:'AZP13 (primary)', spend:14590, sav:0, vtPN:'VTGNCR series', fskSKU:'924872151 / 924872277 / 924871099', vtCase:'$192.93', action:'Near price parity. Performance story is the angle — Valutek NanoTek G3 delivers lower LPC (<600 vs. 950). Frame as a spec upgrade at same cost. Include in glove evaluation alongside latex lines.' },
+  { tier:2, cat:'WIPE', brand:'Kimberly-Clark', incPN:'33330', desc:'Kimtech W4 Dry Meltblown Wipes (100 ct)', loc:'AZP13 / FL024', spend:5283, sav:2049, vtPN:'VTSNTR-1212', fskSKU:'924870125', vtCase:'$115.50', action:'Alternative material (spunlace vs. meltblown). Small volume — good candidate for a low-risk product trial at FL024. 39% savings if approved.' },
+  { tier:3, cat:'SWAB', brand:'Berkshire', incPN:'LTN1465.10', desc:'162mm Non-Woven Polyester Flexible Cleanroom Swab', loc:'NH009', spend:43596, sav:0, vtPN:'—', fskSKU:'—', vtCase:'TBD', action:'Valutek current offering is knitted, not non-woven. Swab development in progress. Flag for 90-day revisit — same buyer as the Tier 1 swab win at NH009.' },
+  { tier:3, cat:'SWAB', brand:'Berkshire', incPN:'LTP70F.20 / LTP70R.20', desc:'70mm Knitted Polyester Flexible & Rigid Cleanroom Swabs', loc:'NH009', spend:22654, sav:0, vtPN:'— (dev.)', fskSKU:'—', vtCase:'TBD', action:'Handle length mismatch: incumbent 70mm vs. Valutek 163mm standard. Development ongoing. Do not compete today — revisit at 90 days as swab line evolves.' },
+  { tier:3, cat:'WIPE', brand:'Berkshire', incPN:'MSVP040416', desc:'4"×4" MicroSeal V Flat Sheet Polyester Wiper (custom size)', loc:'NH009', spend:20980, sav:0, vtPN:'VTPNWUS-44 (custom)', fskSKU:'Custom order', vtCase:'TBD', action:'Non-standard size requires custom production. 90–120 day lead time, pricing TBD. Flag for account planning — $21K opportunity once resolved.' },
+  { tier:3, cat:'WIPE', brand:'Chemtronics', incPN:'6209HC1664', desc:'9"×9" ESD-Safe Surface Wipe with ESD Foil Packaging', loc:'NH009', spend:11913, sav:0, vtPN:'VTPNWLSI70-99F (specialty)', fskSKU:'Specialty', vtCase:'$288.90', action:'ESD foil packaging is the key spec. Valutek alternative exists without foil packaging — confirm whether ESD foil is a hard requirement before pursuing. If not, this moves to Tier 2.' },
+];
+
+let editMode = false;
+let currentTier = 'all';
+
+const fmt = n => '$' + Math.round(n).toLocaleString('en-US');
+const pillClass = t => t===1?'pill-t1':t===2?'pill-t2':'pill-t3';
+const pillLabel = t => t===1?'TIER 1 · ACT NOW':t===2?'TIER 2 · EVALUATE':'TIER 3 · HOLD';
+const actionClass = t => t===1?'t1':t===2?'t2':'t3';
+
+function savLabel(t, s) {
+  if (t === 3) return 'Spec gap';
+  if (s > 0) return '+' + fmt(s);
+  return 'Price parity';
+}
+function savCls(t, s) { return (t!==3 && s>0) ? 'pos' : 'none'; }
+
+function toggleEditMode() {
+  editMode = !editMode;
+  document.getElementById('editToggle').classList.toggle('active', editMode);
+  document.getElementById('editToggleLabel').textContent = editMode ? 'Exit edit mode' : 'Edit mode';
+  document.getElementById('editBanner').classList.toggle('show', editMode);
+  document.body.classList.toggle('edit-mode', editMode);
+  if (!editMode) document.getElementById('addForm').classList.remove('show');
+  renderLines();
+}
+
+function updateField(idx, field, el) {
+  const raw = el.value.trim();
+  if (field === 'spend' || field === 'sav') {
+    const num = parseFloat(raw.replace(/[^0-9.]/g, '')) || 0;
+    lines[idx][field] = num;
+  } else if (field === 'tier') {
+    lines[idx][field] = parseInt(raw);
+  } else {
+    lines[idx][field] = raw;
+  }
+  updateScorecard();
+  updateTotals();
+  // Update summary row labels without full re-render
+  const card = document.getElementById('card-' + idx);
+  if (card) {
+    const pill = card.querySelector('.tier-pill');
+    const descEl = card.querySelector('.line-desc');
+    const spendEl = card.querySelector('.line-spend');
+    const savEl = card.querySelector('.line-sav');
+    if (pill) { pill.className = 'tier-pill ' + pillClass(lines[idx].tier); pill.textContent = pillLabel(lines[idx].tier); }
+    if (descEl) { descEl.textContent = lines[idx].desc; descEl.title = lines[idx].desc; }
+    if (spendEl) spendEl.textContent = fmt(lines[idx].spend);
+    if (savEl) { savEl.textContent = savLabel(lines[idx].tier, lines[idx].sav); savEl.className = 'line-sav ' + savCls(lines[idx].tier, lines[idx].sav); }
+  }
+}
+
+function deleteLine(idx, e) {
+  e.stopPropagation();
+  if (!confirm('Remove this line?')) return;
+  lines.splice(idx, 1);
+  renderLines();
+}
+
+function toggle(id) {
+  const det = document.getElementById('det-' + id);
+  const chv = document.getElementById('chv-' + id);
+  const card = document.getElementById('card-' + id);
+  if (!det) return;
+  const open = det.classList.contains('show');
+  det.classList.toggle('show', !open);
+  chv.classList.toggle('open', !open);
+  card.classList.toggle('expanded', !open);
+}
+
+function filterTier(t, btn) {
+  currentTier = t;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderLines();
+}
+
+function updateScorecard() {
+  [1,2,3].forEach(t => {
+    const tLines = lines.filter(l => l.tier === t);
+    const spend = tLines.reduce((a,l) => a + l.spend, 0);
+    const sav = tLines.reduce((a,l) => a + (l.sav > 0 ? l.sav : 0), 0);
+    document.getElementById('sc'+t+'-spend').textContent = fmt(spend);
+    if (t < 3) document.getElementById('sc'+t+'-sav').textContent = sav > 0 ? fmt(sav) + ' savings available' : '—';
+    else document.getElementById('sc'+t+'-sav').textContent = 'Spec gap · in development';
+  });
+}
+
+function updateTotals() {
+  const visible = currentTier === 'all' ? lines : lines.filter(l => String(l.tier) === currentTier);
+  const ts = visible.reduce((a,l) => a + l.spend, 0);
+  const tv = visible.reduce((a,l) => a + (l.sav > 0 ? l.sav : 0), 0);
+  document.getElementById('tot-spend').textContent = fmt(ts);
+  document.getElementById('tot-sav').textContent = tv > 0 ? '+' + fmt(tv) : '—';
+  document.getElementById('tot-count').textContent = visible.length + ' lines';
+}
+
+function makeField(val, idx, field, cls='') {
+  const stop = e => e.stopPropagation();
+  if (!editMode) return `<span class="ef ${cls}">${val||'—'}</span>`;
+  return `<input class="ef ${cls}" value="${String(val||'').replace(/"/g,'&quot;')}" oninput="updateField(${idx},'${field}',this)" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()">`;
+}
+
+function makeTierSelect(val, idx) {
+  if (!editMode) return `<span class="ef-select">${val}</span>`;
+  return `<select class="ef-select" onchange="updateField(${idx},'tier',this)" onclick="event.stopPropagation()">
+    <option value="1" ${val===1?'selected':''}>Tier 1 — Act now</option>
+    <option value="2" ${val===2?'selected':''}>Tier 2 — Evaluate</option>
+    <option value="3" ${val===3?'selected':''}>Tier 3 — Hold</option>
+  </select>`;
+}
+
+function makeTextarea(val, idx, field) {
+  if (!editMode) return `<span class="ef-action">${val||''}</span>`;
+  return `<textarea class="ef-action" oninput="updateField(${idx},'${field}',this)" onclick="event.stopPropagation()" onkeydown="event.stopPropagation()">${val||''}</textarea>`;
+}
+
+function renderLines() {
+  const wrap = document.getElementById('lines');
+  const visible = currentTier === 'all' ? lines.map((l,i) => ({l,i})) : lines.map((l,i)=>({l,i})).filter(({l}) => String(l.tier) === currentTier);
+
+  wrap.innerHTML = '';
+
+  if (visible.length === 0) {
+    wrap.innerHTML = '<div class="empty">No lines match this filter.</div>';
+    updateTotals();
+    updateScorecard();
+    return;
+  }
+
+  visible.forEach(({l, i}) => {
+    const card = document.createElement('div');
+    card.className = 'line-card' + (editMode ? ' edit-mode-card' : '');
+    card.id = 'card-' + i;
+
+    card.innerHTML = `
+      <div class="line-top" onclick="toggle(${i})">
+        <span class="tier-pill ${pillClass(l.tier)}">${pillLabel(l.tier)}</span>
+        <span class="cat-tag">${l.cat}</span>
+        <span class="line-desc" title="${l.desc}">${l.desc}</span>
+        <div class="line-right">
+          <span class="line-spend">${fmt(l.spend)}</span>
+          <span class="line-sav ${savCls(l.tier, l.sav)}">${savLabel(l.tier, l.sav)}</span>
+          <button class="delete-btn" onclick="deleteLine(${i}, event)" title="Remove this line">&#x2715;</button>
+          <span class="chevron" id="chv-${i}">
+            <svg viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3,2 7,5 3,8"/></svg>
+          </span>
+        </div>
+      </div>
+      <div class="line-detail" id="det-${i}">
+        <div class="detail-inner">
+          <div class="detail-grid">
+            <div class="detail-field">
+              <span class="detail-lbl">Tier</span>
+              ${makeTierSelect(l.tier, i)}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Incumbent brand</span>
+              ${makeField(l.brand, i, 'brand')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Incumbent PN</span>
+              ${makeField(l.incPN, i, 'incPN')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Description</span>
+              ${makeField(l.desc, i, 'desc')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Location(s)</span>
+              ${makeField(l.loc, i, 'loc')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Incumbent spend ($)</span>
+              ${makeField(l.spend, i, 'spend', 'num')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Valutek PN</span>
+              ${makeField(l.vtPN, i, 'vtPN')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Fastenal SKU</span>
+              ${makeField(l.fskSKU, i, 'fskSKU')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Valutek case price</span>
+              ${makeField(l.vtCase, i, 'vtCase')}
+            </div>
+            <div class="detail-field">
+              <span class="detail-lbl">Savings opportunity ($)</span>
+              ${makeField(l.sav, i, 'sav', l.sav>0?'sav-val':'gap-val')}
+            </div>
+          </div>
+          <div class="action-box ${actionClass(l.tier)}">
+            <div class="action-lbl">Next step</div>
+            ${makeTextarea(l.action, i, 'action')}
+          </div>
+        </div>
+      </div>`;
+
+    wrap.appendChild(card);
+  });
+
+  updateScorecard();
+  updateTotals();
+}
+
+function showAddForm() {
+  document.getElementById('addForm').classList.add('show');
+  document.getElementById('addForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function cancelAdd() {
+  document.getElementById('addForm').classList.remove('show');
+  ['af-cat','af-brand','af-incPN','af-desc','af-loc','af-spend','af-sav','af-vtPN','af-fskSKU','af-vtCase','af-action'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = el.tagName === 'SELECT' ? '1' : '';
+  });
+}
+
+function addLine() {
+  const tier = parseInt(document.getElementById('af-tier').value);
+  const spend = parseFloat(document.getElementById('af-spend').value) || 0;
+  const sav = parseFloat(document.getElementById('af-sav').value) || 0;
+  const desc = document.getElementById('af-desc').value.trim();
+  if (!desc) { alert('Please enter a description.'); return; }
+  lines.push({
+    tier, cat: document.getElementById('af-cat').value.trim() || 'OTHER',
+    brand: document.getElementById('af-brand').value.trim(),
+    incPN: document.getElementById('af-incPN').value.trim(),
+    desc, loc: document.getElementById('af-loc').value.trim(),
+    spend, sav,
+    vtPN: document.getElementById('af-vtPN').value.trim() || '—',
+    fskSKU: document.getElementById('af-fskSKU').value.trim() || '—',
+    vtCase: document.getElementById('af-vtCase').value.trim() || 'TBD',
+    action: document.getElementById('af-action').value.trim()
+  });
+  cancelAdd();
+  renderLines();
+}
+
+function exportData() {
+  const json = JSON.stringify(lines, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'L3Harris_opportunity_data.json';
+  a.click();
+}
+
+renderLines();
+</script>
+
+</body>
+</html>

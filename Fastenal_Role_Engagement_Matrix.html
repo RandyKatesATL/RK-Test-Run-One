@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fastenal Role Engagement Matrix — Valutek</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f3ef;
+    color: #1a1a1a;
+    padding: 40px 32px;
+    min-height: 100vh;
+  }
+
+  .page-header {
+    margin-bottom: 28px;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 16px;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  .page-header .subtitle {
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-size: 11px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border: 1.5px solid #bbb;
+    border-radius: 3px;
+    background: #fff;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .filter-btn:hover { border-color: #1a1a1a; color: #1a1a1a; }
+
+  .filter-btn.active {
+    background: #1a1a1a;
+    color: #fff;
+    border-color: #1a1a1a;
+  }
+
+  .filter-btn.active.f-high   { background: #0a5c41; border-color: #0a5c41; }
+  .filter-btn.active.f-med    { background: #7a4d0a; border-color: #7a4d0a; }
+  .filter-btn.active.f-low    { background: #444; border-color: #444; }
+  .filter-btn.active.f-noise  { background: #8b1a1a; border-color: #8b1a1a; }
+
+  .row-count {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 0.03em;
+  }
+
+  .table-wrap {
+    background: #fff;
+    border: 1px solid #d0cec8;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    table-layout: fixed;
+  }
+
+  colgroup col.c1 { width: 20%; }
+  colgroup col.c2 { width: 31%; }
+  colgroup col.c3 { width: 13%; }
+  colgroup col.c4 { width: 7%; }
+  colgroup col.c5 { width: 11%; }
+  colgroup col.c6 { width: 18%; }
+
+  thead tr {
+    background: #1a1a1a;
+  }
+
+  thead th {
+    font-size: 10px;
+    font-weight: 600;
+    color: #ccc;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    padding: 10px 12px;
+    text-align: left;
+    border-right: 1px solid #333;
+  }
+
+  thead th:last-child { border-right: none; }
+
+  tbody tr.group-header td {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    padding: 10px 12px 5px;
+    background: #f4f3ef;
+    border-top: 1px solid #d0cec8;
+    border-bottom: 1px solid #e0deda;
+  }
+
+  tbody tr:not(.group-header) {
+    border-bottom: 1px solid #ece9e4;
+    transition: background 0.1s;
+  }
+
+  tbody tr:not(.group-header):hover { background: #faf9f7; }
+
+  tbody tr.hidden { display: none; }
+
+  td {
+    padding: 9px 12px;
+    vertical-align: top;
+    line-height: 1.5;
+    border-right: 1px solid #ece9e4;
+    color: #1a1a1a;
+  }
+
+  td:last-child { border-right: none; }
+
+  td.role {
+    font-weight: 600;
+    font-size: 12px;
+    color: #111;
+    line-height: 1.4;
+  }
+
+  td.resp {
+    font-size: 11.5px;
+    color: #555;
+    line-height: 1.55;
+  }
+
+  td.count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  /* Tier badges */
+  .tier {
+    display: inline-block;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .tier-1   { background: #dbeafe; color: #1e40af; }
+  .tier-2   { background: #d1fae5; color: #065f46; }
+  .tier-3   { background: #e5e7eb; color: #374151; }
+  .tier-ops { background: #fef3c7; color: #92400e; }
+  .tier-corp{ background: #ede9fe; color: #4c1d95; }
+  .tier-noise { background: #fee2e2; color: #991b1b; }
+
+  /* Scope badge */
+  .scope {
+    font-size: 10.5px;
+    color: #666;
+    line-height: 1.4;
+  }
+
+  /* Impact cell */
+  .impact-cell {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-high    { background: #059669; }
+  .dot-med     { background: #d97706; }
+  .dot-low     { background: #9ca3af; }
+  .dot-exclude { background: #dc2626; }
+
+  .impact-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  .impact-label.high    { color: #065f46; }
+  .impact-label.med     { color: #92400e; }
+  .impact-label.low     { color: #6b7280; }
+  .impact-label.exclude { color: #991b1b; }
+
+  .engage-note {
+    font-size: 10px;
+    color: #888;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #fff;
+    border: 1px solid #d0cec8;
+    border-radius: 4px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    color: #555;
+  }
+
+  /* Tier definitions */
+  .tier-defs {
+    margin-top: 14px;
+    background: #fff;
+    border: 1px solid #d0cec8;
+    border-radius: 4px;
+    padding: 18px 20px;
+  }
+
+  .tier-defs-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ece9e4;
+  }
+
+  .tier-defs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .tier-def-card {
+    background: #faf9f7;
+    border: 1px solid #e5e2dc;
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+
+  .tier-def-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .tier-def-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+    letter-spacing: 0.01em;
+  }
+
+  .tier-def-body {
+    font-size: 11.5px;
+    color: #555;
+    line-height: 1.65;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 14px;
+    font-size: 10px;
+    color: #aaa;
+    text-align: right;
+    letter-spacing: 0.03em;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Fastenal Southwest — Role Engagement Matrix</h1>
+  <div class="subtitle">Valutek Commercial Activation Framework &nbsp;|&nbsp; May 2026 &nbsp;|&nbsp; Alpha Growth Group</div>
+</div>
+
+<div class="meta-row">
+  <div class="controls">
+    <button class="filter-btn active f-all"   onclick="filterTable('all', this)">All Roles</button>
+    <button class="filter-btn f-high"          onclick="filterTable('high', this)">High Impact</button>
+    <button class="filter-btn f-med"           onclick="filterTable('med', this)">Medium Impact</button>
+    <button class="filter-btn f-low"           onclick="filterTable('low', this)">Low Impact</button>
+    <button class="filter-btn f-noise"         onclick="filterTable('noise', this)">Exclude / Noise</button>
+  </div>
+  <div class="row-count" id="row-count">Showing all roles</div>
+</div>
+
+<div class="table-wrap">
+<table>
+<colgroup>
+  <col class="c1"><col class="c2"><col class="c3">
+  <col class="c4"><col class="c5"><col class="c6">
+</colgroup>
+<thead>
+  <tr>
+    <th>Role / Title</th>
+    <th>Core Responsibility</th>
+    <th>Scope</th>
+    <th>Count</th>
+    <th>Tier</th>
+    <th>Valutek Impact</th>
+  </tr>
+</thead>
+<tbody id="table-body">
+
+<!-- ── STRATEGIC COMMERCIAL ── -->
+<tr class="group-header"><td colspan="6">Strategic Commercial — Growth Engine &nbsp;(Largely Absent from Current List)</td></tr>
+
+<tr data-impact="high">
+  <td class="role">Customer Solutions Consultant (CSC)</td>
+  <td class="resp">Backbone of outside selling. Lands and expands large regional and national accounts. Takes direction from DMs; reports to CSM. Most important missing relationship for Valutek.</td>
+  <td><span class="scope">Regional / National</span></td>
+  <td class="count">19</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Full commercial support. Respond same day.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">Key Account Development Specialist (KADS)</td>
+  <td class="resp">Focused exclusively on expansion of large site business. Manages onsite revenue growth and customer relationship development across 1–2 districts.</td>
+  <td><span class="scope">Regional / National</span></td>
+  <td class="count">4</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Full commercial support. Respond same day.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">Business Sales Specialist (BSS)</td>
+  <td class="resp">Owns corporate customer relationship. Executes business growth plan within assigned book of business. Manages contract price files and amendments. Works with field to drive growth.</td>
+  <td><span class="scope">National</span></td>
+  <td class="count">5</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Full commercial support. Respond same day.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">National Account Specialist / NASS</td>
+  <td class="resp">Hunter role pursuing contracts at $2M+. Develops new partnerships and negotiates contracts. Transitions signed accounts to BSS. Directly relevant to multi-site opportunities like L3Harris.</td>
+  <td><span class="scope">National</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Full commercial support. Respond same day.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">Regional Sales Manager (RSM)</td>
+  <td class="resp">Coaches national account sales team. Leads contract negotiations. Sets sales vision for the market. Manages NASS and BSS teams. Reports to NAVP.</td>
+  <td><span class="scope">Regional / National</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Full commercial support. Respond same day.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">Sales Development Specialist</td>
+  <td class="resp">Manages lower-maintenance accounts and regional contracts. Outbound campaign execution and national account retention. Retains, renews, and grows accounts efficiently.</td>
+  <td><span class="scope">Regional</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Engage with targeted account support.</div>
+  </td>
+</tr>
+
+<!-- ── GATEWAY TIER ── -->
+<tr class="group-header"><td colspan="6">Gateway Tier — District Authority &amp; Multiplier Effect</td></tr>
+
+<tr data-impact="high">
+  <td class="role">District Manager (DM)</td>
+  <td class="resp">Accountable for GMs and outside sales teams. Indirectly directs CSCs operating in their district. Single highest-leverage existing contact for bridging to the strategic tier. One converted DM influences multiple GMs and CSCs.</td>
+  <td><span class="scope">District</span></td>
+  <td class="count">16</td>
+  <td><span class="tier tier-2">Tier 2</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Lead with market intelligence. Ask for CSC intro.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">District Sales Manager / Specialist</td>
+  <td class="resp">District-level commercial leadership. Drives product and solutions penetration across multiple branches. Influences branch selling behavior and coaching conversations.</td>
+  <td><span class="scope">District</span></td>
+  <td class="count">5</td>
+  <td><span class="tier tier-2">Tier 2</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Peer-level conversation. Territory opportunity framing.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">General Sales Manager</td>
+  <td class="resp">Senior branch commercial authority. Oversees GM-level activity with added sales leadership accountability. Above-branch influence across a cluster of locations.</td>
+  <td><span class="scope">District / Branch</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-2">Tier 2</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Engage with market data and branch support tools.</div>
+  </td>
+</tr>
+
+<!-- ── BRANCH FOUNDATION ── -->
+<tr class="group-header"><td colspan="6">Branch Foundation — Optimize &amp; Pull Through</td></tr>
+
+<tr data-impact="med">
+  <td class="role">General Manager (GM) — incl. GM / G.M. / Gen Mgr variants</td>
+  <td class="resp">Runs branch operations and achieves sales targets. Optimizes current customer relationships. Not actively hunting. Controls branch culture, what gets stocked, and what reps are coached to recommend locally.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">224</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Make it easy to pass opportunity up chain. Low friction tools only.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">Outside Sales Representative — incl. OSR / Outside Sales variants</td>
+  <td class="resp">Field seller spending 80%+ of time outside the branch. Calls on top prospects beyond the GM's core accounts. Primary branch hunting resource with direct customer access.</td>
+  <td><span class="scope">Branch / Territory</span></td>
+  <td class="count">83</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Co-sell where possible. Arm with customer-ready story.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Account Specialist — incl. Senior Account Specialist</td>
+  <td class="resp">Manages and grows assigned book of business. Deep relationships with existing customers. Underutilized by manufacturers — already has cleanroom accounts in their BOB. Low effort, real return.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">81</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Single talking point for their next visit. Quick qualify.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Sales Associate — incl. Sales Representative variants</td>
+  <td class="resp">Entry-level sales role. Focused on landing and growing smaller to mid-size book of business customers. Limited authority and customer access compared to OSR or Account Specialist.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">61</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill requests. Do not invest commercial energy.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Industrial Sales Representative / Specialist</td>
+  <td class="resp">Focused on industrial manufacturing accounts. Relevant vertical for cleanroom. May carry above-average product knowledge vs. standard OSR. Potential crossover into cleanroom customer base.</td>
+  <td><span class="scope">Branch / Territory</span></td>
+  <td class="count">4</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Engage with vertical-specific brief and talking points.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Multi-Site Sales Representative</td>
+  <td class="resp">Manages sales across multiple customer facilities simultaneously. Directly relevant to cleanroom customers operating multiple controlled environments or campuses.</td>
+  <td><span class="scope">Branch / Territory</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Engage with multi-site customer story and case data.</div>
+  </td>
+</tr>
+
+<!-- ── EMBEDDED INFLUENCERS ── -->
+<tr class="group-header"><td colspan="6">Embedded Influencers — Onsite &amp; Supply Chain</td></tr>
+
+<tr data-impact="high">
+  <td class="role">Customer Solutions &amp; Inventory Specialist (CSIS)</td>
+  <td class="resp">Implements and maintains Fastenal Solutions technology at customer sites. Physically present in customer environments. Influential in product placement and vending program decisions. District-aligned role.</td>
+  <td><span class="scope">Onsite / District</span></td>
+  <td class="count">6</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Provide samples and onsite-ready product brief.</div>
+  </td>
+</tr>
+
+<tr data-impact="high">
+  <td class="role">LIFT Manager</td>
+  <td class="resp">Manages Lean In-Plant Fulfillment Technology. Embedded inside a customer facility managing inventory and fulfillment operations. May be physically co-located at a cleanroom or semiconductor site.</td>
+  <td><span class="scope">Onsite</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-high"></span><span class="impact-label high">High</span></div>
+    <div class="engage-note">Identify customer site. Engage as internal advocate.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Customer Site Area Manager</td>
+  <td class="resp">Manages onsite Fastenal operations at a customer facility. Responsible for revenue growth and relationship management within the site. May operate inside a cleanroom customer environment.</td>
+  <td><span class="scope">Onsite</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Identify the site. Provide onsite-ready product support.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Customer Supply Chain Support / Specialist</td>
+  <td class="resp">Manages VMI and onsite inventory programs at customer locations. Physically present at customer sites. Hidden influencer for product placement and reorder decisions. Systematically overlooked by manufacturers.</td>
+  <td><span class="scope">Onsite / Branch</span></td>
+  <td class="count">11</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Arm with samples. Ask what's on the shelf at their site.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Onsite Account Specialist / Onsite Sales Specialist</td>
+  <td class="resp">Sales and relationship management role embedded at a customer facility. Direct customer proximity makes them a strong product advocate if properly equipped and engaged.</td>
+  <td><span class="scope">Onsite</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-3">Tier 3</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Provide samples and a one-page customer brief.</div>
+  </td>
+</tr>
+
+<!-- ── LEAN & SOLUTIONS ── -->
+<tr class="group-header"><td colspan="6">Lean &amp; Solutions Overlay — Program-Driven Engagement</td></tr>
+
+<tr data-impact="med">
+  <td class="role">Lean Solutions Project Manager — incl. Sr. / Contract variants</td>
+  <td class="resp">Manages deployment of Fastenal supply chain programs at customer sites. Conducts site transitions and assessments inside customer facilities. May walk cleanroom floors during implementation.</td>
+  <td><span class="scope">Regional</span></td>
+  <td class="count">5</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Engage during site assessment phase if cleanroom present.</div>
+  </td>
+</tr>
+
+<tr data-impact="med">
+  <td class="role">Regional Lean Solutions Manager</td>
+  <td class="resp">Leads regional Lean Solutions team. Applies supply chain strategy across territory. Manages consultants and technology resources. Carries above-branch authority and program design influence.</td>
+  <td><span class="scope">Regional</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-med"></span><span class="impact-label med">Medium</span></div>
+    <div class="engage-note">Engage with supply chain program case study.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Strategic Metalworking Account Acquisition Specialist</td>
+  <td class="resp">Elite hunter for metalworking accounts at $600K+ regional and $2M+ national opportunities. Cleanroom is not primary vertical but calls on large manufacturing accounts with potential crossover.</td>
+  <td><span class="scope">Regional / National</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-1">Tier 1</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill if they ask. Do not actively pursue.</div>
+  </td>
+</tr>
+
+<!-- ── OPERATIONS & SUPPORT ── -->
+<tr class="group-header"><td colspan="6">Operations &amp; Branch Support — Fulfill, Don't Pursue</td></tr>
+
+<tr data-impact="low">
+  <td class="role">Branch Operations Manager</td>
+  <td class="resp">Owns branch operations, A/R, and inventory. Not a seller. Manages branch logistics and fulfillment infrastructure. No commercial authority or selling mandate.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">39</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. No commercial pursuit.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Operations Manager — incl. FMI Technologies variant</td>
+  <td class="resp">Branch operations leadership. Manages fulfillment and operations teams. FMI variant oversees vending solution deployments. Not a commercial selling role.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">20</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. No commercial pursuit.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Regional / District Operations Manager</td>
+  <td class="resp">Executes operations strategy at district or regional level. Supports BOMs with training and larger-scale operations projects. Not a commercial or customer-facing selling role.</td>
+  <td><span class="scope">Regional / District</span></td>
+  <td class="count">4</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. No commercial pursuit.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Sales Support — incl. Sales Support Rep / Specialist / Associate variants</td>
+  <td class="resp">Inside support for field sales teams. Handles quoting, sourcing, and administrative sales tasks. Not customer-facing in a selling capacity. Creates work but not commercial opportunity.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">37</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Respond and fulfill. Qualify for any seller behind the request.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Supply Chain Specialist / Employee / Lead</td>
+  <td class="resp">Supports inventory, procurement, and replenishment activities. Operational role with limited commercial influence. Manages logistics, not customer relationships or product decisions.</td>
+  <td><span class="scope">Branch / Onsite</span></td>
+  <td class="count">12</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. No commercial pursuit.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Inside Sales Representative / Support</td>
+  <td class="resp">Phone and inbound sales. Handles order management and customer service. Limited outbound commercial authority. Good for fulfillment intelligence but not growth activation.</td>
+  <td><span class="scope">Branch</span></td>
+  <td class="count">4</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. No commercial pursuit.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Site Manager / Branch Manager</td>
+  <td class="resp">Manages a specific facility or onsite location. Similar to GM but typically smaller scope or single-site responsibility. Limited commercial authority beyond their location.</td>
+  <td><span class="scope">Branch / Onsite</span></td>
+  <td class="count">8</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. Escalate if cleanroom site present.</div>
+  </td>
+</tr>
+
+<tr data-impact="low">
+  <td class="role">Area Manager</td>
+  <td class="resp">Oversees a geographic cluster of branches. Operations-focused. Moderate commercial influence but not a primary selling or prospecting resource. Above-branch but below district.</td>
+  <td><span class="scope">District</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-ops">Ops</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-low"></span><span class="impact-label low">Low</span></div>
+    <div class="engage-note">Fulfill efficiently. No commercial pursuit.</div>
+  </td>
+</tr>
+
+<!-- ── CORPORATE / FUNCTIONAL ── -->
+<tr class="group-header"><td colspan="6">Corporate &amp; Functional — Not Commercial Targets</td></tr>
+
+<tr data-impact="noise">
+  <td class="role">Regional Finance Manager</td>
+  <td class="resp">Financial operations and reporting. Not a commercial or sales role. No product influence, purchasing authority, or customer-facing selling mandate.</td>
+  <td><span class="scope">Regional / Corporate</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-corp">Corporate</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove from all activation campaigns.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Regional Marketing Manager</td>
+  <td class="resp">Regional marketing operations. Potential co-marketing discussion but not a commercial activation target. No customer-facing selling authority or product decision influence.</td>
+  <td><span class="scope">Regional / Corporate</span></td>
+  <td class="count">2</td>
+  <td><span class="tier tier-corp">Corporate</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove from all activation campaigns.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Regional EHS Manager</td>
+  <td class="resp">Environmental, health, and safety compliance. Not a commercial role. Adjacent to safety products but not a purchasing or selling decision-maker in the commercial chain.</td>
+  <td><span class="scope">Regional / Corporate</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-corp">Corporate</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove from all activation campaigns.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Marketing Manager</td>
+  <td class="resp">Branch or regional marketing function. No commercial selling authority, product influence, or customer-facing sales mandate.</td>
+  <td><span class="scope">Branch / Corporate</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-corp">Corporate</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove from all activation campaigns.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Project Manager (Corporate)</td>
+  <td class="resp">Internal project execution. Not customer-facing in a commercial capacity. No product or purchasing influence in the customer-facing selling chain.</td>
+  <td><span class="scope">Corporate</span></td>
+  <td class="count">3</td>
+  <td><span class="tier tier-corp">Corporate</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove from all activation campaigns.</div>
+  </td>
+</tr>
+
+<!-- ── DATA QUALITY ── -->
+<tr class="group-header"><td colspan="6">Data Quality Issues — Clean Before Any Campaign</td></tr>
+
+<tr data-impact="noise">
+  <td class="role">Placeholder / Ghost Accounts</td>
+  <td class="resp">Entries where First Name = "Fastenal" or store-code usernames (e.g., Fastenal Waoly, Fastenal Tx003, Fastenal Orcor). System or store-level accounts — not individuals. Will not respond to personalized outreach.</td>
+  <td><span class="scope">—</span></td>
+  <td class="count">9</td>
+  <td><span class="tier tier-noise">Noise</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove before any campaign deployment.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Duplicate Email Addresses</td>
+  <td class="resp">Three shared emails (bjames@, jmichael@, tnelson@) each mapped to two different individuals in different states. Will generate duplicate campaign touches and inflated engagement metrics.</td>
+  <td><span class="scope">—</span></td>
+  <td class="count">6</td>
+  <td><span class="tier tier-noise">Noise</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Resolve before any campaign deployment.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Non-Fastenal Contact</td>
+  <td class="resp">Albert Olvera — albert.olvera@blackstone.com, listed as Research Fellow at Blackstone. Not a Fastenal employee. Likely a data entry or CRM import error. Remove immediately.</td>
+  <td><span class="scope">—</span></td>
+  <td class="count">1</td>
+  <td><span class="tier tier-noise">Noise</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Remove before any campaign deployment.</div>
+  </td>
+</tr>
+
+<tr data-impact="noise">
+  <td class="role">Unclassifiable / Informal Titles</td>
+  <td class="resp">Titles with no clear role definition: Sales Puller, Salesman, Sales Attendant, Purchasing Development Sales, Traveling Salesman, Sales Association, etc. Cannot be reliably segmented or activated without further verification.</td>
+  <td><span class="scope">—</span></td>
+  <td class="count">~12</td>
+  <td><span class="tier tier-noise">Noise</span></td>
+  <td>
+    <div class="impact-cell"><span class="dot dot-exclude"></span><span class="impact-label exclude">Exclude</span></div>
+    <div class="engage-note">Verify individually before including in any campaign.</div>
+  </td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="dot dot-high"></span><strong>High</strong> — Prioritize. Full commercial support. Respond same day.</div>
+  <div class="legend-item"><span class="dot dot-med"></span><strong>Medium</strong> — Engage with targeted tools and relevant talking points.</div>
+  <div class="legend-item"><span class="dot dot-low"></span><strong>Low</strong> — Fulfill requests efficiently. Do not invest commercial energy.</div>
+  <div class="legend-item"><span class="dot dot-exclude"></span><strong>Exclude</strong> — Remove from activation campaigns. Not commercial targets.</div>
+</div>
+
+<div class="tier-defs">
+  <div class="tier-defs-title">Tier Definitions</div>
+  <div class="tier-defs-grid">
+
+    <div class="tier-def-card">
+      <div class="tier-def-header">
+        <span class="tier tier-1">Tier 1</span>
+        <span class="tier-def-label">Strategic Commercial</span>
+      </div>
+      <p class="tier-def-body">Roles with direct authority to land, expand, or influence large regional and national accounts. These are the hunters and strategic account managers — CSCs, KADS, NASS, BSS, and RSMs — who operate above the branch and drive enterprise-level growth. Tier 1 contacts are largely absent from the current list and represent the most important relationship gap to close. When a Tier 1 contact engages Valutek, drop everything and respond same day with your best resource.</p>
+    </div>
+
+    <div class="tier-def-card">
+      <div class="tier-def-header">
+        <span class="tier tier-2">Tier 2</span>
+        <span class="tier-def-label">Gateway — District Authority</span>
+      </div>
+      <p class="tier-def-body">Roles with accountability for both branch performance and outside sales teams, including indirect direction of CSCs. District Managers are the connective tissue between branch execution and strategic growth. A single converted DM influences multiple GMs and CSCs simultaneously, creating a multiplier effect no amount of individual branch calls can replicate. Tier 2 contacts are the bridge to Tier 1 — every DM conversation should include a direct ask for the CSC covering cleanroom or semiconductor accounts in their district.</p>
+    </div>
+
+    <div class="tier-def-card">
+      <div class="tier-def-header">
+        <span class="tier tier-3">Tier 3</span>
+        <span class="tier-def-label">Branch Foundation</span>
+      </div>
+      <p class="tier-def-body">Roles that operate at the branch level, including General Managers, Outside Sales Representatives, and Account Specialists. GMs optimize current business and set branch culture but are not actively hunting new accounts. OSRs are the primary field-selling resource and should be armed with a customer-ready cleanroom story. Account Specialists own book-of-business accounts and are systematically overlooked by manufacturers — they already have cleanroom customers and need only a single talking point to open the conversation. Tier 3 is the foundation of pull-through revenue and the intelligence network for reaching Tier 2 and Tier 1.</p>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer">
+  Fastenal Southwest Role Engagement Matrix &nbsp;|&nbsp; Valutek / Alpha Growth Group &nbsp;|&nbsp; May 2026 &nbsp;|&nbsp; Confidential
+</div>
+
+<script>
+  function filterTable(impact, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const dataRows = document.querySelectorAll('#table-body tr:not(.group-header)');
+    let visibleCount = 0;
+
+    dataRows.forEach(row => {
+      const d = row.getAttribute('data-impact');
+      const show = (impact === 'all') || (d === impact);
+      row.classList.toggle('hidden', !show);
+      if (show) visibleCount++;
+    });
+
+    const headers = document.querySelectorAll('.group-header');
+    headers.forEach(h => {
+      let next = h.nextElementSibling;
+      let hasVisible = false;
+      while (next && !next.classList.contains('group-header')) {
+        if (!next.classList.contains('hidden')) hasVisible = true;
+        next = next.nextElementSibling;
+      }
+      h.classList.toggle('hidden', !hasVisible);
+    });
+
+    const countEl = document.getElementById('row-count');
+    if (impact === 'all') {
+      countEl.textContent = 'Showing all roles';
+    } else {
+      const label = { high: 'High impact', med: 'Medium impact', low: 'Low impact', noise: 'Exclude / Noise' };
+      countEl.textContent = visibleCount + ' role' + (visibleCount !== 1 ? 's' : '') + ' — ' + label[impact];
+    }
+  }
+</script>
+
+</body>
+</html>

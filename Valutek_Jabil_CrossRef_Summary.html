@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valutek Cleanroom Cross-Reference | Jabil</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f3; color: #1a1a1a; padding: 24px; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e0e0e0; }
+  .header-left h1 { font-size: 18px; font-weight: 600; color: #1a1a1a; }
+  .header-left p { font-size: 13px; color: #666; margin-top: 2px; }
+  .header-right img { height: 40px; width: auto; }
+
+  .tab-bar { display: flex; gap: 0; border-bottom: 1px solid #ddd; margin-bottom: 20px; }
+  .tab { padding: 8px 20px; font-size: 13px; cursor: pointer; color: #666; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; background: none; }
+  .tab.active { color: #1a1a1a; border-bottom: 2px solid #1a1a1a; font-weight: 500; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .metric { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 8px; padding: 14px 16px; }
+  .metric-label { font-size: 11px; color: #888; margin: 0 0 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .metric-value { font-size: 22px; font-weight: 600; color: #1a1a1a; margin: 0; }
+  .metric-sub { font-size: 11px; color: #aaa; margin: 4px 0 0; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 500; font-size: 11px; color: #888; padding: 7px 10px; border-bottom: 1px solid #e0e0e0; text-transform: uppercase; letter-spacing: 0.04em; background: #fafafa; }
+  td { padding: 9px 10px; border-bottom: 0.5px solid #ececec; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; }
+  .badge-exact { background: #EAF3DE; color: #3B6D11; }
+  .badge-alt { background: #FAEEDA; color: #854F0B; }
+
+  .price-fisher { color: #888; }
+  .price-vt { color: #3B6D11; font-weight: 500; }
+  .note-text { font-size: 11px; color: #666; line-height: 1.4; }
+  .perf-flag { color: #185FA5; font-size: 11px; }
+
+  .detail-table { table-layout: fixed; font-size: 12px; }
+  .detail-table th, .detail-table td { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 7px 8px; }
+  .detail-table .note-text { white-space: normal; }
+
+  .cat-header td { font-size: 11px; font-weight: 600; padding: 6px 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .cat-coveralls td { background: #EEEDFE; color: #3C3489; }
+  .cat-labcoats td { background: #E1F5EE; color: #085041; }
+  .cat-bouffant td { background: #E6F1FB; color: #0C447C; }
+  .cat-beard td { background: #EAF3DE; color: #27500A; }
+  .cat-facemask td { background: #FAECE7; color: #712B13; }
+  .cat-sterile td { background: #FBEAF0; color: #72243E; }
+  .cat-nitrile td { background: #FAEEDA; color: #633806; }
+  .cat-shoe td { background: #FCEBEB; color: #791F1F; }
+  .cat-presat td { background: #F1EFE8; color: #444441; }
+  .cat-paper td { background: #dceefb; color: #0C447C; }
+
+  .row-coveralls td { background: #F7F6FF; }
+  .row-labcoats td { background: #F0FAF6; }
+  .row-bouffant td { background: #EFF6FD; }
+  .row-beard td { background: #F4F9EE; }
+  .row-facemask td { background: #FDF5F2; }
+  .row-sterile td { background: #FDF3F7; }
+  .row-nitrile td { background: #FDF6EC; }
+  .row-shoe td { background: #FEF5F5; }
+  .row-presat td { background: #F7F6F3; }
+  .row-paper td { background: #EFF6FD; }
+
+  .legend { display: flex; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #666; }
+  .legend-swatch { width: 11px; height: 11px; border-radius: 2px; }
+
+  .footer { font-size: 11px; color: #aaa; margin-top: 14px; }
+
+  @media print {
+    body { background: white; padding: 12px; }
+    .tab-bar { display: none; }
+    #summary, #detail { display: block !important; }
+    #detail { page-break-before: always; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Valutek Cleanroom Cross-Reference</h1>
+    <p>Jabil Account &nbsp;|&nbsp; Prepared for Fastenal Distribution Review &nbsp;|&nbsp; May 26, 2026</p>
+  </div>
+  <div class="header-right">
+    <img src="data:image/png;base64,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" alt="Valutek logo">
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab active" onclick="showTab('summary', this)">Summary</button>
+  <button class="tab" onclick="showTab('detail', this)">Detail view</button>
+</div>
+
+<!-- SUMMARY TAB -->
+<div id="summary" class="tab-content active">
+  <div class="metric-grid">
+    <div class="metric"><p class="metric-label">Total SKUs</p><p class="metric-value">26</p><p class="metric-sub">10 product categories</p></div>
+    <div class="metric"><p class="metric-label">Exact matches</p><p class="metric-value">25</p><p class="metric-sub">Same spec, material &amp; cleanliness</p></div>
+    <div class="metric"><p class="metric-label">Alternatives</p><p class="metric-value">1</p><p class="metric-sub">Equal/better performance — see notes</p></div>
+    <div class="metric"><p class="metric-label">Distribution</p><p class="metric-value">Fastenal</p><p class="metric-sub">All 26 SKUs available via Fastenal</p></div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:20%">Category</th>
+        <th style="width:7%">SKUs</th>
+        <th style="width:13%">Match status</th>
+        <th style="width:18%">Fisher price / case</th>
+        <th style="width:18%">Fastenal / Valutek price</th>
+        <th style="width:24%">Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Coveralls</td><td>5</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$361.50</td><td class="price-vt">$100.00 – $107.50</td><td class="note-text">Dupont Tyvek, sizes MD – 3X</td></tr>
+      <tr><td>Lab coats</td><td>5</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$175.63</td><td class="price-vt">$36.25 – $38.75</td><td class="note-text">Fisherbrand, sizes S – 2XL</td></tr>
+      <tr><td>Sterile nitrile gloves</td><td>6</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td class="note-text">Sizes 6.5 – 9; 200 pairs / case</td></tr>
+      <tr><td>Nitrile gloves (12")</td><td>4</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$993.50</td><td class="price-vt">$192.93</td><td class="note-text"><span class="perf-flag">★ Valutek LPC &lt;600 vs. KC &lt;950 — ~50% cleaner</span></td></tr>
+      <tr><td>Bouffant caps</td><td>1</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$341.25</td><td class="price-vt">$55.00</td><td class="note-text">24" round, 1,000 ea / case</td></tr>
+      <tr><td>Beard covers</td><td>1</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$192.13</td><td class="price-vt">$46.25</td><td class="note-text">18", 1,000 ea / case</td></tr>
+      <tr><td>Face masks</td><td>1</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$85.25</td><td class="price-vt">$67.50</td><td class="note-text">Disposable earloop, 1,000 ea / case</td></tr>
+      <tr><td>Shoe covers</td><td>1</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$230.00</td><td class="price-vt">$141.25</td><td class="note-text">Aquatrak butterfly XL, 200 ea / case</td></tr>
+      <tr><td>Pre-saturated wipers</td><td>1</td><td><span class="badge badge-alt">Alternative</span></td><td class="price-fisher">$39.85 / pouch</td><td class="price-vt">$205.44 / case (1,350 ea)</td><td class="note-text">Reusable bucket vs. pouch; spunlace vs. polypropylene. Validate vs. Jabil protocol.</td></tr>
+      <tr><td>Cleanroom paper</td><td>1</td><td><span class="badge badge-exact">Exact</span></td><td class="price-fisher">$1,043.00</td><td class="price-vt">$115.56</td><td class="note-text">2,500 sheets / case; colors &amp; sizes available</td></tr>
+    </tbody>
+  </table>
+  <p class="footer">Pricing shown at case level. Volume pricing subject to RFQ. Exact match = same specification, material, and cleanliness level. Alternative = equal or better performance; see notes.</p>
+</div>
+
+<!-- DETAIL TAB -->
+<div id="detail" class="tab-content">
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#EEEDFE"></div>Coveralls</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#E1F5EE"></div>Lab coats</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#E6F1FB"></div>Bouffant / Paper</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#EAF3DE"></div>Beard covers</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FAECE7"></div>Face masks</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FBEAF0"></div>Sterile gloves</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FAEEDA"></div>Nitrile gloves</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#FCEBEB"></div>Shoe covers</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F1EFE8"></div>Pre-sat wipers</div>
+  </div>
+
+  <table class="detail-table">
+    <colgroup>
+      <col style="width:16%"><col style="width:10%"><col style="width:9%"><col style="width:13%"><col style="width:10%"><col style="width:11%"><col style="width:11%"><col style="width:20%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Fisher description</th><th>Fisher part #</th><th>Match</th><th>Valutek PN</th><th>Fastenal PN</th><th>Fisher price / case</th><th>Fastenal price / case</th><th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="cat-header cat-coveralls"><td colspan="8">Coveralls — 5 SKUs</td></tr>
+      <tr class="row-coveralls"><td>Tyvek Coverall 2X</td><td>013614E</td><td><span class="badge badge-exact">Exact</span></td><td>VTMCVRL-2X</td><td>924871071</td><td class="price-fisher">$361.50</td><td class="price-vt">$107.50</td><td></td></tr>
+      <tr class="row-coveralls"><td>Tyvek Coverall 3X</td><td>013614F</td><td><span class="badge badge-exact">Exact</span></td><td>VTMCVRL-3X</td><td>924871038</td><td class="price-fisher">$361.50</td><td class="price-vt">$107.50</td><td></td></tr>
+      <tr class="row-coveralls"><td>Tyvek Coverall L</td><td>013614C</td><td><span class="badge badge-exact">Exact</span></td><td>VTMCVRL-LG</td><td>924870531</td><td class="price-fisher">$361.50</td><td class="price-vt">$100.00</td><td></td></tr>
+      <tr class="row-coveralls"><td>Tyvek Coverall M</td><td>013614B</td><td><span class="badge badge-exact">Exact</span></td><td>VTMCVRL-MD</td><td>924870802</td><td class="price-fisher">$361.50</td><td class="price-vt">$100.00</td><td></td></tr>
+      <tr class="row-coveralls"><td>Tyvek Coverall XL</td><td>013614D</td><td><span class="badge badge-exact">Exact</span></td><td>VTMCVRL-XL</td><td>924870717</td><td class="price-fisher">$361.50</td><td class="price-vt">$100.00</td><td></td></tr>
+
+      <tr class="cat-header cat-labcoats"><td colspan="8">Lab coats — 5 SKUs</td></tr>
+      <tr class="row-labcoats"><td>Lab Coat 2XL</td><td>128930064F</td><td><span class="badge badge-exact">Exact</span></td><td>VTLBCT-2X</td><td>924870164</td><td class="price-fisher">$175.63</td><td class="price-vt">$38.75</td><td></td></tr>
+      <tr class="row-labcoats"><td>Lab Coat M</td><td>128930064C</td><td><span class="badge badge-exact">Exact</span></td><td>VTLBCT-MD</td><td>924870324</td><td class="price-fisher">$175.63</td><td class="price-vt">$36.25</td><td></td></tr>
+      <tr class="row-labcoats"><td>Lab Coat S</td><td>128930064B</td><td><span class="badge badge-exact">Exact</span></td><td>VTLBCT-SM</td><td>924870167</td><td class="price-fisher">$175.63</td><td class="price-vt">$36.25</td><td></td></tr>
+      <tr class="row-labcoats"><td>Lab Coat XL</td><td>128930064E</td><td><span class="badge badge-exact">Exact</span></td><td>VTLBCT-XL</td><td>924870479</td><td class="price-fisher">$175.63</td><td class="price-vt">$36.25</td><td></td></tr>
+      <tr class="row-labcoats"><td>Lab Coat L</td><td>128930064D</td><td><span class="badge badge-exact">Exact</span></td><td>VTLBCT-LG</td><td>924870550</td><td class="price-fisher">$175.63</td><td class="price-vt">$36.25</td><td></td></tr>
+
+      <tr class="cat-header cat-bouffant"><td colspan="8">Bouffant caps — 1 SKU</td></tr>
+      <tr class="row-bouffant"><td>24" Round Bouffant</td><td>128970022</td><td><span class="badge badge-exact">Exact</span></td><td>VTBFCW-24</td><td>924870488</td><td class="price-fisher">$341.25</td><td class="price-vt">$55.00</td><td></td></tr>
+
+      <tr class="cat-header cat-beard"><td colspan="8">Beard covers — 1 SKU</td></tr>
+      <tr class="row-beard"><td>Disp Beard Covers 18"</td><td>12898001</td><td><span class="badge badge-exact">Exact</span></td><td>VTBCV-18</td><td>924872050</td><td class="price-fisher">$192.13</td><td class="price-vt">$46.25</td><td></td></tr>
+
+      <tr class="cat-header cat-facemask"><td colspan="8">Face masks — 1 SKU</td></tr>
+      <tr class="row-facemask"><td>Disp Earloop Face Mask</td><td>12888001A</td><td><span class="badge badge-exact">Exact</span></td><td>VTMASKELR-BL</td><td>924871247</td><td class="price-fisher">$85.25</td><td class="price-vt">$67.50</td><td></td></tr>
+
+      <tr class="cat-header cat-sterile"><td colspan="8">Sterile nitrile gloves — 6 SKUs</td></tr>
+      <tr class="row-sterile"><td>G3 Sterile Glove 6.5</td><td>19047732</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRBIR12-XS</td><td>924870786</td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td></td></tr>
+      <tr class="row-sterile"><td>G3 Sterile Glove 7</td><td>19047733</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRBIR12-SM</td><td>924871062</td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td></td></tr>
+      <tr class="row-sterile"><td>G3 Sterile Glove 7.5</td><td>19047734</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRBIR12-MD</td><td>924870696</td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td></td></tr>
+      <tr class="row-sterile"><td>G3 Sterile Glove 8</td><td>19047735</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRBIR12-LG</td><td>924871147</td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td></td></tr>
+      <tr class="row-sterile"><td>G3 Sterile Glove 8.5</td><td>19047736</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRBIR12-XL</td><td>924870936</td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td></td></tr>
+      <tr class="row-sterile"><td>G3 Sterile Glove 9</td><td>19047737</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRBIR12-2X</td><td>924871203</td><td class="price-fisher">$1,445.00</td><td class="price-vt">$301.93</td><td></td></tr>
+
+      <tr class="cat-header cat-nitrile"><td colspan="8">Nitrile gloves 12" — 4 SKUs</td></tr>
+      <tr class="row-nitrile"><td>NXT Nitrile 12" LG</td><td>19059326D</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRB12-LG</td><td>924871099</td><td class="price-fisher">$993.50</td><td class="price-vt">$192.93</td><td class="note-text perf-flag">★ VT LPC &lt;600 vs. KC &lt;950</td></tr>
+      <tr class="row-nitrile"><td>NXT Nitrile 12" MD</td><td>19059326C</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRB12-MD</td><td>924872151</td><td class="price-fisher">$993.50</td><td class="price-vt">$192.93</td><td class="note-text perf-flag">★ VT LPC &lt;600 vs. KC &lt;950</td></tr>
+      <tr class="row-nitrile"><td>NXT Nitrile 12" SM</td><td>19059326B</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRB12-SM</td><td>924872277</td><td class="price-fisher">$993.50</td><td class="price-vt">$192.93</td><td class="note-text perf-flag">★ VT LPC &lt;600 vs. KC &lt;950</td></tr>
+      <tr class="row-nitrile"><td>NXT Nitrile 12" XL</td><td>19059326F</td><td><span class="badge badge-exact">Exact</span></td><td>VTGNCRB12-XL</td><td>924871445</td><td class="price-fisher">$993.50</td><td class="price-vt">$192.93</td><td class="note-text perf-flag">★ VT LPC &lt;600 vs. KC &lt;950</td></tr>
+
+      <tr class="cat-header cat-shoe"><td colspan="8">Shoe covers — 1 SKU</td></tr>
+      <tr class="row-shoe"><td>Aquatrak Butterfly XL</td><td>191301499</td><td><span class="badge badge-exact">Exact</span></td><td>VTSHCVPPLWNE-XL</td><td>924871424</td><td class="price-fisher">$230.00</td><td class="price-vt">$141.25</td><td></td></tr>
+
+      <tr class="cat-header cat-presat"><td colspan="8">Pre-saturated wipers — 1 SKU</td></tr>
+      <tr class="row-presat"><td>PROSAT 9×11 70% IPA</td><td>19064205</td><td><span class="badge badge-alt">Alternative</span></td><td>VTSNTRI70R-99</td><td>921925555</td><td class="price-fisher">$39.85 / pouch</td><td class="price-vt">$205.44 / case</td><td class="note-text">Reusable bucket vs. pouch; spunlace substrate. Validate vs. Jabil protocol.</td></tr>
+
+      <tr class="cat-header cat-paper"><td colspan="8">Cleanroom paper — 1 SKU</td></tr>
+      <tr class="row-paper"><td>TexWrite 10 MP Paper</td><td>18339</td><td><span class="badge badge-exact">Exact</span></td><td>VTCRPS23W-8511</td><td>924870676</td><td class="price-fisher">$1,043.00</td><td class="price-vt">$115.56</td><td class="note-text">Colors, sizes &amp; weights available</td></tr>
+    </tbody>
+  </table>
+  <p class="footer">All pricing at case level. Volume pricing subject to RFQ. ★ = performance advantage. Exact match = same specification, material, and cleanliness level.</p>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
