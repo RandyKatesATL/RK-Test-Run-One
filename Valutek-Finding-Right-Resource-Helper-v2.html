@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Valutek — How Can We Help You Today?</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f4f4f2;min-height:100vh;padding:20px 16px;}
+#app{max-width:640px;margin:0 auto;}
+.header{background:#111;color:#fff;border-radius:12px;padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.eyebrow{font-size:10px;letter-spacing:2px;color:#888;text-transform:uppercase;margin-bottom:3px;}
+.title{font-size:19px;font-weight:700;}
+.btn-reset{background:transparent;border:1px solid #555;color:#aaa;padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;}
+.progress{display:flex;align-items:center;gap:6px;margin-bottom:16px;}
+.bar{height:3px;flex:1;border-radius:2px;background:#ddd;transition:background 0.3s;}
+.bar.active{background:#111;}
+.step-lbl{font-size:11px;color:#888;white-space:nowrap;margin-left:4px;}
+.intro{color:#666;margin-bottom:18px;font-size:14px;line-height:1.6;}
+.aud-btn{display:flex;justify-content:space-between;align-items:center;width:100%;background:#fff;border:1.5px solid #222;border-radius:12px;padding:16px 20px;cursor:pointer;text-align:left;font-size:15px;font-weight:600;color:#111;margin-bottom:10px;transition:background 0.15s;}
+.aud-btn:hover{background:#f0f0ec;}
+.search-bar{margin-top:6px;padding:12px 16px;background:#fff;border-radius:8px;border:1px solid #ddd;font-size:14px;color:#555;}
+.search-bar a{color:#111;font-weight:600;text-decoration:none;}
+.search-bar a:hover{text-decoration:underline;}
+.card{background:#fff;border-radius:12px;padding:20px 22px;border:1px solid #e0e0e0;margin-bottom:12px;}
+.aud-lbl{font-size:12px;color:#999;margin-bottom:6px;}
+.q-text{font-size:18px;font-weight:700;color:#111;margin:0 0 5px;}
+.q-sub{font-size:13px;color:#777;margin:0 0 16px;}
+.opt{display:flex;justify-content:space-between;align-items:center;width:100%;background:#f7f7f5;border:1.5px solid #ddd;border-radius:8px;padding:12px 15px;cursor:pointer;text-align:left;font-size:14px;font-weight:500;color:#222;margin-bottom:9px;transition:background 0.12s,color 0.12s,border-color 0.12s;}
+.opt:hover{background:#111;color:#fff;border-color:#111;}
+.arr{font-size:15px;margin-left:8px;flex-shrink:0;}
+.btn-back{background:transparent;border:none;color:#888;cursor:pointer;font-size:13px;padding:4px 0;}
+.result-hdr{border-radius:12px;padding:22px 24px;margin-bottom:12px;color:#fff;}
+.result-icon{font-size:24px;margin-bottom:8px;}
+.result-cat{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,0.55);text-transform:uppercase;margin-bottom:5px;}
+.result-hl{font-size:18px;font-weight:700;margin:0 0 9px;}
+.result-desc{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.65;margin:0;}
+.links-lbl{font-size:11px;font-weight:700;color:#999;letter-spacing:1px;text-transform:uppercase;margin-bottom:11px;}
+.link{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:#f7f7f5;border-radius:8px;border:1.5px solid #e0e0e0;color:#111;text-decoration:none;font-size:14px;font-weight:500;margin-bottom:8px;transition:background 0.12s,color 0.12s;}
+.link:hover{background:#111;color:#fff;}
+.actions{display:flex;gap:10px;}
+.btn-bk{flex:1;padding:11px;background:#fff;border:1.5px solid #ccc;border-radius:8px;cursor:pointer;font-size:13px;color:#555;}
+.btn-restart{flex:1;padding:11px;background:#111;border:none;border-radius:8px;cursor:pointer;font-size:13px;color:#fff;font-weight:600;}
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div>
+      <div class="eyebrow">Valutek Resources</div>
+      <div class="title">How can we help you today?</div>
+    </div>
+    <button class="btn-reset hidden" id="btn-reset" onclick="reset()">Start over</button>
+  </div>
+
+  <div class="progress hidden" id="progress">
+    <div class="bar" id="pb0"></div>
+    <div class="bar" id="pb1"></div>
+    <div class="bar" id="pb2"></div>
+    <div class="bar" id="pb3"></div>
+    <span class="step-lbl" id="step-lbl">Step 1</span>
+  </div>
+
+  <div id="screen-audience">
+    <p class="intro">Tell us who you are and we'll take you straight to the resources most useful for your situation.</p>
+    <button class="aud-btn" onclick="selectAudience('distributor')">Distributor Sales Professional <span>→</span></button>
+    <button class="aud-btn" onclick="selectAudience('enduser')">Cleanroom Manager / Technical or Quality Manager <span>→</span></button>
+    <div class="search-bar">🔍 &nbsp;Already know what you need? <a href="https://www.valutek.com/blog" target="_blank">Search all resources →</a></div>
+  </div>
+
+  <div id="screen-question" class="hidden">
+    <div class="card">
+      <div class="aud-lbl" id="q-aud"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-sub" id="q-sub"></div>
+      <div id="q-opts"></div>
+    </div>
+    <button class="btn-back" onclick="goBack()">← Back</button>
+  </div>
+
+  <div id="screen-result" class="hidden">
+    <div class="result-hdr" id="r-hdr">
+      <div class="result-icon" id="r-icon"></div>
+      <div class="result-cat" id="r-cat"></div>
+      <div class="result-hl" id="r-hl"></div>
+      <p class="result-desc" id="r-desc"></p>
+    </div>
+    <div class="card">
+      <div class="links-lbl">Jump to</div>
+      <div id="r-links"></div>
+    </div>
+    <div class="actions">
+      <button class="btn-bk" onclick="goBack()">← Back</button>
+      <button class="btn-restart" onclick="reset()">Start over</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FLOWS = {
+  distributor: {
+    label: "Distributor Sales Professional",
+    questions: {
+      q1: { question: "What brings you here today?", subtitle: "We'll point you straight to what you need.", options: [
+        { label: "Preparing for a customer call or demo", next: "q2_prep" },
+        { label: "Recommending or comparing a product", next: "q3_product" },
+        { label: "My customer needs compliance documentation", next: "result_specs" },
+        { label: "Building my cleanroom knowledge", next: "result_learn" },
+        { label: "I know what I'm looking for", next: "result_search" },
+      ]},
+      q2_prep: { question: "Which industry is your customer in?", subtitle: "We'll filter the content to match their world.", options: [
+        { label: "Semiconductor / Advanced Materials", next: "result_prep_adv" },
+        { label: "Pharmaceutical / Biotech", next: "result_prep_ls" },
+        { label: "Medical Device", next: "result_prep_ls" },
+        { label: "Research / University / Nanofab", next: "result_prep_research" },
+        { label: "Aerospace / Defense / Manufacturing", next: "result_prep_adv" },
+      ]},
+      q3_product: { question: "Which product category?", subtitle: "Select what you're focusing on for this opportunity.", options: [
+        { label: "Gloves", next: "result_gloves" },
+        { label: "Wipers or Pre-Saturated Wipers", next: "result_wipers" },
+        { label: "Apparel & Gowning", next: "result_apparel" },
+        { label: "Adhesive Mats", next: "result_mats" },
+        { label: "Cleaning & Maintenance", next: "result_cleaning" },
+        { label: "ESD / Finger Cots / Glove Liners", next: "result_esd" },
+      ]},
+    },
+    results: {
+      result_search: { cat: "Search Resources", icon: "🔍", hl: "Search the full library", desc: "With 40+ blogs, 17 technical papers, 5 case studies, and 277 product docs — search is the fastest path when you know what you need.", links: [{ label: "Search All Resources →", url: "https://www.valutek.com/blog" }], color: "#1a1a1a" },
+      result_prep_ls: { cat: "Prepare for the Call", icon: "📋", hl: "Life Sciences call prep", desc: "Content to help you walk into pharma, biotech, or medical device accounts sounding like a contamination control expert.", links: [{ label: "Endotoxins: Strategies for Control", url: "https://www.valutek.com/blog/endotoxin-control-strategies-life-science" }, { label: "PFAS in Cleanroom Garments", url: "https://www.valutek.com/blog/understanding-pfas-in-cleanroom-garments" }, { label: "ISO 14644-5 Revision: What It Means", url: "https://www.valutek.com/blog/the-first-iso-14644-5-revision-in-over-20-years" }, { label: "Beyond Cleanroom Certification: Why Monitoring Matters", url: "https://www.valutek.com/case-studies/beyond-cleanroom-certification-why-monitoring-matters" }], color: "#1a3a5c" },
+      result_prep_adv: { cat: "Prepare for the Call", icon: "📋", hl: "Advanced Materials call prep", desc: "Content to help you walk into semiconductor, aerospace, or advanced manufacturing accounts with the right vocabulary and insights.", links: [{ label: "PFAS Chemicals in Your Supply Chain", url: "https://www.valutek.com/blog/how-pfas-chemical-infiltrate-cleanrooms" }, { label: "ESD Risks in Controlled Environments", url: "https://www.valutek.com/blog/mitigating-the-risk-of-esd-in-controlled-environments" }, { label: "Why Two Cleanroom Standards?", url: "https://www.valutek.com/blog/why-two-cleanroom-standards" }], color: "#1a3a5c" },
+      result_prep_research: { cat: "Prepare for the Call", icon: "📋", hl: "Research & University call prep", desc: "Content for calling on nanofab labs, public research institutions, and universities.", links: [{ label: "Cleanroom Standards Overview", url: "https://www.valutek.com/technical-papers/introduction-general-standards-organizations-cleanrooms" }, { label: "Modern Methods for Detecting Contaminants", url: "https://www.valutek.com/blog/modern-methods-detecting-cleanroom-contaminants-overview" }, { label: "Product Selection Secrets: Matched Sets", url: "https://www.valutek.com/blog/how-product-matched-sets-define-cleanroom-quality" }], color: "#1a3a5c" },
+      result_gloves: { cat: "Select the Right Product", icon: "🧤", hl: "Glove selection resources", desc: "Everything you need to recommend the right glove — substrate comparisons, ISO class guidance, selection guides, and vendor criteria.", links: [{ label: "Latex vs. Nitrile: What's Right for Your Customer?", url: "https://www.valutek.com/blog/latex-vs-nitrile-glove" }, { label: "Cleanroom Glove Selection Guide (E-book)", url: "https://www.valutek.com/cleanroom-glove-selection" }, { label: "Glove Product Documents (TDS Library)", url: "https://www.valutek.com/product-documents" }], color: "#2d5016" },
+      result_wipers: { cat: "Select the Right Product", icon: "🧹", hl: "Wiper selection resources", desc: "Substrate comparisons, application guides, matched set strategy, and vendor selection criteria for dry and pre-saturated wipers.", links: [{ label: "Mastering Cleanroom Maintenance: Using Wipers", url: "https://www.valutek.com/blog/mastering-cleanroom-maintenance-the-science-of-using-wipers" }, { label: "Cleanroom Wiper Selection Guide (E-book)", url: "https://www.valutek.com/cleanroom-wiper-selection" }, { label: "Wiper Product Documents (TDS / SDS Library)", url: "https://www.valutek.com/product-documents" }], color: "#2d5016" },
+      result_apparel: { cat: "Select the Right Product", icon: "👗", hl: "Apparel & gowning resources", desc: "Launderable vs. disposable decisions, garment procurement, gowning procedures, and PFAS-free options.", links: [{ label: "Launderable & Disposable Garment Options", url: "https://www.valutek.com/blog/launderable-and-disposable-garments" }, { label: "PFAS-Free Launderable Garment System", url: "https://www.valutek.com/blog/valuteks-pfas-free-launderable-garment-system" }, { label: "Cleanroom Gowning Procedure (E-book)", url: "https://www.valutek.com/cleanroom-gowning-procedure" }], color: "#2d5016" },
+      result_mats: { cat: "Select the Right Product", icon: "🟦", hl: "Adhesive mat resources", desc: "Selection criteria, sizing, installation tips, and full TDS library.", links: [{ label: "Adhesive Mat Fundamentals: 3 Tips to Select & Install", url: "https://www.valutek.com/blog/adhesive-mat-fundamentals-3-tips" }, { label: "Adhesive Mat Product Documents (TDS Library)", url: "https://www.valutek.com/product-documents" }], color: "#2d5016" },
+      result_cleaning: { cat: "Select the Right Product", icon: "🧽", hl: "Cleaning & maintenance resources", desc: "Mop system comparisons, tacky roller guidance, and cleaning SOP references.", links: [{ label: "Fantail & Flat Mops and Tacky Rollers", url: "https://www.valutek.com/blog/mastering-cleanroom-maintenance" }, { label: "Valutek's New Butterfly Mop System", url: "https://www.valutek.com/blog/valutek-butterfly-mop-system" }], color: "#2d5016" },
+      result_esd: { cat: "Select the Right Product", icon: "⚡", hl: "ESD product resources", desc: "ESD risk mitigation, grounding, and product selection for static-sensitive environments.", links: [{ label: "How to Mitigate ESD Risks in Controlled Environments", url: "https://www.valutek.com/blog/mitigating-the-risk-of-esd-in-controlled-environments" }, { label: "ESD Shoe Covers: The Power of Proper Grounding", url: "https://www.valutek.com/blog/proper-grounding-starts-at-your-feet-the-importance-of-esd-shoe-covers" }], color: "#2d5016" },
+      result_specs: { cat: "Specs, Docs & Compliance", icon: "📁", hl: "Documentation & compliance", desc: "TDS, SDS, CoA, CoC — find or request the document your customer needs.", links: [{ label: "Product Document Library (277 TDS documents)", url: "https://www.valutek.com/product-documents" }, { label: "Request a Certificate (CoC or CoA)", url: "https://www.valutek.com/request-certificates" }, { label: "Safety Data Sheets — Pre-Saturated Wipers", url: "https://www.valutek.com/faq" }], color: "#4a0030" },
+      result_learn: { cat: "Learn the Fundamentals", icon: "📚", hl: "Cleanroom knowledge base", desc: "From ISO class basics to gowning SOPs — build the fluency to sell into cleanroom accounts with confidence.", links: [{ label: "Why Two Cleanroom Standards? Federal and ISO", url: "https://www.valutek.com/blog/why-two-cleanroom-standards" }, { label: "Best Practices: Operator Gowning Procedures", url: "https://www.valutek.com/blog/best-practices-operator-gowning-procedures-training" }, { label: "Cleanroom Gowning Procedure (E-book)", url: "https://www.valutek.com/cleanroom-gowning-procedure" }], color: "#1a1a5c" },
+    }
+  },
+  enduser: {
+    label: "Cleanroom Manager / Technical or Quality Manager",
+    questions: {
+      q1: { question: "What brings you here today?", subtitle: "Tell us what you need and we'll take you straight there.", options: [
+        { label: "Evaluating products for my facility", next: "q_iso" },
+        { label: "I need compliance documentation", next: "q_docs" },
+        { label: "Troubleshooting a contamination or process issue", next: "q_problem" },
+        { label: "Learning about cleanroom standards or best practices", next: "result_learn" },
+        { label: "I'm ready to order or need to contact someone", next: "result_contact" },
+      ]},
+      q_iso: { question: "What ISO class is your cleanroom?", subtitle: "This helps us match you to the right product family and specifications.", options: [
+        { label: "ISO Class 1–4  (semiconductor, nanofab, ultra-precision)", next: "result_nanotek" },
+        { label: "ISO Class 5–6  (medical device, pharma aseptic, aerospace)", next: "result_microtek" },
+        { label: "ISO Class 7–8  (general pharma, food, less critical mfg)", next: "result_macrotek" },
+        { label: "I'm not sure of my ISO class", next: "result_classify" },
+      ]},
+      q_docs: { question: "What type of document do you need?", subtitle: "Select the closest match — we'll take you directly to it.", options: [
+        { label: "Certificate of Conformance (CoC)", next: "result_coc" },
+        { label: "Certificate of Analysis (CoA)", next: "result_coc" },
+        { label: "Technical Data Sheet (TDS)", next: "result_tds" },
+        { label: "Safety Data Sheet (SDS)", next: "result_sds" },
+        { label: "Latex-free certification", next: "result_contact" },
+        { label: "FDA alignment or test data", next: "result_fda" },
+      ]},
+      q_problem: { question: "What challenge are you trying to solve?", subtitle: "We'll connect you to the most relevant content and products.", options: [
+        { label: "Failing audits or contamination compliance issues", next: "result_compliance" },
+        { label: "Operator comfort or gowning non-compliance", next: "result_gowning" },
+        { label: "Unexplained particle counts or yield issues", next: "result_particles" },
+        { label: "Chemical contamination concern (PFAS, silicone, ESD)", next: "result_chemical" },
+        { label: "Need to update SOPs or gowning procedures", next: "result_sops" },
+        { label: "Re-evaluating vendor or reducing cost", next: "result_prove" },
+      ]},
+    },
+    results: {
+      result_nanotek: { cat: "NanoTek Product Family", icon: "⚛️", hl: "ISO Class 1–4: Ultra-precision products", desc: "Valutek's NanoTek family is designed for the most demanding cleanroom environments — semiconductor, nanofab, and ultra-precision manufacturing.", links: [{ label: "NanoTek Product Family", url: "https://www.valutek.com/nanotek" }, { label: "Product Document Library — TDS by category", url: "https://www.valutek.com/product-documents" }, { label: "Request a Certificate (CoC / CoA)", url: "https://www.valutek.com/request-certificates" }], color: "#1a3a5c" },
+      result_microtek: { cat: "MicroTek Product Family", icon: "🔬", hl: "ISO Class 5–6: Mid-tier critical environments", desc: "Valutek's MicroTek family covers medical device, pharmaceutical aseptic, and aerospace applications.", links: [{ label: "MicroTek Product Family", url: "https://www.valutek.com/microtek" }, { label: "Product Document Library — TDS by category", url: "https://www.valutek.com/product-documents" }, { label: "Request a Certificate (CoC / CoA)", url: "https://www.valutek.com/request-certificates" }], color: "#1a3a5c" },
+      result_macrotek: { cat: "MacroTek Product Family", icon: "🏭", hl: "ISO Class 7–8: Controlled environment products", desc: "Valutek's MacroTek family is designed for general pharmaceutical, food processing, and less critical manufacturing environments.", links: [{ label: "MacroTek Product Family", url: "https://www.valutek.com/macrotek" }, { label: "Product Document Library — TDS by category", url: "https://www.valutek.com/product-documents" }], color: "#1a3a5c" },
+      result_classify: { cat: "Cleanliness Classification", icon: "📐", hl: "Find your ISO class", desc: "Use Valutek's classification tool to identify the right cleanroom class for your environment.", links: [{ label: "Cleanliness Classification Tool", url: "https://www.valutek.com/valutek-cleanroom-cleanliness-classification" }, { label: "Why Two Cleanroom Standards? (Blog)", url: "https://www.valutek.com/blog/why-two-cleanroom-standards" }], color: "#1a3a5c" },
+      result_coc: { cat: "Certificates", icon: "📜", hl: "Request a CoC or CoA", desc: "Valutek provides Certificates of Conformance and Certificates of Analysis within 1–2 business days of your request.", links: [{ label: "Request Certificate Here →", url: "https://www.valutek.com/request-certificates" }, { label: "Email: orderdesk@valutek.com", url: "mailto:orderdesk@valutek.com" }], color: "#4a0030" },
+      result_tds: { cat: "Technical Data Sheets", icon: "📄", hl: "Product Document Library", desc: "277 TDS documents available — searchable and filterable by product category.", links: [{ label: "Product Document Library →", url: "https://www.valutek.com/product-documents" }], color: "#4a0030" },
+      result_sds: { cat: "Safety Data Sheets", icon: "⚠️", hl: "SDS — Pre-Saturated Wipers", desc: "SDS documents are available for pre-wetted wipers only, by IPA saturation level.", links: [{ label: "SDS Downloads — FAQ page", url: "https://www.valutek.com/faq" }], color: "#4a0030" },
+      result_fda: { cat: "FDA & Regulatory", icon: "🏛️", hl: "FDA alignment & regulatory standards", desc: "Cleanroom consumables are not regulated by the FDA directly — but Valutek provides test data aligned with FDA-recommended practices.", links: [{ label: "FAQ: Is Valutek FDA Registered?", url: "https://www.valutek.com/faq" }, { label: "U.S. Government Agencies & Cleanroom Standards", url: "https://www.valutek.com/technical-papers/us-government-agencies-regulations-and-standards-for-cleanrooms" }], color: "#4a0030" },
+      result_compliance: { cat: "Compliance & Audit Prep", icon: "✅", hl: "Compliance and contamination control", desc: "Real-world case studies and technical resources on contamination monitoring, gowning compliance, and audit readiness.", links: [{ label: "Beyond Cleanroom Certification: Why Monitoring Matters", url: "https://www.valutek.com/case-studies/beyond-cleanroom-certification-why-monitoring-matters" }, { label: "Failing to Monitor Macroparticles?", url: "https://www.valutek.com/case-studies/failing-to-monitor-macroparticles" }, { label: "SOPs for Controlled Environments", url: "https://www.valutek.com/technical-papers/tag/sops-for-controlled-environments" }], color: "#5c2d00" },
+      result_gowning: { cat: "Gowning & Apparel", icon: "👔", hl: "Gowning compliance & operator comfort", desc: "Comfortable operators are compliant operators. Resources on garment selection, gowning room design, and SOPs.", links: [{ label: "Comfortable, Happy Operators Reduce Risk", url: "https://www.valutek.com/blog/happy-operators" }, { label: "Best Practices: Gowning Room Design", url: "https://www.valutek.com/blog/gowning-room-setup-best-practices" }, { label: "Cleanroom Gowning Procedure (E-book)", url: "https://www.valutek.com/cleanroom-gowning-procedure" }], color: "#5c2d00" },
+      result_particles: { cat: "Contamination Detection", icon: "🔍", hl: "Particle counts & yield issues", desc: "Modern detection methods, macroparticle monitoring, and matched-set product strategy to control contamination at the source.", links: [{ label: "Modern Methods for Detecting Contaminants", url: "https://www.valutek.com/blog/modern-methods-detecting-cleanroom-contaminants-overview" }, { label: "Failing to Monitor Macroparticles?", url: "https://www.valutek.com/case-studies/failing-to-monitor-macroparticles" }], color: "#5c2d00" },
+      result_chemical: { cat: "Chemical Contamination", icon: "🧪", hl: "PFAS, silicone & ESD contamination", desc: "Understanding and mitigating chemical contamination risks from cleanroom consumables themselves.", links: [{ label: "Are PFAS Chemicals in Your Supply Chain?", url: "https://www.valutek.com/blog/how-pfas-chemical-infiltrate-cleanrooms" }, { label: "How to Prevent Silicone Contamination", url: "https://www.valutek.com/blog/how-to-prevent-silicone-contamination" }], color: "#5c2d00" },
+      result_sops: { cat: "SOPs & Procedures", icon: "📋", hl: "SOP development resources", desc: "A full 5-chapter technical paper series on writing and managing cleanroom SOPs — from gowning to critical cleaning.", links: [{ label: "Introduction to Writing Internal SOPs (Ch. 1)", url: "https://www.valutek.com/technical-papers/writing-sops-for-controlled-environments" }, { label: "SOPs for Gowning Protocols (Ch. 2)", url: "https://www.valutek.com/technical-papers/sops-for-cleanroom-gowning-protocols" }], color: "#1a1a5c" },
+      result_prove: { cat: "Vendor Evaluation", icon: "📊", hl: "Why Valutek", desc: "36-month lot trending, transparent test data, defined upper and lower limits — the quality case for Valutek.", links: [{ label: "5 Reasons to Choose Valutek", url: "https://www.valutek.com/blog/5-reasons-to-trust-valutek" }, { label: "Cleanroom Consumable & Vendor Selection", url: "https://www.valutek.com/technical-papers/cleanroom-consumable-vendor-selection" }], color: "#5c2d00" },
+      result_learn: { cat: "Learn the Fundamentals", icon: "📚", hl: "Cleanroom knowledge base", desc: "Standards, contamination control, gowning procedures, and product selection guides — all in one place.", links: [{ label: "Why Two Cleanroom Standards?", url: "https://www.valutek.com/blog/why-two-cleanroom-standards" }, { label: "Standards Organizations Overview", url: "https://www.valutek.com/technical-papers/introduction-general-standards-organizations-cleanrooms" }, { label: "Cleanroom E-books", url: "https://www.valutek.com/free-cleanroom-ebooks" }], color: "#1a1a5c" },
+      result_contact: { cat: "Contact & Orders", icon: "📞", hl: "Get in touch", desc: "Our Customer Service team is available for orders, custom requests, and any question not answered in the Resources section.", links: [{ label: "Contact Us", url: "https://www.valutek.com/contact-us" }, { label: "Help me find a distributor", url: "https://www.valutek.com/find-a-distributor" }, { label: "Request Free Samples", url: "https://www.valutek.com/free-sample-request" }], color: "#1a1a1a" },
+    }
+  }
+};
+
+let audKey=null, history=[], curQ="q1", resKey=null;
+
+function show(id){document.getElementById(id).classList.remove('hidden');}
+function hide(id){document.getElementById(id).classList.add('hidden');}
+
+function updateProgress(){
+  const steps = history.length + (resKey ? 1 : 0);
+  document.getElementById('step-lbl').textContent = 'Step ' + (steps+1);
+  for(let i=0;i<4;i++) document.getElementById('pb'+i).classList.toggle('active', i<=steps);
+}
+
+function renderAudience(){
+  show('screen-audience'); hide('screen-question'); hide('screen-result');
+  hide('progress'); hide('btn-reset');
+}
+
+function renderQuestion(){
+  const flow = FLOWS[audKey];
+  const q = flow.questions[curQ];
+  document.getElementById('q-aud').textContent = flow.label;
+  document.getElementById('q-text').textContent = q.question;
+  document.getElementById('q-sub').textContent = q.subtitle || '';
+  const c = document.getElementById('q-opts'); c.innerHTML = '';
+  q.options.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.innerHTML = '<span>'+opt.label+'</span><span class="arr">→</span>';
+    b.onclick = () => handleAnswer(opt);
+    c.appendChild(b);
+  });
+  hide('screen-audience'); show('screen-question'); hide('screen-result');
+  show('progress'); show('btn-reset'); updateProgress();
+}
+
+function renderResult(){
+  const r = FLOWS[audKey].results[resKey];
+  document.getElementById('r-hdr').style.background = r.color;
+  document.getElementById('r-icon').textContent = r.icon;
+  document.getElementById('r-cat').textContent = r.cat;
+  document.getElementById('r-hl').textContent = r.hl;
+  document.getElementById('r-desc').textContent = r.desc;
+  const lc = document.getElementById('r-links'); lc.innerHTML = '';
+  r.links.forEach(l => {
+    const a = document.createElement('a');
+    a.className = 'link'; a.href = l.url; a.target = '_blank'; a.rel = 'noreferrer';
+    a.innerHTML = l.label + ' <span style="color:#aaa">↗</span>';
+    lc.appendChild(a);
+  });
+  hide('screen-audience'); hide('screen-question'); show('screen-result');
+  show('progress'); show('btn-reset'); updateProgress();
+}
+
+function selectAudience(key){ audKey=key; history=[]; curQ='q1'; resKey=null; renderQuestion(); }
+
+function handleAnswer(opt){
+  if(opt.next.startsWith('result_')){ history.push(curQ); resKey=opt.next; renderResult(); }
+  else{ history.push(curQ); curQ=opt.next; renderQuestion(); }
+}
+
+function goBack(){
+  if(resKey){ resKey=null; renderQuestion(); return; }
+  if(history.length>0){ curQ=history.pop(); renderQuestion(); }
+  else{ audKey=null; renderAudience(); }
+}
+
+function reset(){ audKey=null; history=[]; curQ='q1'; resKey=null; renderAudience(); }
+</script>
+</body>
+</html>

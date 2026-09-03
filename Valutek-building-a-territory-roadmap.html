@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Territory Target Account Roadmap — Field Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0F1E2E;
+    --navy-2:#16283C;
+    --paper:#F4F2EA;
+    --ink:#14181D;
+    --steel:#5C6B7C;
+    --steel-light:#AEB9C4;
+    --blue:#1D4E89;
+    --amber:#E8871E;
+    --line: rgba(244,242,234,0.14);
+    --line-dark: rgba(15,30,46,0.12);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    font-weight:600;
+  }
+  h1,h2,h3{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.01em;
+    margin:0;
+  }
+
+  /* ===== HEADER ===== */
+  header{
+    background:
+      linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    color:var(--paper);
+    padding:64px 24px 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:44px 44px;
+    opacity:0.5;
+    pointer-events:none;
+  }
+  .header-inner{max-width:920px; margin:0 auto; position:relative;}
+  .eyebrow-row{
+    display:flex; align-items:center; gap:10px;
+    color:var(--amber);
+    margin-bottom:22px;
+  }
+  .eyebrow-row .dot{width:7px;height:7px;background:var(--amber);border-radius:50%;}
+  header h1{
+    font-size:clamp(34px, 5.4vw, 58px);
+    line-height:1.04;
+    font-weight:700;
+    color:var(--paper);
+    max-width:14ch;
+  }
+  header h1 span{color:var(--amber);}
+  .thesis{
+    margin-top:22px;
+    font-size:18px;
+    line-height:1.55;
+    color:var(--steel-light);
+    max-width:52ch;
+    font-weight:400;
+  }
+  .thesis strong{color:var(--paper); font-weight:600;}
+  .meta-strip{
+    display:flex; gap:28px; flex-wrap:wrap;
+    margin-top:34px; padding-top:22px;
+    border-top:1px solid var(--line);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:var(--steel-light);
+    letter-spacing:0.03em;
+  }
+  .meta-strip b{color:var(--paper); font-weight:600;}
+
+  /* ===== SECTION WRAP ===== */
+  .wrap{max-width:920px; margin:0 auto; padding:0 24px;}
+  .section-label{
+    display:flex; align-items:center; gap:14px;
+    margin:64px 0 24px;
+  }
+  .section-label .eyebrow{color:var(--blue);}
+  .section-label .rule{flex:1; height:1px; background:var(--line-dark);}
+
+  /* ===== PROCESS SCHEMATIC ===== */
+  .schematic{position:relative; padding-left:2px;}
+  .schematic::before{
+    content:"";
+    position:absolute; left:27px; top:8px; bottom:8px;
+    width:2px;
+    background:repeating-linear-gradient(
+      to bottom, var(--blue) 0 6px, transparent 6px 12px
+    );
+  }
+  .step{
+    position:relative;
+    display:flex;
+    gap:22px;
+    margin-bottom:14px;
+  }
+  .step-node{
+    flex-shrink:0;
+    width:56px; height:56px;
+    border-radius:50%;
+    background:var(--navy);
+    color:var(--paper);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600; font-size:19px;
+    border:3px solid var(--paper);
+    box-shadow:0 0 0 2px var(--navy);
+    z-index:2;
+  }
+  .step-card{
+    flex:1;
+    background:#fff;
+    border:1px solid var(--line-dark);
+    border-radius:3px;
+    overflow:hidden;
+    transition:box-shadow .2s ease;
+  }
+  .step-card.open{box-shadow:0 6px 20px rgba(15,30,46,0.08);}
+  .step-head{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px;
+    padding:16px 20px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .step-head:hover{background:rgba(29,78,137,0.04);}
+  .step-title-group .step-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--steel); font-weight:600; margin-bottom:4px;
+  }
+  .step-head h3{font-size:19px; color:var(--ink); font-weight:600; letter-spacing:0;}
+  .chevron{
+    flex-shrink:0;
+    width:22px; height:22px;
+    border:1.5px solid var(--steel);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; color:var(--steel);
+    transition:transform .2s ease;
+  }
+  .step-card.open .chevron{transform:rotate(45deg); border-color:var(--amber); color:var(--amber);}
+  .step-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .28s ease;
+  }
+  .step-card.open .step-body{max-height:900px;}
+  .step-body-inner{
+    padding:2px 20px 22px;
+    border-top:1px solid var(--line-dark);
+    padding-top:18px;
+  }
+  .objective{
+    font-size:15px; line-height:1.6; color:var(--ink);
+    margin-bottom:18px;
+    padding:12px 14px;
+    background:var(--paper);
+    border-left:3px solid var(--blue);
+  }
+  .objective b{font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue); display:block; margin-bottom:6px;}
+  .block-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--steel); font-weight:600;
+    margin:16px 0 8px;
+  }
+  ul.q-list{list-style:none; margin:0; padding:0;}
+  ul.q-list li{
+    position:relative;
+    padding:7px 0 7px 22px;
+    font-size:14.5px; line-height:1.55;
+    color:var(--ink);
+    border-bottom:1px dashed var(--line-dark);
+  }
+  ul.q-list li:last-child{border-bottom:none;}
+  ul.q-list li::before{
+    content:"?";
+    position:absolute; left:0; top:7px;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700; color:var(--amber); font-size:13px;
+  }
+  .data-tags{display:flex; flex-wrap:wrap; gap:8px;}
+  .data-tags span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    padding:5px 10px;
+    background:var(--navy);
+    color:var(--paper);
+    border-radius:2px;
+    letter-spacing:0.02em;
+  }
+
+  /* ===== SCORING INSTRUMENT (signature element) ===== */
+  .instrument-wrap{margin:18px 0 6px;}
+  .instrument{
+    background:var(--navy);
+    color:var(--paper);
+    border-radius:6px;
+    padding:28px 24px 24px;
+    position:relative;
+    border:1px solid rgba(244,242,234,0.15);
+  }
+  .instrument::before,.instrument::after,
+  .instrument .bolt-tl,.instrument .bolt-br{
+    content:"";
+    position:absolute;
+    width:9px; height:9px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 35%, #cfd6dd, #7c8896 70%);
+  }
+  .instrument::before{top:10px; left:10px;}
+  .instrument::after{top:10px; right:10px;}
+  .instrument .bolt-tl{bottom:10px; left:10px;}
+  .instrument .bolt-br{bottom:10px; right:10px;}
+  .instrument-label{
+    text-align:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:0.2em; text-transform:uppercase;
+    color:var(--steel-light);
+    margin-bottom:18px;
+  }
+  .formula-row{
+    display:flex; align-items:center; justify-content:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:22px;
+  }
+  .formula-chip{
+    text-align:center;
+    padding:14px 18px;
+    border:1px solid rgba(244,242,234,0.25);
+    border-radius:4px;
+    min-width:120px;
+  }
+  .formula-chip .fc-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--steel-light); margin-bottom:6px;
+  }
+  .formula-chip .fc-value{
+    font-family:'Oswald',sans-serif;
+    font-size:20px; font-weight:600; color:var(--paper);
+  }
+  .formula-op{font-family:'Oswald',sans-serif; font-size:26px; color:var(--amber); font-weight:600;}
+
+  .weight-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-bottom:22px;
+  }
+  @media(max-width:640px){.weight-grid{grid-template-columns:1fr;}}
+  .weight-col h4{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--amber); margin-bottom:10px; font-weight:600;
+  }
+  .weight-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:7px 0;
+    border-bottom:1px solid rgba(244,242,234,0.1);
+    font-size:13.5px;
+  }
+  .weight-item .wi-name{color:var(--paper);}
+  .weight-item .wi-pct{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px; color:var(--steel-light);
+  }
+  .weight-note{
+    font-size:12px; color:var(--steel-light);
+    margin-top:10px; line-height:1.5;
+  }
+
+  .tier-plate{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    background:rgba(244,242,234,0.15);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  @media(max-width:640px){.tier-plate{grid-template-columns:1fr;}}
+  .tier{
+    background:var(--navy-2);
+    padding:16px 14px;
+    text-align:center;
+  }
+  .tier .t-letter{
+    font-family:'Oswald',sans-serif; font-size:30px; font-weight:700;
+    color:var(--amber);
+  }
+  .tier .t-range{
+    font-family:'IBM Plex Mono',monospace; font-size:12px;
+    color:var(--steel-light); margin:4px 0 8px;
+  }
+  .tier .t-cadence{
+    font-size:13px; color:var(--paper); font-weight:500;
+  }
+
+  /* ===== CALLOUT / CTA ===== */
+  .callout{
+    margin:60px 0 40px;
+    background:var(--navy);
+    color:var(--paper);
+    padding:36px 32px;
+    border-radius:6px;
+    position:relative;
+  }
+  .callout .eyebrow{color:var(--amber); margin-bottom:12px; display:block;}
+  .callout p{font-size:16.5px; line-height:1.6; color:var(--steel-light); margin:0; max-width:60ch;}
+  .callout p strong{color:var(--paper);}
+
+  footer{
+    text-align:center;
+    padding:34px 24px 50px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--steel);
+    letter-spacing:0.04em;
+  }
+
+  @media(max-width:600px){
+    .step{gap:14px;}
+    .step-node{width:44px;height:44px;font-size:15px;}
+    .schematic::before{left:21px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="eyebrow-row"><span class="dot"></span><span class="eyebrow">Field Reference — Territory Planning</span></div>
+    <h1>Building Target Accounts <span>With Data, Not Gut Feel</span></h1>
+    <p class="thesis">Your reps already have instincts about who's worth chasing. This roadmap doesn't replace that — it gives them <strong>proof, priority, and a plan</strong> they can defend in the field.</p>
+    <div class="meta-strip">
+      <div><b>6</b> Steps</div>
+      <div><b>Fit × Signal</b> Scoring Model</div>
+      <div><b>A / B / C</b> Tier System</div>
+      <div><b>Quarterly</b> Refresh Cadence</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="section-label"><span class="eyebrow">01 — Process</span><div class="rule"></div></div>
+
+  <div class="schematic" id="schematic">
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-node">1</div>
+      <div class="step-card open">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="step-title-group">
+            <div class="step-eyebrow">Foundation</div>
+            <h3>Define the ICP</h3>
+          </div>
+          <div class="chevron">+</div>
+        </div>
+        <div class="step-body">
+          <div class="step-body-inner">
+            <div class="objective"><b>Objective</b>Name the traits of a customer that buys fast, buys often, and doesn't churn — before touching a single account list.</div>
+            <div class="block-label">Key Questions For The Team</div>
+            <ul class="q-list">
+              <li>What 4–6 firmographic traits define our best customers — and can you name why each one matters?</li>
+              <li>Which industry/NAICS codes actually convert, versus just sound relevant?</li>
+              <li>Where's the revenue and employee-count sweet spot — and where do we consistently lose deals outside it?</li>
+              <li>What facility type or regulatory tier (cleanroom class, GMP status) predicts a real buyer?</li>
+              <li>Is purchasing centralized or plant-by-plant — and does that change who we target first?</li>
+            </ul>
+            <div class="block-label">Data Inputs</div>
+            <div class="data-tags"><span>CRM closed-won history</span><span>Churn analysis</span><span>Win/loss notes</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-node">2</div>
+      <div class="step-card">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="step-title-group">
+            <div class="step-eyebrow">Universe</div>
+            <h3>Build the Territory Universe</h3>
+          </div>
+          <div class="chevron">+</div>
+        </div>
+        <div class="step-body">
+          <div class="step-body-inner">
+            <div class="objective"><b>Objective</b>Pull every account in the territory that fits the ICP filters — the full "TAM in my backyard," not the list a rep already knows.</div>
+            <div class="block-label">Key Questions For The Team</div>
+            <ul class="q-list">
+              <li>Which data source defines "every account that fits" — D&B, ZoomInfo, trade association rosters?</li>
+              <li>How many accounts in this territory actually match the ICP filters from Step 1?</li>
+              <li>Does this list confirm what's already in CRM, or does it expose gaps we didn't know existed?</li>
+              <li>When a rep's mental list disagrees with the data pull — is that a coaching conversation or a data problem?</li>
+            </ul>
+            <div class="block-label">Data Inputs</div>
+            <div class="data-tags"><span>D&B / ZoomInfo pull</span><span>NAICS filter</span><span>Geographic radius</span><span>Trade association directories</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-node">3</div>
+      <div class="step-card">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="step-title-group">
+            <div class="step-eyebrow">Enrichment</div>
+            <h3>Layer In Whitespace &amp; Signal Data</h3>
+          </div>
+          <div class="chevron">+</div>
+        </div>
+        <div class="step-body">
+          <div class="step-body-inner">
+            <div class="objective"><b>Objective</b>Turn a static list into a living one by identifying who has no spend with us today, and who's showing signs of buying soon.</div>
+            <div class="block-label">Key Questions For The Team</div>
+            <ul class="q-list">
+              <li>Which ICP-fit accounts have zero dollars with us right now (whitespace)?</li>
+              <li>What intent signals are visible — hiring surges, facility expansion, new equipment, permit filings?</li>
+              <li>What's changed in this account's world in the last 90 days — M&A, new plant, leadership change, regulatory shift?</li>
+              <li>Which signals can we actually detect today, and which need a new data source we don't have yet?</li>
+            </ul>
+            <div class="block-label">Data Inputs</div>
+            <div class="data-tags"><span>CRM gap analysis</span><span>ZoomInfo intent data</span><span>Permit databases</span><span>LinkedIn leadership changes</span><span>Trade press</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4 - SCORING -->
+    <div class="step">
+      <div class="step-node">4</div>
+      <div class="step-card open">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="step-title-group">
+            <div class="step-eyebrow">Prioritization</div>
+            <h3>Score &amp; Tier — The Objective Model</h3>
+          </div>
+          <div class="chevron">+</div>
+        </div>
+        <div class="step-body">
+          <div class="step-body-inner">
+            <div class="objective"><b>Objective</b>Replace opinion with a formula every rep applies the same way — so "I have 200 accounts" becomes "I know exactly where Monday morning goes."</div>
+
+            <div class="instrument-wrap">
+              <div class="instrument">
+                <span class="bolt-tl"></span><span class="bolt-br"></span>
+                <div class="instrument-label">Scoring Instrument — Priority Rating Plate</div>
+
+                <div class="formula-row">
+                  <div class="formula-chip"><div class="fc-label">Fit Score</div><div class="fc-value">0–100</div></div>
+                  <div class="formula-op">×</div>
+                  <div class="formula-chip"><div class="fc-label">Signal Score</div><div class="fc-value">0–100</div></div>
+                  <div class="formula-op">=</div>
+                  <div class="formula-chip"><div class="fc-label">Priority Score</div><div class="fc-value">Tier</div></div>
+                </div>
+
+                <div class="weight-grid">
+                  <div class="weight-col">
+                    <h4>Fit Score — Who They Are</h4>
+                    <div class="weight-item"><span class="wi-name">Industry / NAICS match</span><span class="wi-pct">30%</span></div>
+                    <div class="weight-item"><span class="wi-name">Revenue / employee band match</span><span class="wi-pct">25%</span></div>
+                    <div class="weight-item"><span class="wi-name">Facility / regulatory tier match</span><span class="wi-pct">25%</span></div>
+                    <div class="weight-item"><span class="wi-name">Purchasing structure fit</span><span class="wi-pct">20%</span></div>
+                    <div class="weight-note">Weights should track back to what actually predicted closed-won deals in Step 1 — not a guess.</div>
+                  </div>
+                  <div class="weight-col">
+                    <h4>Signal Score — Why Now</h4>
+                    <div class="weight-item"><span class="wi-name">Active trigger event (M&A, new plant)</span><span class="wi-pct">35%</span></div>
+                    <div class="weight-item"><span class="wi-name">Hiring surge / expansion signal</span><span class="wi-pct">25%</span></div>
+                    <div class="weight-item"><span class="wi-name">Whitespace — no vendor lock-in</span><span class="wi-pct">25%</span></div>
+                    <div class="weight-item"><span class="wi-name">Budget cycle timing</span><span class="wi-pct">15%</span></div>
+                    <div class="weight-note">No detectable signal doesn't mean no opportunity — it means the account waits for Tier B until one appears.</div>
+                  </div>
+                </div>
+
+                <div class="tier-plate">
+                  <div class="tier"><div class="t-letter">A</div><div class="t-range">Score 70–100</div><div class="t-cadence">Weekly touches</div></div>
+                  <div class="tier"><div class="t-letter">B</div><div class="t-range">Score 40–69</div><div class="t-cadence">Monthly touches</div></div>
+                  <div class="tier"><div class="t-letter">C</div><div class="t-range">Score &lt;40</div><div class="t-cadence">Quarterly / nurture</div></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="block-label">Key Questions For The Team</div>
+            <ul class="q-list">
+              <li>What weight does each fit criterion get — and is that weight based on win-rate data or opinion?</li>
+              <li>Where's our actual cutoff between A, B, and C — and will two different reps land on the same tier for the same account?</li>
+              <li>Are sales and marketing scoring accounts the same way, or running two different formulas?</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-node">5</div>
+      <div class="step-card">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="step-title-group">
+            <div class="step-eyebrow">Ownership</div>
+            <h3>Assign Ownership &amp; Build Account Plans</h3>
+          </div>
+          <div class="chevron">+</div>
+        </div>
+        <div class="step-body">
+          <div class="step-body-inner">
+            <div class="objective"><b>Objective</b>Turn the tiered list into a plan a rep can execute Monday morning — and can explain in their own words.</div>
+            <div class="block-label">Key Questions For The Team</div>
+            <ul class="q-list">
+              <li>Who owns each Tier-A account, and do they know it?</li>
+              <li>For your top 5 accounts — who's the economic buyer, what's the trigger, what's the entry-point offer?</li>
+              <li>Can you present your top 5 back to me, in your own words, with a hypothesis for "why now"?</li>
+            </ul>
+            <div class="block-label">Data Inputs</div>
+            <div class="data-tags"><span>Org charts / LinkedIn</span><span>CRM contact roles</span><span>Rep-built account plans</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step">
+      <div class="step-node">6</div>
+      <div class="step-card">
+        <div class="step-head" onclick="toggleStep(this)">
+          <div class="step-title-group">
+            <div class="step-eyebrow">Discipline</div>
+            <h3>Build the Refresh Cadence</h3>
+          </div>
+          <div class="chevron">+</div>
+        </div>
+        <div class="step-body">
+          <div class="step-body-inner">
+            <div class="objective"><b>Objective</b>A target list decays the moment it's finished. This step is what turns it into a system instead of a one-time project.</div>
+            <div class="block-label">Key Questions For The Team</div>
+            <ul class="q-list">
+              <li>On what cadence do we re-score — quarterly, at minimum?</li>
+              <li>What specifically triggers a tier promotion or demotion mid-cycle?</li>
+              <li>What's our rule for retiring a dead account instead of letting it sit on the list forever?</li>
+            </ul>
+            <div class="block-label">Data Inputs</div>
+            <div class="data-tags"><span>Updated CRM activity</span><span>Refreshed firmographic pull</span><span>Refreshed signal data</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="callout">
+    <span class="eyebrow">The Coaching Move</span>
+    <p>Don't hand your team the finished list. Walk one rep through Steps 1–4 live, using their own territory. Then have them teach it to the next rep. <strong>A list you hand down gets used once. A method someone builds themselves gets used every quarter.</strong></p>
+  </div>
+
+</div>
+
+<footer>Territory Target Account Roadmap — Field Reference Tool</footer>
+
+<script>
+  function toggleStep(headEl){
+    const card = headEl.closest('.step-card');
+    card.classList.toggle('open');
+  }
+</script>
+
+</body>
+</html>
