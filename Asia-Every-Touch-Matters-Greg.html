@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Every Touch Matters — Field Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10161B;
+    --ink-soft:#3E5361;
+    --panel:#FFFFFF;
+    --bg:#EEF2F4;
+    --steel:#24333D;
+    --steel-deep:#182229;
+    --accent:#F2A93B;
+    --accent-deep:#C7841E;
+    --line:#CBD6DB;
+    --line-soft:#E2E9EC;
+    --good:#3E7A5C;
+    --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--ink); font-family:var(--font-body); }
+  body{
+    padding-bottom: 78px;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+
+  /* Header */
+  header.top{
+    background: var(--steel);
+    background-image: linear-gradient(180deg, var(--steel) 0%, var(--steel-deep) 100%);
+    color:#F4F7F8;
+    padding: 18px 18px 16px;
+    position: sticky; top:0; z-index:20;
+    border-bottom: 3px solid var(--accent);
+  }
+  header.top .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: .06em;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  header.top h1{
+    margin:0;
+    font-size: 21px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+    line-height:1.15;
+  }
+  header.top .sub{
+    margin:4px 0 0;
+    font-size:13px;
+    color:#B9C6CC;
+  }
+
+  main{
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px 14px 24px;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; animation: fade .18s ease; }
+  @keyframes fade{ from{opacity:0; transform: translateY(4px);} to{opacity:1; transform:none;} }
+
+  .panel-intro{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height:1.5;
+    margin: 2px 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Section headers within panels */
+  .group-label{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: .04em;
+    margin: 22px 0 8px;
+  }
+  .group-label:first-child{ margin-top:0; }
+
+  /* Accordion cards */
+  details.card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--steel);
+    border-radius: 3px;
+    margin-bottom: 10px;
+    overflow:hidden;
+  }
+  details.card[open]{ border-left-color: var(--accent); }
+  details.card summary{
+    list-style:none;
+    padding: 13px 14px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:14.5px;
+    line-height:1.35;
+  }
+  details.card summary::-webkit-details-marker{ display:none; }
+  details.card summary .num{
+    font-family: var(--font-mono);
+    font-size:11.5px;
+    color: var(--ink-soft);
+    background: var(--line-soft);
+    border-radius: 2px;
+    padding: 2px 6px;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  details.card summary .chev{
+    margin-left:auto;
+    font-family: var(--font-mono);
+    color: var(--ink-soft);
+    font-size:13px;
+    transition: transform .15s ease;
+    flex-shrink:0;
+  }
+  details.card[open] summary .chev{ transform: rotate(45deg); }
+  details.card .card-body{
+    padding: 0 14px 16px 40px;
+    font-size:13.5px;
+    line-height:1.55;
+  }
+  details.card .card-body .field{ margin-bottom:10px; }
+  details.card .card-body .field:last-child{ margin-bottom:0; }
+  details.card .card-body .field-label{
+    font-family: var(--font-mono);
+    font-size:10.5px;
+    color: var(--accent-deep);
+    letter-spacing:.03em;
+    margin-bottom:3px;
+  }
+  details.card .card-body .oneline{
+    font-size:13.5px;
+    color: var(--ink-soft);
+    padding: 0 14px 14px 40px;
+    margin-top:-4px;
+  }
+
+  /* Flow list (condensed) */
+  .flow-item{
+    display:flex; gap:10px; align-items:flex-start;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .flow-item:last-child{ border-bottom:none; }
+  .flow-item .num{
+    font-family: var(--font-mono);
+    font-size:11px; color:#fff; background:var(--steel);
+    width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-top:1px;
+  }
+  .flow-item .txt strong{ display:block; font-size:14px; margin-bottom:2px; }
+  .flow-item .txt span{ font-size:12.5px; color:var(--ink-soft); }
+
+  /* Data stat grid */
+  .stat-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    margin: 10px 0 4px;
+  }
+  .stat{
+    background:var(--panel); border:1px solid var(--line); border-radius:3px;
+    padding: 12px 12px 11px;
+  }
+  .stat .num{
+    font-family:var(--font-mono); font-weight:600; font-size:22px; color:var(--steel-deep);
+    line-height:1;
+  }
+  .stat .label{ font-size:11.5px; color:var(--ink-soft); margin-top:5px; line-height:1.35; }
+
+  .note{
+    background:#FBF3E4; border:1px solid #E8CE9A; border-radius:3px;
+    padding:11px 13px; font-size:12.5px; color:#6B4A0F; line-height:1.5; margin:12px 0;
+  }
+  .note strong{ display:block; margin-bottom:3px; font-size:12px; }
+
+  .todo{
+    background:#FDECEC; border:1px solid #E9B8B8; border-radius:3px;
+    padding:11px 13px; font-size:12.5px; color:#7A2323; line-height:1.5; margin:8px 0;
+  }
+  .todo strong{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; display:block; margin-bottom:3px;}
+
+  ul.plain{ margin:6px 0; padding-left:18px; }
+  ul.plain li{ margin-bottom:6px; font-size:13.5px; line-height:1.5; }
+
+  .table-quick{
+    width:100%; border-collapse:collapse; margin-top:10px; font-size:12.5px;
+  }
+  .table-quick th, .table-quick td{
+    border-bottom:1px solid var(--line-soft); text-align:left; padding:7px 6px; vertical-align:top;
+  }
+  .table-quick th{ font-family:var(--font-mono); font-size:10.5px; color:var(--ink-soft); font-weight:500;}
+
+  /* Bottom tab bar */
+  nav.tabbar{
+    position:fixed; bottom:0; left:0; right:0; z-index:30;
+    background: var(--panel);
+    border-top:1px solid var(--line);
+    display:flex;
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    box-shadow: 0 -2px 10px rgba(16,22,27,0.06);
+  }
+  nav.tabbar button{
+    flex:1; background:none; border:none; padding:8px 2px 6px;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    font-family: var(--font-body); color: var(--ink-soft);
+    font-size:10.5px; font-weight:500;
+  }
+  nav.tabbar button .dot{
+    width:5px; height:5px; border-radius:50%; background:transparent;
+  }
+  nav.tabbar button.active{ color: var(--steel-deep); }
+  nav.tabbar button.active .dot{ background: var(--accent); }
+  nav.tabbar button svg{ width:20px; height:20px; }
+
+  h2.panel-title{
+    font-size:17px; margin:0 0 2px; font-weight:700; letter-spacing:-0.01em;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <p class="eyebrow">EVERY TOUCH MATTERS · GREG'S FIELD REFERENCE</p>
+  <h1>Presentation Command Center</h1>
+  <p class="sub">Asia summit prep · reusable for Japan, November</p>
+</header>
+
+<main>
+
+  <!-- FLOW -->
+  <section class="panel active" id="panel-flow">
+    <h2 class="panel-title">The Flow</h2>
+    <p class="panel-intro">Eleven beats, in order. Tap Detail for the full version with data and notes. This is the fast version, for when you just need to remember what comes next.</p>
+
+    <div class="flow-item"><div class="num">1</div><div class="txt"><strong>Fortunate to Be Together — Let's Make Every Touch Today Matter</strong><span>Open. 25 years invested in being the person people call when they're stuck, not the person who writes the standard.</span></div></div>
+    <div class="flow-item"><div class="num">2</div><div class="txt"><strong>Capital Isn't Your Constraint — Optimizing the Human Side of Execution Is</strong><span>The positioning. Sets the whole talk as a leadership opportunity.</span></div></div>
+    <div class="flow-item"><div class="num">3</div><div class="txt"><strong>Three Circles, One Missing Connection — You Hold the Bridge</strong><span>The Venn diagram. Experts, operators, production. Almost no overlap.</span></div></div>
+    <div class="flow-item"><div class="num">4</div><div class="txt"><strong>The Why Behind the Rule — Turn Compliance into Conviction</strong><span>Tim's arc. Cardboard/tape story, then technical debt.</span></div></div>
+    <div class="flow-item"><div class="num">5</div><div class="txt"><strong>A Different Floor, A Different Playbook — Lead Where You Actually Stand</strong><span>Victor's arc. Bunny-suit story, defect killer size, regional reality stats.</span></div></div>
+    <div class="flow-item"><div class="num">6</div><div class="txt"><strong>Your Posture, Not Their Culture — The Next Level of Leadership Starts Here</strong><span>New beat. Leadership adapts to the floor, spoken only, no slide stat.</span></div></div>
+    <div class="flow-item"><div class="num">7</div><div class="txt"><strong>Small Materials, Big Signal — What Your Gloves Say About Your People</strong><span>Optional third story. Consumables as a leadership signal. Still a go/no-go.</span></div></div>
+    <div class="flow-item"><div class="num">8</div><div class="txt"><strong>Close the Gap in Plain Sight — Make the Invisible Visible</strong><span>The newsletter payoff. Leadership-sponsored, visual proof, closes the Venn diagram loop.</span></div></div>
+    <div class="flow-item"><div class="num">9</div><div class="txt"><strong>2.1 Million Chances a Year — Every One Is Yours to Win</strong><span>The bridge stat. Big number, minimal text, right before the room takes over.</span></div></div>
+    <div class="flow-item"><div class="num">10</div><div class="txt"><strong>Your Table, Your Breakthrough — Learn From the Room</strong><span>Table talk. Annotate a blank Venn diagram, 20 minutes, replaces open Q&A.</span></div></div>
+    <div class="flow-item"><div class="num">11</div><div class="txt"><strong>What Will You Carry Home — Make Monday Count</strong><span>The close. Greg's one sentence. Still open — the actual homework.</span></div></div>
+
+  </section>
+
+  <!-- WHY / ASSUMPTIONS -->
+  <section class="panel" id="panel-why">
+    <h2 class="panel-title">Key Assumptions</h2>
+    <p class="panel-intro">What this whole framework is built on. Worth a glance if the room feels different than expected — check these first.</p>
+
+    <p class="group-label">FORMAT</p>
+    <ul class="plain">
+      <li>40 minutes of content, 20 minutes of table talk and Q&A — no open-floor Q&A for a room this size.</li>
+      <li>Randy's call: table-based discussion beats individual Q&A in a large, culturally mixed room where hands don't go up easily.</li>
+      <li>Reused in Japan in November — build it once, refine it twice.</li>
+    </ul>
+
+    <p class="group-label">AUDIENCE</p>
+    <ul class="plain">
+      <li>Mostly directors, managers, and engineers. Not a purchasing-heavy room.</li>
+      <li>Mixed semiconductor and medical device leaders in the same room — different ISO classes, same underlying human problem.</li>
+      <li>Three other speakers on the agenda: standards/science (Hasim), cleanroom performance (Chong Loc), disinfectants (Lee Lim). Greg's talk sits at the most strategic, least technical altitude of the four — that's a strength, not a gap.</li>
+    </ul>
+
+    <p class="group-label">POSITIONING PHILOSOPHY</p>
+    <ul class="plain">
+      <li>Data smooths and shapes the story. It doesn't replace it. Every stat in this deck should serve a human point, never stand alone.</li>
+      <li>Balance test for every regional insight: "I understand your industry challenges" AND "I know your conditions are genuinely different" — never lecture the room on their own culture back to them.</li>
+      <li>Leadership behavior is the lever throughout, not operator behavior. Every story should leave leaders feeling capable of acting, not blamed.</li>
+    </ul>
+
+    <p class="group-label">STILL OPEN — GREG'S HOMEWORK</p>
+    <ul class="plain">
+      <li>Which single story (cardboard/tape vs. bunny-suit) does he tell with the most conviction?</li>
+      <li>How directly is he willing to tell leaders their own instinct might be the risk?</li>
+      <li>Does the Southeast Asia material stay general, or get specific to this room?</li>
+      <li>What's the actual visual for the newsletter concept — real mockup or verbal only?</li>
+      <li>Confirm the annotated Venn diagram as the table-talk artifact, or simplify further.</li>
+      <li><strong>The big one:</strong> what's the one sentence a manager who's never met him carries back to their team on Monday?</li>
+    </ul>
+  </section>
+
+  <!-- DATA -->
+  <section class="panel" id="panel-data">
+    <h2 class="panel-title">Background Data</h2>
+    <p class="panel-intro">The regional research behind Victor's arc and the positioning section. Sourced from Penang semiconductor/med device workforce research pulled together ahead of this talk.</p>
+
+    <p class="group-label">THE STAKES</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">RM20.8B</div><div class="label">approved E&E investment in Penang, single year</div></div>
+      <div class="stat"><div class="num">80%</div><div class="label">of Malaysia's semiconductor exports run through this state</div></div>
+    </div>
+
+    <p class="group-label">THE TALENT REALITY</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">50,000</div><div class="label">engineer shortfall in Penang vs. the 2030 national target</div></div>
+      <div class="stat"><div class="num">15-20%</div><div class="label">of engineering grads have the right microelectronics/materials competency</div></div>
+      <div class="stat"><div class="num">14-60%</div><div class="label">turnover range — industry average to high-turnover companies</div></div>
+      <div class="stat"><div class="num">15%</div><div class="label">of regional semiconductor talent lost annually to brain drain</div></div>
+    </div>
+
+    <p class="group-label">THE WORKFORCE ON THE FLOOR</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">2.5M</div><div class="label">workers on Malaysia's migrant labor scheme, concentrated in manufacturing</div></div>
+      <div class="stat"><div class="num">2.1M</div><div class="label">touches per operator per year — the bridge stat, Section 9</div></div>
+    </div>
+    <p style="font-size:12.5px; color:var(--ink-soft); line-height:1.5; margin-top:2px;">Two distinct tiers feed this workforce: a scarce university-trained engineering tier, and a much larger TVET-pathway operator/technician tier, many tracked into the industry since their teens. A meaningful share of hands actually touching product are non-local and multilingual.</p>
+
+    <div class="note">
+      <strong>Gen Z finding, worth having in your back pocket</strong>
+      This generation isn't resistant to rigor — they're resistant to rigor that feels arbitrary. Purpose-based framing (who receives this device, who uses this chip) lands harder than compliance framing.
+    </div>
+
+    <div class="todo">
+      <strong>HANDLE WITH CARE</strong>
+      Power Distance Index for Malaysia sits near the top of any country ever measured — employees are culturally conditioned not to escalate even when something looks wrong. This is real and useful, but it never gets named as a stat or index on a slide. It lives only inside Section 6, reframed as a leadership-posture point, never a culture lecture. Do not put this number in front of the room.
+    </div>
+  </section>
+
+  <!-- LOGISTICS -->
+  <section class="panel" id="panel-logistics">
+    <h2 class="panel-title">Logistics &amp; Event Info</h2>
+    <p class="panel-intro">Fill this tab in once travel and venue details are confirmed. What's known from the planning calls is captured below; everything else is a placeholder for now.</p>
+
+    <p class="group-label">KNOWN — OTHER SPEAKERS</p>
+    <table class="table-quick">
+      <tr><th>Speaker</th><th>Topic</th></tr>
+      <tr><td>Hasim</td><td>Contamination Control 360° — Aligning Science and Standards</td></tr>
+      <tr><td>Chong Loc</td><td>Optimizing cleanroom performance</td></tr>
+      <tr><td>Lee Lim</td><td>Cleanroom disinfectants — residue and mitigation trends</td></tr>
+    </table>
+    <p style="font-size:12.5px; color:var(--ink-soft); margin-top:8px;">Hasim's branch office in Southeast Asia is the program sponsor. Greg knows Hasim personally — plan is to compare notes ahead of time so the two talks complement rather than overlap.</p>
+
+    <p class="group-label">KNOWN — FORMAT</p>
+    <ul class="plain">
+      <li>40 minutes presenting, 20 minutes table talk and Q&A.</li>
+      <li>Audience seated at tables — table-based discussion is the planned engagement format.</li>
+      <li>Reuse planned for Greg's Japan trip in November.</li>
+    </ul>
+
+    <div class="todo">
+      <strong>NEEDS INPUT — EVENT</strong>
+      Event name, date(s), city/venue, start time, session order and time slot, dress code, AV/laptop requirements, room capacity.
+    </div>
+    <div class="todo">
+      <strong>NEEDS INPUT — TRAVEL</strong>
+      Outbound/return flights and confirmation numbers, ground transport, hotel name, address, check-in date, confirmation number, front desk phone.
+    </div>
+    <div class="todo">
+      <strong>NEEDS INPUT — CONTACTS</strong>
+      Event organizer name and phone/email, on-site AV contact, Hasim's direct contact for the pre-event sync.
+    </div>
+    <p style="font-size:12px; color:var(--ink-soft); margin-top:10px;">Once these are confirmed, this tab is the fastest place to find them at 2am with jet lag — worth updating this file the moment details land.</p>
+  </section>
+
+  <!-- DETAIL -->
+  <section class="panel" id="panel-detail">
+    <h2 class="panel-title">Full Detail</h2>
+    <p class="panel-intro">Every section, expanded. Headline, core idea, key concept, and the data or visual that belongs with it.</p>
+
+    <details class="card">
+      <summary><span class="num">01</span><span>Fortunate to Be Together — Let's Make Every Touch Today Matter</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>25 years invested in becoming the person leaders call when they're stuck, not the person who writes the standard.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Credibility through relationships and problem-solving, not credentials.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>None. Runs on presence, not proof.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">02</span><span>Capital Isn't Your Constraint — Optimizing the Human Side of Execution Is</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>The gap between world-class and average isn't decided in strategy meetings — it's decided in thousands of small physical moments on the floor.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Reframes the whole talk as a leadership opportunity before any story begins.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>RM20.8B investment / 80% export stat card. One big number, small context line.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">03</span><span>Three Circles, One Missing Connection — You Hold the Bridge</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>Technical experts, operators, and production management sit close together on the org chart, with almost no real connective tissue between them.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>The Venn diagram is the mechanism the entire talk hangs on. Leadership owns the white space between the circles — that's an opportunity, not a shortfall. Optional line: QA measures if it was done right, 5S organizes the conditions to do it right, Every Touch Matters is what makes both stick when no one's watching.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>The Venn diagram itself — animated build, circles appear one at a time, then the gap gets highlighted. The most important visual in the deck.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">04</span><span>The Why Behind the Rule — Turn Compliance into Conviction</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>The cardboard/tape story — operators trying to do the right thing, improvising badly because the why was never connected to them.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Technical debt — a facility launches optimal and quietly erodes as headcount and equipment grow without matching discipline. Strongest leadership-exposure moment. Give it real weight.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>Day One vs. Month 18 visual — same footprint, more people, less discipline. No external stat needed, runs on the story's own logic.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">05</span><span>A Different Floor, A Different Playbook — Lead Where You Actually Stand</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>Contamination risk here compounds on top of a workforce reality most HQ playbooks weren't built for — and the leaders who see that clearly get ahead of it.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Victor won cooperation with a financial case, not a directive — the only lever that scales when tenure and shared language can't be counted on.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>4-stat regional reality panel: 50,000 engineer shortfall · 14-60% turnover · 15% brain drain · 2.5M migrant workforce. Icon-based layout, not a chart — this is about scale and humanity.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">06</span><span>Your Posture, Not Their Culture — The Next Level of Leadership Starts Here</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>The person on the line today may be new, multilingual, and less likely to flag a problem even when they see one. Not a workforce weakness — an invitation for leadership to adapt.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Leadership behavior is the variable that's actually in the room's control.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>None. Spoken bridge only, clean mostly-text slide. Never a stat or index — see the Data tab warning.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">07</span><span>Small Materials, Big Signal — What Your Gloves Say About Your People</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>Consumables look interchangeable on a spec sheet, but investing there is a leadership signal, not a procurement footnote.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Optional third story. Ties resource-allocation discipline to something the whole room touches daily.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>Simple cost comparison, premium consumable vs. average cost of a contamination event (napkin math). Flag: closest section to sounding like a pitch — principle-level only, no brand, no product.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">08</span><span>Close the Gap in Plain Sight — Make the Invisible Visible</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>Leadership-sponsored, visual, recurring — real fingerprints and skin flakes on parts, not theoretical language.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Answers the turnover problem directly. A visual message survives a shift change even when the trainer who built it doesn't. Proof the gap can close, not just a warning it exists.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>Newsletter mockup — before/after part photos, one sentence of explanation. Visual callback to the Section 3 circles, now shown connected.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">09</span><span>2.1 Million Chances a Year — Every One Is Yours to Win</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>The single number that makes every touch matters viscerally real, right before the room takes it into their own hands.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Sets up the table exercise as a small-scale version of the cross-silo connection the talk has been building toward.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>2.1M standalone, minimal text. Pair with: "Every one of them is a chance to get it right." Keep it positive — no "or wrong" framing.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">10</span><span>Your Table, Your Breakthrough — Learn From the Room</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>Each table annotates a simple Venn diagram for their own organization, then compares notes — structured peer exchange, not open Q&A.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>Directly activates the goal of leveraging other leaders' perspectives on shared challenges — the room becomes the resource.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>Printed handout, blank three-circle Venn diagram per table, large enough to write on. No screen data needed — the exercise is the content.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="num">11</span><span>What Will You Carry Home — Make Monday Count</span><span class="chev">+</span></summary>
+      <div class="card-body">
+        <div class="field"><div class="field-label">CORE IDEA</div>One sentence Greg wants a manager who's never met him to bring back to their own team.</div>
+        <div class="field"><div class="field-label">KEY CONCEPT</div>This is the actual deliverable of the entire talk. Everything before it is scaffolding to make this sentence land.</div>
+        <div class="field"><div class="field-label">VISUAL / DATA</div>Still open — Greg's sentence to write. Once written, likely the final slide, alone, large text.</div>
+      </div>
+    </details>
+
+    <p class="group-label">CUT — AND WHY</p>
+    <ul class="plain">
+      <li>70-80% process-vs-operator debate — better raised by a table than pre-litigated on stage.</li>
+      <li>Squeeze bottle/nitrogen gun story — redundant with the cardboard story.</li>
+      <li>Direct references to the other speakers' content inside the talk — useful for prep, not for the room.</li>
+      <li>Power Distance Index, named by number or label — the insight is used, never the stat itself.</li>
+    </ul>
+  </section>
+
+</main>
+
+<nav class="tabbar">
+  <button class="tab-btn active" data-panel="panel-flow">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    <span>Flow</span><span class="dot"></span>
+  </button>
+  <button class="tab-btn" data-panel="panel-why">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+    <span>Why</span><span class="dot"></span>
+  </button>
+  <button class="tab-btn" data-panel="panel-data">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+    <span>Data</span><span class="dot"></span>
+  </button>
+  <button class="tab-btn" data-panel="panel-logistics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10l9-6 9 6v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9z"/></svg>
+    <span>Logistics</span><span class="dot"></span>
+  </button>
+  <button class="tab-btn" data-panel="panel-detail">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <span>Detail</span><span class="dot"></span>
+  </button>
+</nav>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.panel');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).classList.add('active');
+      window.scrollTo({top:0, behavior:'instant'});
+    });
+  });
+</script>
+
+</body>
+</html>
