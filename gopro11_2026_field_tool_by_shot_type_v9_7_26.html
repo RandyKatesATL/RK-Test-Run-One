@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Field Cam Toolbox</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-card:#161616;
+    --bg-card-hi:#1e1e1e;
+    --text:#f2f2f0;
+    --text-dim:#a8a8a4;
+    --orange:#ff7a1a;
+    --orange-dim:#c9631a;
+    --border:#2a2a2a;
+    --green:#4caf7d;
+    --tap-min:52px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{
+    margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",system-ui,sans-serif;
+    height:100%; overscroll-behavior-y: contain;
+  }
+  body{
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    padding-top: env(safe-area-inset-top);
+  }
+  /* ---------- Header / Search ---------- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
+    padding:14px 16px 12px;
+  }
+  header h1{
+    margin:0 0 10px; font-size:20px; font-weight:800; letter-spacing:0.2px;
+    display:flex; align-items:center; gap:8px;
+  }
+  header h1 .dot{color:var(--orange);}
+  .search-wrap{position:relative;}
+  #search{
+    width:100%; height:var(--tap-min); border-radius:14px;
+    border:1px solid var(--border); background:var(--bg-card);
+    color:var(--text); font-size:17px; padding:0 44px 0 16px;
+  }
+  #search::placeholder{color:var(--text-dim);}
+  .search-wrap svg{position:absolute; right:14px; top:50%; transform:translateY(-50%); pointer-events:none;}
+  #clearSearch{
+    position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    display:none; background:none; border:none; color:var(--text-dim); font-size:20px; padding:6px;
+  }
+
+  /* ---------- Main content ---------- */
+  main{padding:14px 16px 40px;}
+  .section-title{
+    font-size:13px; text-transform:uppercase; letter-spacing:1px;
+    color:var(--orange); font-weight:700; margin:22px 0 10px;
+  }
+  .section-title:first-child{margin-top:6px;}
+  .group-label{
+    font-size:15px; font-weight:700; color:var(--text-dim);
+    margin:18px 2px 8px; display:flex; align-items:center; gap:6px;
+  }
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:16px; margin-bottom:10px; overflow:hidden;
+  }
+  .card-head{
+    width:100%; text-align:left; background:none; border:none; color:var(--text);
+    padding:14px 14px; min-height:var(--tap-min);
+    display:flex; align-items:center; gap:12px; font-family:inherit;
+  }
+  .card-head .emoji{font-size:26px; flex-shrink:0; width:32px; text-align:center;}
+  .card-head .titles{flex:1; min-width:0;}
+  .card-head .titles .t{font-size:16.5px; font-weight:700; line-height:1.3;}
+  .card-head .titles .s{font-size:13.5px; color:var(--text-dim); margin-top:2px; line-height:1.3;}
+  .chevron{flex-shrink:0; transition:transform .2s ease; color:var(--text-dim);}
+  .card.open .chevron{transform:rotate(90deg); color:var(--orange);}
+
+  .card-body{display:none; padding:0 16px 16px;}
+  .card.open .card-body{display:block;}
+
+  .tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;}
+  .tag{
+    font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:100px;
+    background:#232323; color:var(--text-dim); border:1px solid var(--border);
+  }
+
+  table.settings{width:100%; border-collapse:collapse; margin-bottom:12px;}
+  table.settings td{padding:9px 8px; border-bottom:1px solid var(--border); font-size:15px; vertical-align:top;}
+  table.settings tr:last-child td{border-bottom:none;}
+  table.settings td.k{color:var(--text-dim); font-weight:600; width:38%; padding-right:10px;}
+  table.settings td.v{font-weight:600;}
+  table.settings tr.crit td.v{color:var(--orange);}
+
+  .tips{margin:0 0 12px; padding-left:0; list-style:none;}
+  .tips li{
+    font-size:15px; line-height:1.5; margin-bottom:8px; padding-left:22px; position:relative;
+  }
+  .tips li::before{content:"›"; position:absolute; left:2px; color:var(--orange); font-weight:800;}
+
+  .warning-box{
+    background:rgba(255,122,26,0.1); border:1px solid var(--orange-dim);
+    border-radius:12px; padding:12px 14px; font-size:14.5px; line-height:1.5;
+    color:#ffd9b3; margin-bottom:8px;
+  }
+  .warning-box b{color:var(--orange);}
+
+  .fix-box{
+    background:rgba(76,175,125,0.08); border:1px solid #2e6b4a;
+    border-radius:12px; padding:12px 14px; font-size:15px; line-height:1.55; margin-bottom:10px;
+  }
+  .fix-box b{color:var(--green);}
+
+  .see-also{font-size:13.5px; color:var(--text-dim); margin-top:4px;}
+  .see-also a{color:var(--orange); text-decoration:none; font-weight:700;}
+
+  .empty{
+    text-align:center; color:var(--text-dim); padding:60px 20px; font-size:15px; line-height:1.6;
+  }
+
+  /* ---------- Bottom tab bar ---------- */
+  nav.tabbar{
+    position:fixed; left:0; right:0; bottom:0; z-index:30;
+    background:#111; border-top:1px solid var(--border);
+    display:flex; padding-bottom: env(safe-area-inset-bottom);
+  }
+  nav.tabbar button{
+    flex:1; background:none; border:none; color:var(--text-dim);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:3px; padding:9px 4px 8px; min-height:64px; font-family:inherit;
+  }
+  nav.tabbar button .ic{font-size:21px; line-height:1;}
+  nav.tabbar button .lb{font-size:11px; font-weight:700; letter-spacing:0.2px;}
+  nav.tabbar button.active{color:var(--orange);}
+  nav.tabbar button.active .ic{transform:scale(1.05);}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="dot">●</span> Field Cam Toolbox</h1>
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Search settings, scenes, problems..." autocomplete="off" autocorrect="off" spellcheck="false">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a8a8a4" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <button id="clearSearch" aria-label="clear">✕</button>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<nav class="tabbar">
+  <button data-tab="scenario" class="active"><span class="ic">🎬</span><span class="lb">Scenario</span></button>
+  <button data-tab="function"><span class="ic">⚙️</span><span class="lb">Function</span></button>
+  <button data-tab="trouble"><span class="ic">🛠️</span><span class="lb">Troubleshoot</span></button>
+</nav>
+
+<script>
+/* =========================================================================
+   DATA LIBRARY
+   -------------------------------------------------------------------------
+   To add a new scenario/function/fix later: just push a new object into the
+   matching array below. Nothing else needs to change — all three tabs and
+   search pull from these same arrays.
+   ========================================================================= */
+
+const SCENARIOS = [
+  {
+    id: "mtb-campus",
+    group: "Riding & Driving",
+    emoji: "🚵",
+    title: "Campus / Mixed Scenic Ride",
+    subtitle: "TimeWarp 10x \u2014 stop-and-go, variable pace",
+    tags: ["GoPro 11", "TimeWarp", "HyperSmooth", "QuikCapture"],
+    settings: [
+      {k:"Speed", v:"10x \u2014 default for mixed/scenic pace", crit:true},
+      {k:"Resolution/FPS", v:"4K/30 (detail) or 5.3K/60 (smoothness)"},
+      {k:"FOV (Lens)", v:"Wide/SuperView chest-mount \u2014 Linear if bar-mounted"},
+      {k:"HyperSmooth", v:"Boost or AutoBoost \u2014 non-negotiable for MTB", crit:true},
+      {k:"Horizon Lock", v:"On, if terrain tilts a lot"}
+    ],
+    tips: [
+      "Run QuikCapture per-ride, not per-scene \u2014 start once, let TimeWarp compress the boring parts.",
+      "Only drop out of TimeWarp into real-time for a highlight moment you can see coming \u2014 not to skip \u2018slow\u2019 sections.",
+      "Button presses over touchscreen taps while actually riding \u2014 far more reliable.",
+      "Before descending: confirm REC status at a dead stop, then trust the process \u2014 don\u2019t try to verify mid-descent.",
+      "Front-facing display (Hero 11/12/13 Black) or a GoPro Smart Remote are the only real options for a mid-ride glance \u2014 the rear LED is invisible while descending.",
+      "TimeWarp drains battery fast \u2014 carry a spare for anything past ~90 min."
+    ],
+    warning: "Don\u2019t chase mid-ride verification on noisy/fast descents \u2014 audio cues and rear LEDs are unreliable at speed. Make the <b>start</b> bulletproof instead."
+  },
+  {
+    id: "mtb-known",
+    group: "Riding & Driving",
+    emoji: "🗺️",
+    title: "Known / Linear Route (rail trail)",
+    subtitle: "TimeWarp 10x + planned speed ramps",
+    tags: ["GoPro 11", "TimeWarp", "HyperSmooth", "Speed Ramp"],
+    settings: [
+      {k:"Speed", v:"10x baseline \u2014 same as mixed/scenic", crit:true},
+      {k:"Speed Ramp", v:"Plan ramp points in advance \u2014 tap Real Speed just before a known feature (bridge, overlook, tight switchback)"},
+      {k:"Resolution/FPS", v:"4K/30 (detail) or 5.3K/60 (smoothness)"},
+      {k:"HyperSmooth", v:"Boost or AutoBoost", crit:true}
+    ],
+    tips: [
+      "Because you already know the route, you can pre-plan exactly where to tap Real Speed for a highlight \u2014 no guessing mid-ride like on an unfamiliar trail.",
+      "Rail trails and other long straight sections are the best case for 15x if you want a punchier, faster-feeling edit \u2014 10x stays safer for readability.",
+      "Same start-once QuikCapture approach as any other ride \u2014 the pre-planning is about ramp points, not stop/start behavior."
+    ],
+    seeAlso: [{label:"TimeWarp reference \u2192", target:"fn-timewarp"}]
+  },
+  {
+    id: "car-windshield",
+    group: "Riding & Driving",
+    emoji: "🚗",
+    title: "Car Windshield",
+    subtitle: "TimeWarp 5\u201310x \u2014 vehicle speed already compresses",
+    tags: ["GoPro 11", "TimeWarp", "Dash Mount"],
+    settings: [
+      {k:"Speed", v:"10x for mixed roads with towns/landmarks; 5x for highway stretches you want real screen time on", crit:true},
+      {k:"Why lower than biking", v:"A car\u2019s own ground speed (60\u201370mph) already compresses scenery far more than biking (10\u201315mph) before TimeWarp factors in"},
+      {k:"Speed Ramp", v:"Your only tool for a \u2018what was that\u2019 moment \u2014 you can\u2019t slow your own pace like on a bike"},
+      {k:"Mount", v:"Dash or windshield mount, steady and vibration-dampened"}
+    ],
+    tips: [
+      "Avoid Auto TimeWarp here too \u2014 same unpredictability as biking.",
+      "Reserve 5x for scenic overlooks or landmarks on a highway drive; 10x is the default for anything with more variety.",
+      "Tap Real Speed just before something worth seeing at full pace \u2014 it's the only way to slow down without slowing the car."
+    ],
+    seeAlso: [{label:"TimeWarp reference \u2192", target:"fn-timewarp"}]
+  },
+  {
+    id: "star-trails",
+    group: "Night Sky",
+    emoji: "\u2728",
+    title: "Night Sky \u2014 Star Trails",
+    subtitle: "Night Lapse Video, tripod required",
+    tags: ["GoPro 11", "Night Lapse", "Protune", "GoPro Labs"],
+    settings: [
+      {k:"Mode", v:"Night Lapse Video (composites into streaks)"},
+      {k:"Trail Length", v:"Long or Max for classic streaks; Short for comet-style"},
+      {k:"Interval", v:"10\u201320s sweet spot on Hero 11"},
+      {k:"Shutter", v:"~15s \u2014 balances light vs. star trailing", crit:true},
+      {k:"ISO", v:"Floor 100, cap 1600 (3200 gets grainy fast)"},
+      {k:"White Balance", v:"5500K (native sky tone) or 4500K"},
+      {k:"Lens (FOV)", v:"Wide, not SuperView \u2014 reduces star edge distortion"},
+      {k:"RAW Output", v:"ON if you plan to edit \u2014 big post flexibility"}
+    ],
+    tips: [
+      "GoPro Labs firmware unlocks finer shutter/ISO control specifically useful for astrophotography.",
+      "Lock it on a solid tripod \u2014 any movement ruins the whole sequence.",
+      "Shoot 2\u20133 hours minimum for a compelling clip.",
+      "New moon or thin crescent nights are dramatically better than a bright moon.",
+      "Get away from city lights first \u2014 this is the single biggest variable."
+    ],
+    proTip: "Neighborhood/streetlight nearby? Drop ISO cap to 800\u20131200, shorten shutter to 8\u201310s, lock WB to 4000\u20134500K to counter the orange cast. Physically block direct fixtures with a roofline/tree/fence and shoot toward the darkest quadrant of sky."
+  },
+  {
+    id: "moon-lapse",
+    group: "Night Sky",
+    emoji: "\ud83c\udf19",
+    title: "Night Sky \u2014 Moon Lapse",
+    subtitle: "Different exposure problem than stars",
+    tags: ["GoPro 11", "Night Lapse", "Protune"],
+    settings: [
+      {k:"Shutter", v:"1/4s to 1s \u2014 short, prevents blowout", crit:true},
+      {k:"ISO Max", v:"200"},
+      {k:"ISO Min", v:"100"},
+      {k:"White Balance", v:"4000K"},
+      {k:"Interval", v:"5s or 10s"},
+      {k:"Lens (FOV)", v:"Linear"}
+    ],
+    tips: [
+      "The moon reflects direct sunlight \u2014 it\u2019s bright, not dim. Star Trail settings (30s shutter, ISO 1600) will blow it out to a white blob.",
+      "Foreground will go very dark/silhouetted \u2014 that\u2019s the intended look, not a mistake. Position a strong shape (tree line, ridge, rock outcrop) and let it go dark beneath the tracking moon.",
+      "Field test 2\u20133 minutes and review before committing to a full session."
+    ],
+    warning: "White blob? \u2192 shutter shorter, ISO max lower. Too dark/small? \u2192 nudge ISO to 400. Foreground too black is not fixable in-camera \u2014 that\u2019s a post-processing pull."
+  },
+  {
+    id: "lightning",
+    group: "Light & Weather",
+    emoji: "\u26a1",
+    title: "Lightning \u2014 Night Storm",
+    subtitle: "Night Lapse Photo for max flexibility",
+    tags: ["GoPro 11", "Night Lapse", "Protune", "Post-Processing"],
+    settings: [
+      {k:"Mode", v:"Night Lapse Photo (most flexible/best quality)"},
+      {k:"FOV (Lens)", v:"Wide or SuperView \u2014 bigger sky = better odds"},
+      {k:"Shutter", v:"5\u201330s, long \u2014 keeps sensor open for the strike", crit:true},
+      {k:"ISO", v:"800\u20131600 to start"},
+      {k:"Interval", v:"2\u20135s \u2014 short, catches multiple strikes"},
+      {k:"White Balance", v:"Auto, or 4000\u20135500K for a cooler/dramatic look"},
+      {k:"Protune / RAW", v:"Enable both \u2014 max post-processing headroom"}
+    ],
+    tips: [
+      "Enable Hindsight (captures ~20s before you hit record) \u2014 a lifesaver for unpredictable strikes.",
+      "Tripod is absolutely essential \u2014 any movement during a long exposure ruins the shot.",
+      "Include a foreground element (trees, buildings) for scale and visual interest.",
+      "Post: stacking multiple frames intensifies bolts; push contrast; cooler color temp adds atmosphere."
+    ],
+    warning: "If you can hear thunder, you\u2019re within striking distance. Shoot from inside a vehicle or structure, use distance rather than open exposure, and don\u2019t push for the shot if the storm closes in faster than expected.",
+    seeAlso: [{label:"Extracting the exact strike frame from video \u2192", target:"fix-lightning-frame"}]
+  },
+  {
+    id: "lightning-daytime",
+    group: "Light & Weather",
+    emoji: "\ud83c\udf29\ufe0f",
+    title: "Lightning \u2014 Daytime Storm",
+    subtitle: "High frame rate video, not Night Lapse",
+    tags: ["GoPro 11", "High Frame Rate", "Post-Processing"],
+    settings: [
+      {k:"Mode", v:"Standard Video \u2014 Night Lapse Photo doesn\u2019t work in daylight", crit:true},
+      {k:"Frame Rate", v:"120\u2013240fps \u2014 higher odds of catching peak strike brightness", crit:true},
+      {k:"Resolution", v:"4K or higher \u2014 gives clean still frame grabs afterward"},
+      {k:"FOV (Lens)", v:"Wide or SuperView \u2014 bigger sky = better odds"},
+      {k:"Approach", v:"Record continuously, not single-shot attempts \u2014 you\u2019re playing odds, not timing a button press"}
+    ],
+    tips: [
+      "Daytime shutter speeds run fast (often 1/120 or quicker under Auto), which makes timing a single photo to a strike nearly impossible \u2014 continuous high-frame-rate video sidesteps the problem entirely.",
+      "Pull frame grabs after the fact via the Quik app, VLC, or ffmpeg rather than trying to hit the shutter at the right instant.",
+      "Slowing the footage down afterward is a bonus \u2014 120/240fps gives you dramatic slow motion on top of the strike itself."
+    ],
+    warning: "If you can hear thunder, you\u2019re within striking distance. Shoot from inside a vehicle or structure and don\u2019t treat \u2018getting the shot\u2019 as worth the risk if the storm closes in faster than expected.",
+    seeAlso: [{label:"Extracting the exact strike frame from video \u2192", target:"fix-lightning-frame"}]
+  },
+  {
+    id: "storm-rolling-in",
+    group: "Light & Weather",
+    emoji: "\u26c8\ufe0f",
+    title: "Storm Rolling In",
+    subtitle: "Time Lapse Video \u2014 1\u20135 sec interval for fast-moving skies",
+    tags: ["GoPro 11", "Time Lapse Video", "Protune"],
+    settings: [
+      {k:"Mode", v:"Time Lapse Video (baked output \u2014 not Photo)", crit:true},
+      {k:"Interval", v:"1\u20135s \u2014 shorter than a calm sunset since storm clouds move fast", crit:true},
+      {k:"Shutter Speed", v:"~2x frame rate (180\u00b0 rule): 24fps \u2192 ~1/50s"},
+      {k:"ISO", v:"100\u2013200 to start, raise only if the sky is already darkening"},
+      {k:"EV Compensation", v:"\u22120.5 to \u22121 \u2014 protects bright cloud edges from blowing out", crit:true},
+      {k:"White Balance", v:"Auto, or lock slightly cooler for a moodier gray-sky look"},
+      {k:"FOV (Lens)", v:"Wide \u2014 gives the developing storm room to build in-frame"}
+    ],
+    tips: [
+      "Time Lapse Video, not Photo \u2014 same rule as the sunset scenario: finished clip straight off the camera, no raw sequence to edit.",
+      "Tripod or a genuinely stable mount matters more here than for sunsets \u2014 wind picks up fast as a storm approaches.",
+      "Start recording as soon as the front edge of the storm is visible; you\u2019ll capture the buildup, not just the arrival.",
+      "If it's actually lightning you're after once the storm is close, switch to the dedicated Lightning scenario (Night or Daytime) instead \u2014 this mode isn't tuned to catch a strike."
+    ],
+    warning: "Watch the sky, not just the settings \u2014 if the storm is closing fast, get yourself and the gear to safety before worrying about the shot.",
+    seeAlso: [{label:"Lightning \u2014 Daytime Storm \u2192", target:"lightning-daytime"}, {label:"Lightning \u2014 Night Storm \u2192", target:"lightning"}]
+  },
+  {
+    id: "timelapse-daylight",
+    group: "Light & Weather",
+    emoji: "\ud83c\udf05",
+    title: "Sunset \u2014 Light to Dark",
+    subtitle: "Time Lapse Video \u2014 baked output, no editing needed",
+    tags: ["GoPro 11", "Time Lapse Video", "Protune"],
+    settings: [
+      {k:"Mode", v:"Time Lapse Video (baked output \u2014 not Photo)", crit:true},
+      {k:"Shutter Speed", v:"~2x frame rate (180\u00b0 rule): 24fps \u2192 ~1/50s"},
+      {k:"ISO", v:"100\u2013200 to start, raise only if needed"},
+      {k:"Interval", v:"Slower change (sunset) = longer interval; fast change = shorter"},
+      {k:"Resolution", v:"5.3K if possible for max detail"},
+      {k:"FOV (Lens)", v:"Wide (all-around) or SuperView (immersive)"},
+      {k:"White Balance", v:"Auto or 4500\u20135000K for warm sunset tones"},
+      {k:"EV Compensation", v:"\u22120.5 to \u22121 \u2014 protects highlights from blowing out", crit:true}
+    ],
+    tips: [
+      "Time Lapse Video, not Time Lapse Photo \u2014 you want a finished clip straight off the camera, no raw sequence to edit.",
+      "Beach/foreground: use rocks, silhouettes, or wet-sand reflections for composition interest.",
+      "Mountain scenes: shift WB cooler (5500\u20136000K) and watch exposure closely \u2014 snow blows out, peaks go dark easily."
+    ]
+  },
+  {
+    id: "rainbow",
+    group: "Light & Weather",
+    emoji: "\ud83c\udf08",
+    title: "Rainbow Photography",
+    subtitle: "GoPro + iPhone, three-stage approach",
+    tags: ["GoPro 11", "iPhone 17 Pro", "Protune", "Burst Mode"],
+    settings: [
+      {k:"GoPro \u2014 Emerging", v:"Wide FOV, ISO 100, EV \u22120.5, WB locked 5500K, shutter \u22651/125s"},
+      {k:"GoPro \u2014 Full", v:"Same, EV \u22121 \u2014 fire a burst while fine-tuning framing/polarizer angle"},
+      {k:"GoPro \u2014 Waning", v:"Widen to SuperView, EV \u22120.5 \u2014 pull back for landscape context"},
+      {k:"iPhone \u2014 Emerging", v:"Tap-hold AE/AF lock, EV \u22120.5 to \u22121, Live Photo OFF"},
+      {k:"iPhone \u2014 Full", v:"Same lock, ProRAW on if editing \u2014 burst (hold shutter) for peak saturation"},
+      {k:"iPhone \u2014 Waning", v:"Switch to 0.5x ultra-wide, re-lock AE/AF"}
+    ],
+    tips: [
+      "HyperSmooth doesn\u2019t apply to stills \u2014 keep GoPro shutter at 1/125s or faster to avoid handheld blur; let ISO float rather than pinning it low in dim post-storm light.",
+      "iPhone stabilization handles typical handheld shake well, but if a manual camera app shows shutter dropping below 1/60s, brace against something solid rather than trust stabilization alone.",
+      "Default to Wide/SuperView (GoPro) or 0.5x ultra-wide (iPhone) as your baseline lens choice, not an afterthought \u2014 full/double arcs get cut off otherwise.",
+      "Start shooting the moment rain thins and sun breaks through \u2014 faint arcs show up in-camera before they\u2019re obvious to the eye.",
+      "Include a foreground element (tree line, water, a person) for scale \u2014 an empty-sky rainbow reads as generic.",
+      "Polarizer angle can kill a rainbow just as easily as enhance it \u2014 rotate slowly, watch live, don\u2019t guess."
+    ],
+    warning: "Auto-exposure meters for the whole scene and overexposes the bow. Manually pulling EV to \u22120.5/\u22121 on both devices is the single biggest fix for a washed-out rainbow."
+  },
+  {
+    id: "fireworks-night",
+    group: "Special Events",
+    emoji: "\ud83c\udf86",
+    title: "Fireworks at Night",
+    subtitle: "Night Lapse Video \u2014 baked, tripod required",
+    tags: ["GoPro 11", "Night Lapse", "Tripod", "Timelapse"],
+    settings: [
+      {k:"Mode", v:"Night Lapse Video \u2014 stitches in-camera, no editing needed"},
+      {k:"Shutter", v:"2\u20134s fixed \u2014 captures full burst arc without blowing it out", crit:true},
+      {k:"Interval", v:"Match shutter (e.g., 4s shutter / 4s interval)"},
+      {k:"ISO Min/Max", v:"100 / 400"},
+      {k:"EV Compensation", v:"\u22121 to \u22121.5 \u2014 protects bursts from blowing out against black sky", crit:true},
+      {k:"White Balance", v:"4000\u20134500K locked \u2014 counters warm smoke/ambient show lighting"},
+      {k:"FOV (Lens)", v:"Wide or SuperView \u2014 margin for variable burst height/spread"}
+    ],
+    tips: [
+      "Start rolling 2\u20133 minutes before the announced start time \u2014 opening bursts are easy to miss mid-setup.",
+      "Run continuous through the entire show (15\u201320 min) \u2014 Night Lapse Video compresses it into a shorter, punchier stitched clip.",
+      "Keep rolling 30\u201345 seconds past the last visible burst \u2014 finales often have a beat of silence before the true final volley, and smoke-drift afterglow can be a nice closer.",
+      "Lock settings before the show starts and don\u2019t touch anything once it begins \u2014 chasing exposure mid-show is how you miss the finale."
+    ],
+    warning: "Night Lapse is power-hungry over 15\u201320+ minutes continuous. Start on a full battery or have a spare ready \u2014 don\u2019t get caught dead mid-finale."
+  },
+  {
+    id: "daytime-into-dusk",
+    group: "Light & Weather",
+    emoji: "\ud83c\udf06",
+    title: "Daytime into Dusk",
+    subtitle: "Time Lapse Video \u2014 auto exposure across the light transition",
+    tags: ["GoPro 11", "Time Lapse Video", "Auto Exposure", "Long Duration"],
+    settings: [
+      {k:"Mode", v:"Time Lapse Video (baked, in-camera stitch)"},
+      {k:"Exposure", v:"Auto \u2014 do not lock shutter/ISO for this one", crit:true},
+      {k:"Interval", v:"10\u201315s \u2014 holds cloud movement without bloating file size over hours"},
+      {k:"White Balance", v:"Auto \u2014 let it drift warm naturally as dusk sets in"},
+      {k:"Resolution", v:"4K or 5.3K, whichever storage supports for the run length"},
+      {k:"FOV (Lens)", v:"Wide \u2014 gives clouds and sky room to move across frame"},
+      {k:"Protune", v:"Optional \u2014 only for Flat color profile if grading later; otherwise leave off"}
+    ],
+    tips: [
+      "Start while the sun\u2019s still clearly up \u2014 you want the full arc, not just the last hour of light.",
+      "Run continuous straight through civil twilight into true dark \u2014 don\u2019t stop and restart.",
+      "Total runtime is likely 3\u20136+ hours depending on season and how far into darkness you go.",
+      "Partly cloudy is a gift here \u2014 moving clouds against a slowly darkening sky is what sells the shot."
+    ],
+    warning: "A single battery won\u2019t cover a multi-hour run. Use a USB-C power bank tethered to the camera, or a wall/solar setup if unattended \u2014 don\u2019t start on battery alone and walk away."
+  },
+  {
+    id: "storm-from-car",
+    group: "Light & Weather",
+    emoji: "\ud83c\udf29\ufe0f",
+    title: "Capturing Storm from Car (Daylight)",
+    subtitle: "Time Lapse Video \u2014 vehicle/windshield mounted, wiper-aware",
+    tags: ["GoPro 11", "Time Lapse Video", "Dash Mount", "Storm"],
+    settings: [
+      {k:"Mode", v:"Time Lapse Video (baked, in-camera stitch)"},
+      {k:"Interval", v:"2\u20134s \u2014 fast-rolling storm clouds move quickly, longer intervals look choppy", crit:true},
+      {k:"Shutter Speed", v:"~1/50\u20131/100s (180\u00b0 rule) \u2014 slower risks messy motion blur on rain streaks"},
+      {k:"ISO Min/Max", v:"100 / 800"},
+      {k:"EV Compensation", v:"0 to \u22120.3 \u2014 keeps cloud texture, prevents auto-metering from overbrightening dark storm skies"},
+      {k:"White Balance", v:"Auto, or lock cool (5500\u20136000K) for a moodier gray-storm look"},
+      {k:"FOV (Lens)", v:"Wide \u2014 gives the rolling storm room to develop across frame"},
+      {k:"Mount", v:"Suction/dash, as low-vibration as possible \u2014 below the wiper sweep line if possible", crit:true}
+    ],
+    tips: [
+      "A few water droplets on glass read fine at speed \u2014 the wiper blade whipping through frame is the more distracting motion, not the water itself.",
+      "Mount below the wiper\u2019s sweep line if at all possible, or use an exterior mount if you have one \u2014 better fix than any setting.",
+      "Run wipers on intermittent/slower cycles rather than continuous \u2014 fewer frames get a blade streak.",
+      "Start rolling as soon as the storm front is visible approaching; run 5\u201310 minutes past clearing for dramatic broken-cloud light.",
+      "Realistic total runtime: 20\u201340 minutes for a typical fast-moving storm cell."
+    ],
+    warning: "If parked to shoot, make sure you\u2019re not blocking traffic or exposed to flash-flood/hydroplaning risk. If driving while it records, don\u2019t treat framing or wiper-dodging as something to fuss over while you\u2019re the one driving.",
+    seeAlso: [{label:"Storm Rolling In scenario \u2192", target:"storm-rolling-in"}]
+  },
+  {
+    id: "historic-building-walkaround",
+    group: "On Foot",
+    emoji: "\ud83c\udfdb\ufe0f",
+    title: "Historic Building Walkaround",
+    subtitle: "Video + Hyperlapse \u2014 handheld, daylight",
+    tags: ["GoPro 11", "TimeWarp", "HyperSmooth", "Handheld"],
+    settings: [
+      {k:"Mode", v:"Two-mode shoot \u2014 Standard Video for detail/narration, TimeWarp for covering ground", crit:true},
+      {k:"Real-Speed FOV", v:"Linear \u2014 keeps building lines straight, corrects wide-lens distortion"},
+      {k:"Real-Speed HyperSmooth", v:"On (not Boost) \u2014 Boost crops tighter and loses building context"},
+      {k:"Hyperlapse Speed", v:"5x\u20138x \u2014 slower than MTB default; walking pace stays smooth, not frantic"},
+      {k:"Hyperlapse HyperSmooth", v:"Boost or AutoBoost \u2014 walking footstep bounce needs max smoothing"},
+      {k:"Resolution/FPS", v:"4K/30 for real-speed segments"},
+      {k:"White Balance", v:"Auto or locked 5500K if the day\u2019s consistent"}
+    ],
+    tips: [
+      "Switch modes with a button press, not the touchscreen \u2014 same rule as MTB shooting, doubly true while also framing a building.",
+      "Plan switch points before you start walking: real-speed for anything worth lingering on (facades, entryways, unique angles), hyperlapse for the \u2018getting from A to B\u2019 stretches.",
+      "Pause briefly before switching modes \u2014 a beat of stillness on both ends gives a clean edit point instead of a jarring speed-jump.",
+      "Walk slower and steadier than feels natural during real-speed segments \u2014 handheld walking reads shakier on camera than it feels underfoot.",
+      "Circle the building with intent \u2014 front facade, one full side pass, and a unique angle (looking up at a cornice, through an archway) beats a random walk.",
+      "Harsh midday sun creates hard shadow lines on facades \u2014 early or late daylight shows stonework/texture better if you have timing flexibility."
+    ],
+    proTip: "This is a two-mode shoot by design \u2014 the contrast between hyperlapse movement and real-speed stillness is what makes the edit interesting, not a flaw to smooth over."
+  }
+];
+
+const FUNCTIONS = [
+  {
+    id: "fn-timewarp",
+    emoji: "\u23e9",
+    title: "TimeWarp (Hyperlapse)",
+    subtitle: "GoPro 11",
+    camera: "GoPro",
+    tags: ["Speed Ramp", "Stabilized"],
+    settings: [
+      {k:"Speed Options", v:"2x, 5x, 10x, 15x, 30x"},
+      {k:"Turny/technical trail", v:"2x\u20135x \u2014 easier to watch"},
+      {k:"Long/straight/flow", v:"10x\u201330x \u2014 more thrilling"},
+      {k:"Your MTB default", v:"10x mixed, 15x pure flow", crit:true},
+      {k:"Speed Ramp mid-clip", v:"Tap rear touch button while recording to ramp speed down, tap again to ramp back up"}
+    ],
+    tips: [
+      "Auto TimeWarp is unpredictable (runs ~30x for biking) \u2014 always use a fixed multiplier instead.",
+      "Power-intensive \u2014 always carry a spare battery.",
+      "Secure your mount \u2014 vibration gets amplified heavily in TimeWarp output."
+    ]
+  },
+  {
+    id: "fn-nightlapse",
+    emoji: "\ud83c\udf03",
+    title: "Night Lapse (Video vs Photo)",
+    subtitle: "GoPro 11",
+    camera: "GoPro",
+    tags: ["Low Light", "Star Trails", "Moon Lapse", "Lightning"],
+    settings: [
+      {k:"Night Lapse Video", v:"Simplest output \u2014 stitched in-camera, no editing"},
+      {k:"Night Lapse Photo", v:"Individual frames \u2014 max flexibility, needed for lightning/RAW work"},
+      {k:"vs. Star Trails mode", v:"Star Trails composites frames into continuous streaks (an artistic effect) \u2014 different from standard Night Lapse which just stitches a video"}
+    ],
+    tips: [
+      "See Scenario tab for exact settings per use case: Star Trails, Moon Lapse, Lightning all use Night Lapse but with very different shutter/ISO combos.",
+      "GoPro Labs firmware unlocks finer manual control specifically useful here."
+    ]
+  },
+  {
+    id: "fn-quikcapture",
+    emoji: "\ud83d\udd18",
+    title: "QuikCapture",
+    subtitle: "GoPro 11",
+    camera: "GoPro",
+    tags: ["One-Button", "Battery"],
+    settings: [
+      {k:"How it works", v:"Camera off \u2192 press shutter \u2192 powers on + records \u2192 press again to stop + power off"},
+      {k:"Default mode", v:"Video, unless changed manually while camera is powered on normally"}
+    ],
+    tips: [
+      "Primary benefit is one-button simplicity \u2014 collapses power-on/boot/menu-nav/record into a single press.",
+      "Battery savings are real but secondary \u2014 the camera is fully powered off (not standby) between uses, no screen/radio/processor drain.",
+      "Biggest win on cold-weather or back-to-back short-clip days, where idle drain adds up fastest."
+    ]
+  },
+  {
+    id: "fn-hypersmooth",
+    emoji: "\ud83c\udfa5",
+    title: "HyperSmooth Stabilization",
+    subtitle: "GoPro 11",
+    camera: "GoPro",
+    tags: ["Stabilization"],
+    settings: [
+      {k:"AutoBoost", v:"Max stabilization + widest FOV possible; cropping varies by shot"},
+      {k:"Boost", v:"Max stabilization, tight cropping"},
+      {k:"On", v:"High-level stabilization, minimal cropping"},
+      {k:"Off", v:"No stabilization, no cropping"}
+    ],
+    tips: [
+      "Use Boost or AutoBoost for MTB, driving, underwater \u2014 anywhere with constant vibration.",
+      "Touch Zoom before recording adds extra buffer for even smoother results.",
+      "Horizon Lock stacks with HyperSmooth for extra stabilization on tilting terrain."
+    ]
+  },
+  {
+    id: "fn-protune",
+    emoji: "\ud83c\udf9b\ufe0f",
+    title: "Protune Basics",
+    subtitle: "GoPro 11",
+    camera: "GoPro",
+    tags: ["Manual Control"],
+    settings: [
+      {k:"White Balance", v:"Color temperature, cool \u2192 warm"},
+      {k:"Color Profile", v:"GoPro Color (vibrant) vs Flat (more edit headroom)"},
+      {k:"Sharpness", v:"Low/Med/High in-camera sharpening"},
+      {k:"EV Compensation", v:"Fine brightness adjustment"},
+      {k:"ISO Min/Max", v:"Sets sensitivity floor/ceiling"}
+    ],
+    tips: [
+      "Flat + Low/Medium sharpness = more room to correct in post.",
+      "Locking WB (rather than Auto) keeps color consistent across a multi-clip sequence."
+    ]
+  }
+];
+
+const TROUBLESHOOTING = [
+  {
+    id: "fix-recording-check",
+    emoji: "\u2753",
+    title: "Can\u2019t tell if it\u2019s actually recording",
+    subtitle: "Riding/descending, can\u2019t check the rear LED",
+    tags: ["Mountain Biking", "GoPro"],
+    fix: "Rear LED and audio beeps are unreliable at speed or in trail noise. The only real mid-ride options are a <b>front-facing display</b> (Hero 11/12/13 Black, mounted facing you) or a <b>GoPro Smart Remote</b> worn where you can actually see it. Otherwise: confirm REC at a dead stop before you drop in, and don\u2019t try to verify again mid-descent \u2014 trust the process.",
+    seeAlso: [{label:"Full Mountain Biking scenario \u2192", target:"mtb-campus"}]
+  },
+  {
+    id: "fix-black-frame",
+    emoji: "\u26ab",
+    title: "Night sky footage is a black frame / no stars",
+    subtitle: "Star Trails / Night Lapse came back nearly empty",
+    tags: ["Night", "GoPro"],
+    fix: "Shutter or ISO is likely too low for the ambient darkness, or there\u2019s too much stray light hitting the lens. Start around <b>15s shutter / ISO 800\u20131600</b>, confirm the tripod isn\u2019t moving at all, and get further from any ambient light source \u2014 that\u2019s usually the biggest variable, more than settings.",
+    seeAlso: [{label:"Full Star Trails scenario \u2192", target:"star-trails"}]
+  },
+  {
+    id: "fix-moon-blob",
+    emoji: "\u26aa",
+    title: "Moon looks like a white blob",
+    subtitle: "Overexposed moon in a night sky shot",
+    tags: ["Night", "GoPro"],
+    fix: "You\u2019re using Star Trail settings on a Moon Lapse problem \u2014 the moon is a <b>bright</b> subject, not a dim one. Drop shutter to <b>1/4s\u20131s</b> and ISO max to <b>200</b>. Foreground will go dark/silhouetted \u2014 that\u2019s expected, not a failure.",
+    seeAlso: [{label:"Full Moon Lapse scenario \u2192", target:"moon-lapse"}]
+  },
+  {
+    id: "fix-orange-cast",
+    emoji: "\ud83d\udfe0",
+    title: "Night shot has an orange/washed-out cast",
+    subtitle: "Streetlight or neighborhood light interference",
+    tags: ["Night", "GoPro"],
+    fix: "Lock White Balance cooler at <b>4000\u20134500K</b> to counteract sodium/LED streetlight color, drop ISO cap to <b>800\u20131200</b>, and shorten shutter to <b>8\u201310s</b> so the sky doesn\u2019t wash out. Physically block direct light sources with a roofline, tree line, or fence \u2014 positioning beats settings here.",
+    seeAlso: [{label:"Star Trails scenario \u2192", target:"star-trails"}]
+  },
+  {
+    id: "fix-shaky-trail",
+    emoji: "\ud83d\udcc9",
+    title: "Trail footage looks shaky",
+    subtitle: "Mountain biking / rough terrain video",
+    tags: ["Mountain Biking", "GoPro"],
+    fix: "Bump HyperSmooth to <b>Boost or AutoBoost</b> \u2014 anything lower isn\u2019t enough for MTB vibration. Double-check the mount is actually tight; a loose mount defeats stabilization entirely. Horizon Lock helps further if the trail has a lot of tilt.",
+    seeAlso: [{label:"HyperSmooth reference \u2192", target:"fn-hypersmooth"}]
+  },
+  {
+    id: "fix-timewarp-too-fast",
+    emoji: "\ud83d\ude35\u200d\ud83d\udcab",
+    title: "TimeWarp footage feels too fast / motion-sick",
+    subtitle: "Hyperlapse output is hard to watch",
+    tags: ["Mountain Biking", "GoPro"],
+    fix: "Multiplier is too high for the terrain. Drop from <b>15x to 10x</b>, or to <b>5x</b> for tight/technical/turny sections. Faster multipliers (15x\u201330x) only read well on long, straight, high-speed trails.",
+    seeAlso: [{label:"TimeWarp reference \u2192", target:"fn-timewarp"}]
+  },
+  {
+    id: "fix-lightning-frame",
+    emoji: "\ud83d\udcf8",
+    title: "Can\u2019t find the exact lightning strike frame",
+    subtitle: "Extracting a still from lightning video footage",
+    tags: ["Post-Processing", "Lightning"],
+    fix: "In <b>VLC</b>: pause a second before the flash, press <b>E</b> to step forward frame-by-frame (VLC has no native step-back \u2014 if you overshoot, jump back with Alt+Left then step forward again). For more control, pull a burst with <b>ffmpeg</b>: <code>ffmpeg -i file.mp4 -ss 00:01:23 -t 2 -vf fps=30 frame_%03d.png</code> grabs every frame in a 2-second window so you can pick the sharpest one. Footage shot at 60fps+ gives you far better odds than 24/30fps.",
+    seeAlso: [{label:"Lightning scenario \u2192", target:"lightning"}]
+  },
+  {
+    id: "fix-timelapse-blown",
+    emoji: "\u2600\ufe0f",
+    title: "Timelapse/sunset looks washed out or blown out",
+    subtitle: "Highlights clipped, colors flat",
+    tags: ["Timelapse", "GoPro"],
+    fix: "Auto-exposure is metering for the whole scene and overexposing the brightest part. Pull EV Compensation down to <b>\u22120.5 to \u22121</b>, keep ISO low (100\u2013200), and consider Flat color profile if you plan to grade it afterward.",
+    seeAlso: [{label:"Daylight Timelapse scenario \u2192", target:"timelapse-daylight"}]
+  },
+  {
+    id: "fix-rainbow-washed",
+    emoji: "\ud83c\udf08",
+    title: "Rainbow looks washed out / faint",
+    subtitle: "Auto-exposure overexposing the bow",
+    tags: ["Rainbow", "GoPro", "iPhone"],
+    fix: "Auto-exposure is metering for the whole scene and washing out the bow. Manually pull <b>EV to \u22120.5/\u22121</b> on GoPro (Protune) or via AE/AF lock on iPhone \u2014 that's the single biggest fix. Double-check you're not fighting a polarizer angle that's cancelling the rainbow instead of enhancing it.",
+    seeAlso: [{label:"Rainbow Photography scenario \u2192", target:"rainbow"}]
+  },
+  {
+    id: "fix-daytime-lightning-miss",
+    emoji: "\ud83c\udf29\ufe0f",
+    title: "Keep missing daytime lightning strikes",
+    subtitle: "Single-photo timing doesn't work in daylight",
+    tags: ["Lightning", "GoPro"],
+    fix: "Daytime shutter speeds run fast under Auto (often 1/120 or quicker), so timing a single photo to a strike is nearly impossible. Switch to <b>standard video at 120\u2013240fps</b>, record continuously, and pull frame grabs afterward instead of trying to hit the shutter at the right instant.",
+    seeAlso: [{label:"Lightning \u2014 Daytime Storm scenario \u2192", target:"lightning-daytime"}]
+  },
+  {
+    id: "fix-battery-died",
+    emoji: "\ud83d\udd0b",
+    title: "Battery died mid-ride or mid-shoot",
+    subtitle: "Power management for long sessions",
+    tags: ["Battery", "GoPro"],
+    fix: "TimeWarp and Night Lapse are both power-intensive \u2014 always carry a spare for sessions over ~90 minutes. Between clips, let QuikCapture fully power the camera off rather than idling on the screen; idle drain adds up fast, especially in cold weather.",
+    seeAlso: [{label:"QuikCapture reference \u2192", target:"fn-quikcapture"}]
+  }
+];
+
+/* ========================================================================= */
+
+let activeTab = "scenario";
+
+function cardTemplate(item, kind){
+  const emoji = item.emoji || "\ud83d\udcf7";
+  const subtitle = item.subtitle || "";
+  let bodyHtml = "";
+
+  if (item.tags && item.tags.length){
+    bodyHtml += `<div class="tags">${item.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>`;
+  }
+
+  if (item.settings && item.settings.length){
+    bodyHtml += `<table class="settings">${item.settings.map(s=>
+      `<tr class="${s.crit?'crit':''}"><td class="k">${s.k}</td><td class="v">${s.v}</td></tr>`
+    ).join("")}</table>`;
+  }
+
+  if (item.tips && item.tips.length){
+    bodyHtml += `<ul class="tips">${item.tips.map(t=>`<li>${t}</li>`).join("")}</ul>`;
+  }
+
+  if (item.proTip){
+    bodyHtml += `<div class="warning-box">${item.proTip}</div>`;
+  }
+  if (item.warning){
+    bodyHtml += `<div class="warning-box">${item.warning}</div>`;
+  }
+  if (item.fix){
+    bodyHtml += `<div class="fix-box">${item.fix}</div>`;
+  }
+
+  if (item.seeAlso && item.seeAlso.length){
+    bodyHtml += item.seeAlso.map(s=>`<div class="see-also"><a href="#" data-jump="${s.target}">${s.label}</a></div>`).join("");
+  }
+
+  return `
+    <div class="card" id="card-${item.id}" data-id="${item.id}">
+      <button class="card-head" data-toggle="${item.id}">
+        <span class="emoji">${emoji}</span>
+        <span class="titles">
+          <span class="t">${item.title}</span>
+          <span class="s">${subtitle}</span>
+        </span>
+        <span class="chevron">&#8250;</span>
+      </button>
+      <div class="card-body">${bodyHtml}</div>
+    </div>
+  `;
+}
+
+function render(){
+  const main = document.getElementById("main");
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  document.getElementById("clearSearch").style.display = q ? "block" : "none";
+
+  function matches(item){
+    if (!q) return true;
+    const hay = JSON.stringify(item).toLowerCase();
+    return hay.includes(q);
+  }
+
+  let html = "";
+
+  if (activeTab === "scenario"){
+    const items = SCENARIOS.filter(matches);
+    if (!items.length){ html = emptyState(); }
+    else {
+      const byGroup = {};
+      items.forEach(i=>{ (byGroup[i.group||"Other"] = byGroup[i.group||"Other"]||[]).push(i); });
+      const order = ["Riding & Driving","On Foot","Light & Weather","Night Sky","Special Events"];
+      order.forEach(g=>{
+        if (byGroup[g] && byGroup[g].length){
+          html += `<div class="group-label">${g}</div>`;
+          html += byGroup[g].map(i=>cardTemplate(i)).join("");
+        }
+      });
+      Object.keys(byGroup).forEach(g=>{
+        if (!order.includes(g)){
+          html += `<div class="group-label">${g}</div>`;
+          html += byGroup[g].map(i=>cardTemplate(i)).join("");
+        }
+      });
+    }
+  }
+  else if (activeTab === "function"){
+    const items = FUNCTIONS.filter(matches);
+    if (!items.length){ html = emptyState(); }
+    else {
+      const byCam = {};
+      items.forEach(i=>{ (byCam[i.camera] = byCam[i.camera]||[]).push(i); });
+      const order = ["GoPro","iPhone","Canon"];
+      order.forEach(cam=>{
+        if (byCam[cam] && byCam[cam].length){
+          html += `<div class="group-label">\ud83d\udcf7 ${cam}</div>`;
+          html += byCam[cam].map(i=>cardTemplate(i)).join("");
+        }
+      });
+      Object.keys(byCam).forEach(cam=>{
+        if (!order.includes(cam)){
+          html += `<div class="group-label">${cam}</div>`;
+          html += byCam[cam].map(i=>cardTemplate(i)).join("");
+        }
+      });
+    }
+  }
+  else if (activeTab === "trouble"){
+    const items = TROUBLESHOOTING.filter(matches);
+    if (!items.length){ html = emptyState(); }
+    else { html = items.map(i=>cardTemplate(i)).join(""); }
+  }
+
+  main.innerHTML = html;
+}
+
+function emptyState(){
+  return `<div class="empty">No matches. Try a different word \u2014 or check another tab, this same info might live there under a different angle.</div>`;
+}
+
+document.querySelectorAll("nav.tabbar button").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll("nav.tabbar button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeTab = btn.dataset.tab;
+    render();
+    window.scrollTo({top:0, behavior:"instant"});
+  });
+});
+
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("clearSearch").addEventListener("click", ()=>{
+  document.getElementById("search").value = "";
+  render();
+});
+
+document.getElementById("main").addEventListener("click", (e)=>{
+  const toggleBtn = e.target.closest("[data-toggle]");
+  if (toggleBtn){
+    const card = toggleBtn.closest(".card");
+    card.classList.toggle("open");
+    return;
+  }
+  const jump = e.target.closest("[data-jump]");
+  if (jump){
+    e.preventDefault();
+    const targetId = jump.dataset.jump;
+    // figure out which tab that card lives in
+    let targetTab = null;
+    if (SCENARIOS.find(s=>s.id===targetId)) targetTab = "scenario";
+    else if (FUNCTIONS.find(f=>f.id===targetId)) targetTab = "function";
+    else if (TROUBLESHOOTING.find(t=>t.id===targetId)) targetTab = "trouble";
+    if (targetTab && targetTab !== activeTab){
+      activeTab = targetTab;
+      document.querySelectorAll("nav.tabbar button").forEach(b=>b.classList.remove("active"));
+      document.querySelector(`nav.tabbar button[data-tab="${targetTab}"]`).classList.add("active");
+      render();
+    }
+    setTimeout(()=>{
+      const el = document.getElementById("card-"+targetId);
+      if (el){
+        el.classList.add("open");
+        el.scrollIntoView({behavior:"smooth", block:"start"});
+      }
+    }, 30);
+  }
+});
+
+render();
+</script>
+</body>
+</html>
