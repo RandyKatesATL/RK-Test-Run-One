@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valutek Product Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --vt-blue: #1B5FA8;
+    --vt-blue-dark: #0C3E73;
+    --vt-blue-light: #EAF2FB;
+    --vt-blue-mid: #3278C2;
+    --vt-orange: #E8700A;
+    --vt-orange-light: #FEF0E3;
+    --vt-teal: #1D9E75;
+    --vt-teal-light: #E1F5EE;
+    --vt-amber: #BA7517;
+    --vt-amber-light: #FAEEDA;
+    --vt-gray-50: #F7F8FA;
+    --vt-gray-100: #EEF0F4;
+    --vt-gray-200: #DDE1E8;
+    --vt-gray-400: #9BA5B4;
+    --vt-gray-600: #5A6478;
+    --vt-gray-800: #2C3347;
+    --vt-gray-900: #171D2E;
+    --font: 'DM Sans', system-ui, sans-serif;
+    --mono: 'DM Mono', monospace;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-hover: 0 4px 12px rgba(27,95,168,0.15), 0 8px 32px rgba(27,95,168,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: var(--font);
+    background: var(--vt-gray-50);
+    color: var(--vt-gray-800);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: white;
+    border-bottom: 1px solid var(--vt-gray-200);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo-area { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--vt-blue);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .logo-mark::before {
+    content: '';
+    position: absolute;
+    width: 20px; height: 20px;
+    background: white;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    opacity: 0.9;
+  }
+  .logo-mark::after {
+    content: '';
+    position: absolute;
+    top: 4px; left: 4px;
+    width: 10px; height: 10px;
+    background: var(--vt-orange);
+    border-radius: 50%;
+  }
+  .logo-text { font-size: 18px; font-weight: 600; color: var(--vt-blue-dark); letter-spacing: -0.3px; }
+  .logo-sub { font-size: 11px; color: var(--vt-gray-400); font-weight: 400; margin-top: 1px; letter-spacing: 0.02em; }
+  .header-cta {
+    background: var(--vt-orange);
+    color: white;
+    border: none;
+    padding: 9px 20px;
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .header-cta:hover { background: #c45e08; transform: translateY(-1px); }
+
+  /* ── HERO STRIP ── */
+  .hero {
+    background: linear-gradient(135deg, var(--vt-blue-dark) 0%, var(--vt-blue) 60%, var(--vt-blue-mid) 100%);
+    padding: 2.5rem 2rem 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: 'KEEPING IT CLEAN SINCE 1988';
+    position: absolute;
+    right: -20px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: rgba(255,255,255,0.08);
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+  }
+  .hero h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
+  .hero p { font-size: 14px; color: rgba(255,255,255,0.75); max-width: 560px; line-height: 1.6; }
+  .hero-chips { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+  .hero-chip {
+    font-size: 11px; padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.1);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+  /* ── ISO SELECTOR ── */
+  .section-label {
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--vt-gray-400); margin-bottom: 10px;
+  }
+  .iso-bar {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 1.75rem;
+  }
+  .iso-tile {
+    background: white;
+    border: 1.5px solid var(--vt-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .iso-tile::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .iso-tile.nano::before { background: var(--vt-blue); }
+  .iso-tile.micro::before { background: var(--vt-teal); }
+  .iso-tile.macro::before { background: var(--vt-amber); }
+  .iso-tile.any::before { background: var(--vt-gray-400); }
+  .iso-tile:hover { border-color: var(--vt-blue); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+  .iso-tile:hover::before { opacity: 1; }
+  .iso-tile.active { border-color: var(--vt-blue); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+  .iso-tile.active::before { opacity: 1; }
+  .iso-tile.active .tier-name { color: var(--vt-blue-dark); }
+  .tier-badge {
+    display: inline-block;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 20px; margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .nano .tier-badge { background: var(--vt-blue-light); color: var(--vt-blue-dark); }
+  .micro .tier-badge { background: var(--vt-teal-light); color: #085041; }
+  .macro .tier-badge { background: var(--vt-amber-light); color: #633806; }
+  .any .tier-badge { background: var(--vt-gray-100); color: var(--vt-gray-600); }
+  .tier-name { font-size: 15px; font-weight: 600; color: var(--vt-gray-800); display: block; }
+  .tier-iso { font-size: 12px; color: var(--vt-gray-400); display: block; margin-top: 2px; font-family: var(--mono); }
+  .tier-class { font-size: 11px; color: var(--vt-gray-400); display: block; margin-top: 1px; }
+
+  /* ── CATEGORY GRID ── */
+  .cat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 10px; margin-bottom: 1.75rem;
+  }
+  .cat-tile {
+    background: white;
+    border: 1.5px solid var(--vt-gray-200);
+    border-radius: var(--radius-lg);
+    padding: 18px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .cat-tile:hover { border-color: var(--vt-blue); box-shadow: var(--shadow); transform: translateY(-2px); }
+  .cat-tile.active {
+    border-color: var(--vt-blue);
+    background: var(--vt-blue-light);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+  .cat-tile.active .cat-name { color: var(--vt-blue-dark); }
+  .cat-icon-wrap {
+    width: 44px; height: 44px; border-radius: 12px;
+    background: var(--vt-gray-100);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+    transition: background 0.15s;
+    font-size: 20px;
+  }
+  .cat-tile.active .cat-icon-wrap { background: rgba(27,95,168,0.12); }
+  .cat-name { font-size: 13px; font-weight: 600; color: var(--vt-gray-800); display: block; }
+  .cat-sub { font-size: 11px; color: var(--vt-gray-400); margin-top: 3px; display: block; line-height: 1.4; }
+
+  /* ── SUB FILTER ── */
+  .sub-filter-row { margin-bottom: 1.5rem; }
+  .sub-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sub-chip {
+    font-size: 12px; padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--vt-gray-200);
+    background: white;
+    color: var(--vt-gray-600);
+    cursor: pointer;
+    transition: all 0.12s;
+    font-weight: 400;
+  }
+  .sub-chip:hover { border-color: var(--vt-blue); color: var(--vt-blue); }
+  .sub-chip.active {
+    background: var(--vt-blue);
+    border-color: var(--vt-blue);
+    color: white;
+  }
+
+  /* ── RESULTS PANEL ── */
+  .results-panel {
+    background: white;
+    border: 1px solid var(--vt-gray-200);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .results-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--vt-gray-100);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .results-title { font-size: 14px; font-weight: 600; color: var(--vt-gray-800); }
+  .results-meta { font-size: 12px; color: var(--vt-gray-400); }
+  .results-actions { display: flex; gap: 10px; align-items: center; }
+  .clear-btn {
+    font-size: 12px; color: var(--vt-gray-400);
+    background: none; border: none; cursor: pointer; font-family: var(--font);
+  }
+  .clear-btn:hover { color: var(--vt-blue); }
+
+  .prod-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background: var(--vt-gray-100);
+  }
+  .prod-card {
+    background: white;
+    padding: 20px;
+    text-decoration: none;
+    display: block;
+    transition: background 0.12s;
+    position: relative;
+  }
+  .prod-card:hover { background: var(--vt-blue-light); }
+  .prod-card:hover .prod-arrow { opacity: 1; transform: translateX(0); }
+  .prod-tier-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+    padding: 3px 8px; border-radius: 20px; margin-bottom: 10px;
+    text-transform: uppercase; font-family: var(--mono);
+  }
+  .pill-nano { background: var(--vt-blue-light); color: var(--vt-blue-dark); }
+  .pill-micro { background: var(--vt-teal-light); color: #085041; }
+  .pill-macro { background: var(--vt-amber-light); color: #633806; }
+  .pill-any { background: var(--vt-gray-100); color: var(--vt-gray-600); }
+  .prod-name { font-size: 13px; font-weight: 600; color: var(--vt-gray-800); line-height: 1.4; margin-bottom: 6px; }
+  .prod-spec { font-size: 11px; color: var(--vt-gray-400); line-height: 1.6; margin-bottom: 10px; }
+  .prod-links { display: flex; flex-wrap: wrap; gap: 6px; }
+  .prod-link-btn {
+    font-size: 11px; padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--vt-gray-200);
+    color: var(--vt-blue);
+    background: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.12s;
+    cursor: pointer;
+    display: inline-block;
+  }
+  .prod-link-btn:hover { background: var(--vt-blue); color: white; border-color: var(--vt-blue); }
+  .prod-link-btn.sample {
+    background: var(--vt-orange-light);
+    border-color: #f0a55a;
+    color: var(--vt-orange);
+  }
+  .prod-link-btn.sample:hover { background: var(--vt-orange); color: white; border-color: var(--vt-orange); }
+  .prod-arrow {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 14px; color: var(--vt-blue);
+    opacity: 0; transform: translateX(-4px);
+    transition: all 0.15s;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--vt-gray-400);
+  }
+  .empty-icon { font-size: 36px; display: block; margin-bottom: 12px; opacity: 0.5; }
+  .empty-title { font-size: 15px; font-weight: 500; color: var(--vt-gray-600); margin-bottom: 6px; }
+  .empty-sub { font-size: 13px; }
+
+  /* ── RESOURCES PANEL ── */
+  .resources-panel { margin-top: 1.5rem; }
+  .res-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .res-card {
+    background: white;
+    border: 1px solid var(--vt-gray-200);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-decoration: none;
+    display: block;
+    transition: all 0.12s;
+    border-left: 3px solid var(--vt-blue);
+  }
+  .res-card:hover { box-shadow: var(--shadow); transform: translateY(-1px); border-left-color: var(--vt-orange); }
+  .res-tag {
+    font-size: 9px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--vt-gray-400); margin-bottom: 5px;
+  }
+  .res-title { font-size: 12px; font-weight: 600; color: var(--vt-gray-800); line-height: 1.4; }
+
+  /* ── SAMPLE CTA PANEL ── */
+  .sample-banner {
+    background: linear-gradient(135deg, var(--vt-orange) 0%, #c45e08 100%);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 1.5rem; flex-wrap: wrap; gap: 1rem;
+  }
+  .sample-banner-text h3 { font-size: 16px; font-weight: 600; color: white; margin-bottom: 4px; }
+  .sample-banner-text p { font-size: 13px; color: rgba(255,255,255,0.8); }
+  .sample-banner-cta {
+    background: white;
+    color: var(--vt-orange);
+    border: none;
+    padding: 11px 24px;
+    border-radius: var(--radius);
+    font-family: var(--font);
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.1s, box-shadow 0.1s;
+    white-space: nowrap;
+  }
+  .sample-banner-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 3rem;
+    border-top: 1px solid var(--vt-gray-200);
+    padding: 1.5rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+    background: white;
+  }
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a { font-size: 12px; color: var(--vt-gray-400); text-decoration: none; }
+  .footer-links a:hover { color: var(--vt-blue); }
+  .footer-copy { font-size: 11px; color: var(--vt-gray-400); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .prod-card { animation: fadeUp 0.2s ease both; }
+  .res-card { animation: fadeUp 0.25s ease both; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .iso-bar { grid-template-columns: repeat(2, 1fr); }
+    .cat-grid { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 20px; }
+    .header { padding: 0 1rem; }
+    .container { padding: 1rem; }
+    .sample-banner { flex-direction: column; }
+  }
+  @media (max-width: 480px) {
+    .iso-bar { grid-template-columns: 1fr 1fr; }
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <a class="logo-area" href="https://www.valutek.com" target="_blank">
+    <div class="logo-mark"></div>
+    <div>
+      <div class="logo-text">VALUTEK</div>
+      <div class="logo-sub">Keeping It Clean Since 1988</div>
+    </div>
+  </a>
+  <a class="header-cta" href="https://www.valutek.com/free-sample-request" target="_blank">Request Free Sample</a>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Find Your Cleanroom Product</h1>
+  <p>Select your cleanroom classification, then the product category you need. Every card links directly to the product page, tech data, and spec sheets.</p>
+  <div class="hero-chips">
+    <span class="hero-chip">Life Sciences</span>
+    <span class="hero-chip">Advanced Materials</span>
+    <span class="hero-chip">Semiconductor / ESD</span>
+    <span class="hero-chip">Research &amp; Academia</span>
+    <span class="hero-chip">Aerospace &amp; Defense</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- STEP 1: ISO TIER -->
+  <div class="section-label">Step 1 — Cleanroom classification</div>
+  <div class="iso-bar">
+    <div class="iso-tile nano" data-tier="nano" onclick="setTier('nano')">
+      <div><span class="tier-badge">Ultra-critical</span></div>
+      <span class="tier-name">NanoTek</span>
+      <span class="tier-iso">ISO 3–4</span>
+      <span class="tier-class">Class 1–10</span>
+    </div>
+    <div class="iso-tile micro" data-tier="micro" onclick="setTier('micro')">
+      <div><span class="tier-badge">High purity</span></div>
+      <span class="tier-name">MicroTek</span>
+      <span class="tier-iso">ISO 5–6</span>
+      <span class="tier-class">Class 100–1,000</span>
+    </div>
+    <div class="iso-tile macro" data-tier="macro" onclick="setTier('macro')">
+      <div><span class="tier-badge">Controlled</span></div>
+      <span class="tier-name">MacroTek</span>
+      <span class="tier-iso">ISO 7+</span>
+      <span class="tier-class">Class 10,000+</span>
+    </div>
+    <div class="iso-tile any" data-tier="any" onclick="setTier('any')">
+      <div><span class="tier-badge">All classes</span></div>
+      <span class="tier-name">Not sure</span>
+      <span class="tier-iso">Show all</span>
+      <span class="tier-class">Any classification</span>
+    </div>
+  </div>
+
+  <!-- STEP 2: CATEGORY -->
+  <div class="section-label">Step 2 — Product category</div>
+  <div class="cat-grid">
+    <div class="cat-tile" data-cat="gloves" onclick="setCat('gloves')">
+      <div class="cat-icon-wrap">🧤</div>
+      <span class="cat-name">Gloves</span>
+      <span class="cat-sub">Nitrile · Latex · Vinyl</span>
+    </div>
+    <div class="cat-tile" data-cat="wipers" onclick="setCat('wipers')">
+      <div class="cat-icon-wrap">🧻</div>
+      <span class="cat-name">Wipers</span>
+      <span class="cat-sub">Dry cleanroom wipers</span>
+    </div>
+    <div class="cat-tile" data-cat="presaturated" onclick="setCat('presaturated')">
+      <div class="cat-icon-wrap">💧</div>
+      <span class="cat-name">Pre-saturated</span>
+      <span class="cat-sub">IPA &amp; sterile wipers</span>
+    </div>
+    <div class="cat-tile" data-cat="mats" onclick="setCat('mats')">
+      <div class="cat-icon-wrap">⬜</div>
+      <span class="cat-name">Adhesive Mats</span>
+      <span class="cat-sub">Tacky walk-off mats</span>
+    </div>
+    <div class="cat-tile" data-cat="apparel" onclick="setCat('apparel')">
+      <div class="cat-icon-wrap">👕</div>
+      <span class="cat-name">Apparel</span>
+      <span class="cat-sub">Gowns · Hoods · Covers</span>
+    </div>
+    <div class="cat-tile" data-cat="esd" onclick="setCat('esd')">
+      <div class="cat-icon-wrap">⚡</div>
+      <span class="cat-name">ESD Control</span>
+      <span class="cat-sub">Grounding &amp; static</span>
+    </div>
+    <div class="cat-tile" data-cat="cleaning" onclick="setCat('cleaning')">
+      <div class="cat-icon-wrap">🧹</div>
+      <span class="cat-name">Cleaning &amp; Mops</span>
+      <span class="cat-sub">Mops · Buckets · Tools</span>
+    </div>
+    <div class="cat-tile" data-cat="docs" onclick="setCat('docs')">
+      <div class="cat-icon-wrap">📄</div>
+      <span class="cat-name">Docs &amp; Certs</span>
+      <span class="cat-sub">CoC · SDS · Datasheets</span>
+    </div>
+  </div>
+
+  <!-- STEP 3: SUB FILTER -->
+  <div class="sub-filter-row" id="sub-filter-area" style="display:none;">
+    <div class="section-label" id="sub-label">Narrow by material</div>
+    <div class="sub-chips" id="sub-chips"></div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-panel">
+    <div class="results-header">
+      <div>
+        <div class="results-title">Products</div>
+        <div class="results-meta" id="results-meta">Select a classification and category to begin</div>
+      </div>
+      <div class="results-actions">
+        <button class="clear-btn" onclick="resetAll()">Clear filters</button>
+        <a href="https://shop.valutek.com" target="_blank" style="font-size:12px;color:var(--vt-blue);text-decoration:none;font-weight:500;">Browse all →</a>
+      </div>
+    </div>
+    <div class="prod-grid" id="prod-grid">
+      <div class="empty-state">
+        <span class="empty-icon">🔬</span>
+        <div class="empty-title">Start with your cleanroom classification</div>
+        <div class="empty-sub">Select NanoTek, MicroTek, or MacroTek above, then choose a product category.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RELATED RESOURCES -->
+  <div class="resources-panel" id="resources-panel" style="display:none;">
+    <div class="section-label">Related resources &amp; technical content</div>
+    <div class="res-grid" id="res-grid"></div>
+  </div>
+
+  <!-- SAMPLE CTA -->
+  <div class="sample-banner">
+    <div class="sample-banner-text">
+      <h3>Not sure which product fits your application?</h3>
+      <p>Request free samples — we'll match the right product to your cleanroom class and process.</p>
+    </div>
+    <a class="sample-banner-cta" href="https://www.valutek.com/free-sample-request" target="_blank">Request Free Samples →</a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="https://www.valutek.com" target="_blank">valutek.com</a>
+    <a href="https://www.valutek.com/catalog" target="_blank">Full catalog</a>
+    <a href="https://www.valutek.com/cleanroom-product-by-specification" target="_blank">Cross-reference tool</a>
+    <a href="https://www.valutek.com/valutek-cleanroom-cleanliness-classification" target="_blank">ISO classification guide</a>
+    <a href="https://www.valutek.com/contact-us" target="_blank">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 Valutek Inc. · +1-800-763-1250 · orderdesk@valutek.com</div>
+</footer>
+
+<script>
+const PRODUCTS = [
+  // GLOVES — NanoTek
+  { name: 'NanoTek G3 White Nitrile 12"', tier: 'nano', cat: 'gloves',
+    spec: 'Nitrile · 12" cuff · powder-free · bagged · sterile available',
+    tags: ['nitrile'], sterile: true,
+    shopUrl: 'https://shop.valutek.com/products/valutek-nitrile-cleanroom-gloves',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  { name: 'NanoTek G3 White Nitrile Sterile 12"', tier: 'nano', cat: 'gloves',
+    spec: 'Nitrile · 12" cuff · individually sterile bagged · gamma irradiated',
+    tags: ['nitrile', 'sterile'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-sterile-cleanroom-nitrile-glove',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  // GLOVES — MicroTek
+  { name: 'MicroTek G5 White Nitrile 12"', tier: 'micro', cat: 'gloves',
+    spec: 'Nitrile · 12" cuff · powder-free · bagged',
+    tags: ['nitrile'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-white-powder-free-nitrile-cleanroom-glove',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  { name: 'MicroTek G5 Latex 12"', tier: 'micro', cat: 'gloves',
+    spec: 'Latex · 12" cuff · powder-free · bagged',
+    tags: ['latex'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-latex-powder-free-cleanroom-gloves',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  { name: 'MicroTek G6 White Nitrile 9.5"', tier: 'micro', cat: 'gloves',
+    spec: 'Nitrile · 9.5" cuff · powder-free · bagged',
+    tags: ['nitrile'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-vtgnpfb95-cleanroom-nitrile-gloves',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  { name: 'MicroTek G6 Latex 9"', tier: 'micro', cat: 'gloves',
+    spec: 'Latex · 9" cuff · powder-free · bagged',
+    tags: ['latex'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-powder-free-latex-cleanroom-gloves-9',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  { name: 'MicroTek G6 Vinyl 12"', tier: 'micro', cat: 'gloves',
+    spec: 'PVC/Vinyl · 12" cuff · powder-free · bagged',
+    tags: ['vinyl'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-pvc-cleanroom-gloves',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  { name: 'MicroTek GL5 Glove Liner', tier: 'micro', cat: 'gloves',
+    spec: 'Nylon · fingerless or full finger · worn under gloves',
+    tags: ['liner'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-nylon-fingerless-full-finger-glove-liner',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+  // GLOVES — MacroTek
+  { name: 'MacroTek G7 AZ Blue Nitrile 9"', tier: 'macro', cat: 'gloves',
+    spec: 'Nitrile · 9" cuff · Arizona blue · boxed · powder-free',
+    tags: ['nitrile'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-vtgnmtpfb90ab-arizona-blue-powder-free-gloves',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+
+  // WIPERS — NanoTek
+  { name: 'NanoTek W3 PolyKnit LaserSeal', tier: 'nano', cat: 'wipers',
+    spec: '100% polyester knit · laser-sealed edge · highest cleanliness rating',
+    tags: ['polyester', 'laser seal'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-standard-weight-polyester-wiper-laser-seal',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'NanoTek W3 PolyKnit PressHeatSeal', tier: 'nano', cat: 'wipers',
+    spec: '100% polyester knit · pressure/heat-sealed edge',
+    tags: ['polyester', 'heat seal'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-standard-weight-polyester-wiper-pressure-heat-ultrasonic-seal',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'NanoTek W3 PolyKnit UltraSeal', tier: 'nano', cat: 'wipers',
+    spec: '100% polyester knit · ultrasonic-sealed edge',
+    tags: ['polyester', 'ultrasonic'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-standard-weight-polyester-wiper-ultrasonic-seal',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'NanoTek W3 PolyKnit 2-Ply Mophead', tier: 'nano', cat: 'wipers',
+    spec: '2-ply polyester · ultrasonic seal · designed for mop pad use',
+    tags: ['polyester', 'mop pad'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-2-ply-polyester-wiper-ultrasonic-seal',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  // WIPERS — MicroTek
+  { name: 'MicroTek W5 PolyKnit KnifeEdge', tier: 'micro', cat: 'wipers',
+    spec: '100% polyester knit · cold knife-cut edge · standard weight',
+    tags: ['polyester', 'knife cut'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-standard-weight-polyester-wiper-cold-knife-cut',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'MicroTek W6 PolyKnit Light KnifeEdge', tier: 'micro', cat: 'wipers',
+    spec: '100% polyester knit · lightweight · cold knife-cut',
+    tags: ['polyester', 'knife cut'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-light-weight-polyester-wiper-cold-knife-cut-9-x-9',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'MicroTek W6 MicrofiberKnit UltraSeal', tier: 'micro', cat: 'wipers',
+    spec: 'Polyester/nylon microfiber · low texture · ultrasonic seal',
+    tags: ['microfiber', 'ultrasonic'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-microfiber-polyester-nylon-wiper-low-texture-ultrasonic-seal',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'MicroTek W6 NylonKnit KnifeEdge', tier: 'micro', cat: 'wipers',
+    spec: '100% nylon knit · textured surface · cold knife-cut edge',
+    tags: ['nylon', 'knife cut'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-textured-nylon-wiper-cold-knife-cut',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  // WIPERS — MacroTek
+  { name: 'MacroTek W7 PolyCell Nonwoven KnifeEdge', tier: 'macro', cat: 'wipers',
+    spec: '55% cellulose / 45% polyester · spunlace nonwoven · knife-cut edge',
+    tags: ['polycell', 'nonwoven', 'knife cut'],
+    shopUrl: 'https://shop.valutek.com/products/valutek-wiper-55-cellulose-45-polyester-spunlace-non-woven-cold-knife-cut',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+
+  // PRE-SATURATED
+  { name: 'Pre-saturated IPA wipers', tier: 'any', cat: 'presaturated',
+    spec: 'IPA-saturated polyester · ready-to-use · multiple sizes available',
+    tags: ['ipa'],
+    shopUrl: 'https://shop.valutek.com/collections/pre-wetted-wipers',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'Pre-saturated sterile IPA wipers', tier: 'nano', cat: 'presaturated',
+    spec: 'Sterile IPA · gamma-irradiated · ISO 3–5 environments',
+    tags: ['sterile', 'ipa'],
+    shopUrl: 'https://shop.valutek.com/collections/pre-wetted-wipers',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+  { name: 'Pre-saturated DI water wipers', tier: 'any', cat: 'presaturated',
+    spec: 'Deionized water saturated · no chemical residue · non-reactive cleaning',
+    tags: ['di water'],
+    shopUrl: 'https://shop.valutek.com/collections/pre-wetted-wipers',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-wiper-selection' },
+
+  // MATS
+  { name: 'Adhesive walk-off mats', tier: 'any', cat: 'mats',
+    spec: 'Tacky layered sheets · captures particles at entry · peel-and-discard layers',
+    tags: ['tacky', 'walk-off'],
+    shopUrl: 'https://shop.valutek.com/collections/adhesive-mats',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/blog' },
+
+  // APPAREL
+  { name: 'Cleanroom coveralls / frocks', tier: 'any', cat: 'apparel',
+    spec: 'Low-linting fabric · full-body coverage · multiple sizes',
+    tags: ['coverall'],
+    shopUrl: 'https://shop.valutek.com/collections/apparel',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-gowning-procedure' },
+  { name: 'Hoods &amp; face masks', tier: 'any', cat: 'apparel',
+    spec: 'Low-linting · face and head contamination control',
+    tags: ['hood'],
+    shopUrl: 'https://shop.valutek.com/collections/apparel',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-gowning-procedure' },
+  { name: 'Shoe covers &amp; boot covers', tier: 'any', cat: 'apparel',
+    spec: 'Low-linting sole coverage · ESD-compatible options available',
+    tags: ['shoe cover'],
+    shopUrl: 'https://shop.valutek.com/collections/apparel',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-gowning-procedure' },
+  { name: 'Sleeve covers', tier: 'any', cat: 'apparel',
+    spec: 'Low-linting · arm protection under gowning',
+    tags: ['sleeve'],
+    shopUrl: 'https://shop.valutek.com/collections/apparel',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-gowning-procedure' },
+
+  // ESD
+  { name: 'ESD shoe covers', tier: 'any', cat: 'esd',
+    spec: 'Grounding via heel/toe strap · ANSI/ESD S20.20 compliant',
+    tags: ['shoe cover', 'grounding'],
+    shopUrl: 'https://shop.valutek.com/collections/esd',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/blog/proper-grounding-starts-at-your-feet-the-importance-of-esd-shoe-covers' },
+  { name: 'ESD wipers &amp; mops', tier: 'any', cat: 'esd',
+    spec: 'Dissipative polyester · controls static during surface cleaning',
+    tags: ['wiper', 'mop'],
+    shopUrl: 'https://shop.valutek.com/collections/esd',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/blog/the-role-of-cleanroom-wipers-and-mops-in-esd-mitigation' },
+  { name: 'ESD gloves', tier: 'any', cat: 'esd',
+    spec: 'Carbon-fiber conductive · full static dissipation at point of contact',
+    tags: ['gloves', 'conductive'],
+    shopUrl: 'https://shop.valutek.com/collections/esd',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/cleanroom-glove-selection' },
+
+  // CLEANING
+  { name: 'Cleanroom mops — dry', tier: 'any', cat: 'cleaning',
+    spec: 'Polyester mop heads · ISO 5–7 · compatible standard handles',
+    tags: ['dry', 'mop'],
+    shopUrl: 'https://shop.valutek.com/collections/cleaning-maintenance',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/blog/which-cleanroom-mop-is-best-for-your-application' },
+  { name: 'Cleanroom mops — pre-saturated', tier: 'any', cat: 'cleaning',
+    spec: 'IPA-loaded mop heads · frame &amp; handle systems available',
+    tags: ['presaturated', 'mop'],
+    shopUrl: 'https://shop.valutek.com/collections/cleaning-maintenance',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/blog/which-cleanroom-mop-is-best-for-your-application' },
+  { name: 'Mop handles, frames &amp; buckets', tier: 'any', cat: 'cleaning',
+    spec: 'Stainless or plastic · cleanroom-compatible hardware',
+    tags: ['handle', 'frame', 'bucket'],
+    shopUrl: 'https://shop.valutek.com/collections/cleaning-maintenance',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/blog/which-cleanroom-mop-is-best-for-your-application' },
+
+  // DOCS
+  { name: 'Certificate of conformance (CoC)', tier: 'any', cat: 'docs',
+    spec: 'Lot-specific conformance documentation · downloadable on request',
+    tags: ['coc', 'certificate'],
+    shopUrl: 'https://www.valutek.com/request-certificates',
+    docUrl: 'https://www.valutek.com/request-certificates',
+    specUrl: 'https://www.valutek.com/product-documents' },
+  { name: 'Safety data sheets (SDS)', tier: 'any', cat: 'docs',
+    spec: 'Chemical safety data for all applicable products',
+    tags: ['sds', 'safety'],
+    shopUrl: 'https://www.valutek.com/product-documents',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/product-documents' },
+  { name: 'Product specification sheets', tier: 'any', cat: 'docs',
+    spec: 'Technical specs · dimensions · particle counts · extraction data',
+    tags: ['spec sheet', 'datasheet'],
+    shopUrl: 'https://www.valutek.com/product-documents',
+    docUrl: 'https://www.valutek.com/product-documents',
+    specUrl: 'https://www.valutek.com/independent-testing' },
+  { name: 'Independent test reports', tier: 'any', cat: 'docs',
+    spec: 'Third-party validated particle, ion, NVR data',
+    tags: ['test report', 'nvr', 'ion'],
+    shopUrl: 'https://www.valutek.com/independent-testing',
+    docUrl: 'https://www.valutek.com/independent-testing',
+    specUrl: 'https://www.valutek.com/technical-papers' },
+];
+
+const SUB_FILTERS = {
+  gloves: { label: 'Narrow by material', opts: ['Nitrile', 'Latex', 'Vinyl', 'Liner'] },
+  wipers: { label: 'Narrow by substrate', opts: ['Polyester', 'Microfiber', 'Nylon', 'PolyCell / nonwoven'] },
+  presaturated: { label: 'Narrow by solution', opts: ['IPA', 'Sterile IPA', 'DI water'] },
+  mats: { label: null, opts: [] },
+  apparel: { label: 'Narrow by item type', opts: ['Coverall / frock', 'Hood / mask', 'Shoe cover', 'Sleeve cover'] },
+  esd: { label: 'Narrow by item type', opts: ['ESD shoe covers', 'ESD wipers / mops', 'ESD gloves'] },
+  cleaning: { label: 'Narrow by type', opts: ['Dry mops', 'Pre-saturated mops', 'Handles, frames & buckets'] },
+  docs: { label: 'Narrow by document type', opts: ['CoC / conformance', 'SDS / safety', 'Spec sheets', 'Test reports'] },
+};
+
+const TAG_MAP = {
+  'Nitrile': ['nitrile'], 'Latex': ['latex'], 'Vinyl': ['vinyl'], 'Liner': ['liner'],
+  'Polyester': ['polyester'], 'Microfiber': ['microfiber'], 'Nylon': ['nylon'], 'PolyCell / nonwoven': ['polycell', 'nonwoven'],
+  'IPA': ['ipa'], 'Sterile IPA': ['sterile'], 'DI water': ['di water'],
+  'Coverall / frock': ['coverall'], 'Hood / mask': ['hood'], 'Shoe cover': ['shoe cover'], 'Sleeve cover': ['sleeve'],
+  'ESD shoe covers': ['shoe cover', 'grounding'], 'ESD wipers / mops': ['wiper', 'mop'], 'ESD gloves': ['gloves', 'conductive'],
+  'Dry mops': ['dry'], 'Pre-saturated mops': ['presaturated'], 'Handles, frames & buckets': ['handle'],
+  'CoC / conformance': ['coc', 'certificate'], 'SDS / safety': ['sds', 'safety'], 'Spec sheets': ['spec sheet', 'datasheet'], 'Test reports': ['test report'],
+};
+
+const RESOURCES = {
+  gloves: [
+    { tag: 'Selection guide', title: 'Cleanroom glove selection guide', url: 'https://www.valutek.com/cleanroom-glove-selection' },
+    { tag: 'Solutions', title: 'Specifying the correct glove & wiper', url: 'https://www.valutek.com/specifiying-correct-glove-and-wiper' },
+    { tag: 'Technical', title: 'Independent testing results', url: 'https://www.valutek.com/independent-testing' },
+    { tag: 'Free sample', title: 'Request glove samples', url: 'https://www.valutek.com/free-sample-request' },
+  ],
+  wipers: [
+    { tag: 'Selection guide', title: 'Cleanroom wiper selection guide', url: 'https://www.valutek.com/cleanroom-wiper-selection' },
+    { tag: 'Blog', title: 'Which cleanroom mop is best for your application?', url: 'https://www.valutek.com/blog/which-cleanroom-mop-is-best-for-your-application' },
+    { tag: 'Blog', title: 'Prevent silicone contamination', url: 'https://www.valutek.com/blog/how-to-prevent-silicone-contamination' },
+    { tag: 'Solutions', title: 'Custom cleanroom wipes', url: 'https://www.valutek.com/custom-cleanroom-wipes' },
+    { tag: 'Free sample', title: 'Request wiper samples', url: 'https://www.valutek.com/free-sample-request' },
+  ],
+  presaturated: [
+    { tag: 'Selection guide', title: 'Cleanroom wiper selection guide', url: 'https://www.valutek.com/cleanroom-wiper-selection' },
+    { tag: 'Solutions', title: 'Custom cleanroom wipes', url: 'https://www.valutek.com/custom-cleanroom-wipes' },
+    { tag: 'Technical', title: 'Independent testing results', url: 'https://www.valutek.com/independent-testing' },
+  ],
+  mats: [
+    { tag: 'Free sample', title: 'Request mat samples', url: 'https://www.valutek.com/free-sample-request' },
+    { tag: 'Product docs', title: 'Product document library', url: 'https://www.valutek.com/product-documents' },
+  ],
+  apparel: [
+    { tag: 'Procedure guide', title: 'Cleanroom gowning procedure', url: 'https://www.valutek.com/cleanroom-gowning-procedure' },
+    { tag: 'Blog', title: 'Review your cleanroom donning procedures', url: 'https://www.valutek.com/blog/review-your-cleanroom-donning-procedures' },
+    { tag: 'Free sample', title: 'Request apparel samples', url: 'https://www.valutek.com/free-sample-request' },
+  ],
+  esd: [
+    { tag: 'Blog', title: 'ESD wipers & mops in ESD mitigation', url: 'https://www.valutek.com/blog/the-role-of-cleanroom-wipers-and-mops-in-esd-mitigation' },
+    { tag: 'Blog', title: 'ESD shoe covers for controlled environments', url: 'https://www.valutek.com/blog/proper-grounding-starts-at-your-feet-the-importance-of-esd-shoe-covers' },
+    { tag: 'Technical', title: 'Independent testing results', url: 'https://www.valutek.com/independent-testing' },
+  ],
+  cleaning: [
+    { tag: 'Blog', title: 'Which cleanroom mop is best for your application?', url: 'https://www.valutek.com/blog/which-cleanroom-mop-is-best-for-your-application' },
+    { tag: 'Cleanliness', title: 'ISO classification guide', url: 'https://www.valutek.com/valutek-cleanroom-cleanliness-classification' },
+  ],
+  docs: [
+    { tag: 'Solutions', title: 'Request certificates (CoC)', url: 'https://www.valutek.com/request-certificates' },
+    { tag: 'Library', title: 'Product document library', url: 'https://www.valutek.com/product-documents' },
+    { tag: 'Technical', title: 'Independent testing results', url: 'https://www.valutek.com/independent-testing' },
+    { tag: 'Papers', title: 'Technical paper series', url: 'https://www.valutek.com/technical-papers' },
+  ],
+};
+
+const TIER_LABELS = { nano: 'NanoTek', micro: 'MicroTek', macro: 'MacroTek', any: 'All tiers' };
+const PILL_CLASS = { nano: 'pill-nano', micro: 'pill-micro', macro: 'pill-macro', any: 'pill-any' };
+
+let selTier = null, selCat = null, selSub = null;
+
+function setTier(t) {
+  selTier = t;
+  document.querySelectorAll('.iso-tile').forEach(el => el.classList.toggle('active', el.dataset.tier === t));
+  render();
+}
+
+function setCat(c) {
+  selCat = c; selSub = null;
+  document.querySelectorAll('.cat-tile').forEach(el => el.classList.toggle('active', el.dataset.cat === c));
+  renderSubFilter();
+  render();
+}
+
+function setSub(s) {
+  selSub = selSub === s ? null : s;
+  document.querySelectorAll('.sub-chip').forEach(el => el.classList.toggle('active', el.dataset.sub === s));
+  render();
+}
+
+function resetAll() {
+  selTier = null; selCat = null; selSub = null;
+  document.querySelectorAll('.iso-tile, .cat-tile').forEach(el => el.classList.remove('active'));
+  document.getElementById('sub-filter-area').style.display = 'none';
+  document.getElementById('resources-panel').style.display = 'none';
+  document.getElementById('results-meta').textContent = 'Select a classification and category to begin';
+  document.getElementById('prod-grid').innerHTML = `
+    <div class="empty-state">
+      <span class="empty-icon">🔬</span>
+      <div class="empty-title">Start with your cleanroom classification</div>
+      <div class="empty-sub">Select NanoTek, MicroTek, or MacroTek above, then choose a product category.</div>
+    </div>`;
+}
+
+function renderSubFilter() {
+  const area = document.getElementById('sub-filter-area');
+  if (!selCat || !SUB_FILTERS[selCat] || !SUB_FILTERS[selCat].opts.length) {
+    area.style.display = 'none'; return;
+  }
+  const sf = SUB_FILTERS[selCat];
+  document.getElementById('sub-label').textContent = sf.label || 'Filter by type';
+  document.getElementById('sub-chips').innerHTML = sf.opts.map(o =>
+    `<div class="sub-chip" data-sub="${o}" onclick="setSub('${o}')">${o}</div>`
+  ).join('');
+  area.style.display = 'block';
+}
+
+function matchesProd(p) {
+  if (selTier && selTier !== 'any' && p.tier !== selTier && p.tier !== 'any') return false;
+  if (selCat && p.cat !== selCat) return false;
+  if (selSub) {
+    const need = TAG_MAP[selSub] || [];
+    if (!need.some(t => p.tags.map(x => x.toLowerCase()).includes(t.toLowerCase()))) return false;
+  }
+  return true;
+}
+
+function render() {
+  const grid = document.getElementById('prod-grid');
+  const meta = document.getElementById('results-meta');
+  const resPanel = document.getElementById('resources-panel');
+  const resGrid = document.getElementById('res-grid');
+
+  if (!selTier && !selCat) {
+    grid.innerHTML = `<div class="empty-state"><span class="empty-icon">🔬</span><div class="empty-title">Start with your cleanroom classification</div><div class="empty-sub">Select NanoTek, MicroTek, or MacroTek above, then choose a product category.</div></div>`;
+    meta.textContent = 'Select a classification and category to begin';
+    resPanel.style.display = 'none';
+    return;
+  }
+
+  const filtered = PRODUCTS.filter(matchesProd);
+  meta.textContent = filtered.length + ' product' + (filtered.length !== 1 ? 's' : '') + ' matched';
+
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty-state"><span class="empty-icon">🔍</span><div class="empty-title">No products match these filters</div><div class="empty-sub">Try a different classification or remove the sub-filter.</div></div>`;
+  } else {
+    grid.innerHTML = filtered.map((p, i) => `
+      <a class="prod-card" href="${p.shopUrl}" target="_blank" style="animation-delay:${i * 0.04}s">
+        <span class="prod-arrow">→</span>
+        <div class="prod-tier-pill ${PILL_CLASS[p.tier]}">${p.tier === 'any' ? 'All tiers' : TIER_LABELS[p.tier]}</div>
+        <div class="prod-name">${p.name}</div>
+        <div class="prod-spec">${p.spec}</div>
+        <div class="prod-links">
+          <a class="prod-link-btn" href="${p.shopUrl}" target="_blank" onclick="event.stopPropagation()">Buy →</a>
+          <a class="prod-link-btn" href="${p.docUrl}" target="_blank" onclick="event.stopPropagation()">Tech data</a>
+          <a class="prod-link-btn" href="${p.specUrl}" target="_blank" onclick="event.stopPropagation()">Spec guide</a>
+          <a class="prod-link-btn sample" href="https://www.valutek.com/free-sample-request" target="_blank" onclick="event.stopPropagation()">Sample</a>
+        </div>
+      </a>`).join('');
+  }
+
+  if (selCat && RESOURCES[selCat]) {
+    resPanel.style.display = 'block';
+    resGrid.innerHTML = RESOURCES[selCat].map((r, i) =>
+      `<a class="res-card" href="${r.url}" target="_blank" style="animation-delay:${i * 0.05}s">
+        <div class="res-tag">${r.tag}</div>
+        <div class="res-title">${r.title}</div>
+      </a>`
+    ).join('');
+  } else {
+    resPanel.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
