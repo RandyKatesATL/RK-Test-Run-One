@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>North Georgia Photo Field Guide</title>
+<style>
+  :root {
+    --bg:        #0F1214;
+    --surface:   #181C1F;
+    --card:      #1E2328;
+    --border:    #2A3038;
+    --gold:      #C8A84B;
+    --gold-dim:  #8A7030;
+    --sky:       #4A9EBF;
+    --green:     #5A9E6F;
+    --warm:      #D4724A;
+    --text:      #E8E2D8;
+    --muted:     #8A8A8A;
+    --tag-bg:    #252B32;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'SF Pro Text', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(160deg, #0F1A22 0%, #0F1214 60%);
+    padding: 52px 20px 24px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(200,168,75,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    color: var(--text);
+  }
+  .header-sub {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .kit-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .kit-badge {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── NAV TABS ── */
+  .tab-nav {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 12px;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 14px 14px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; padding: 16px; }
+  .panel.active { display: block; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── SCENE CARDS ── */
+  .scene-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .scene-card.open { border-color: var(--gold-dim); }
+  .scene-header {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .scene-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+  .scene-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .scene-title { font-size: 15px; font-weight: 700; color: var(--text); }
+  .scene-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .chevron {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .scene-card.open .chevron { transform: rotate(90deg); color: var(--gold); }
+
+  .scene-body {
+    display: none;
+    padding: 0 16px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .scene-card.open .scene-body { display: block; }
+
+  /* ── CAMERA BADGE ── */
+  .cam-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--sky);
+    margin: 12px 0 10px;
+  }
+
+  /* ── SETTINGS TABLE ── */
+  .settings-table {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+  }
+  .settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+  .s-label { font-size: 12px; color: var(--muted); font-weight: 500; flex: 1; }
+  .s-value { font-size: 12px; font-weight: 700; color: var(--text); text-align: right; flex: 1.2; }
+
+  /* ── TIPS ── */
+  .tip-block {
+    background: rgba(200,168,75,0.07);
+    border-left: 3px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .tip-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .tip-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+  .light-block {
+    background: rgba(74,158,191,0.07);
+    border-left: 3px solid var(--sky);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .light-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 4px;
+  }
+  .light-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+  /* ── COMPARE TABLE (star vs moon) ── */
+  .compare-table {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .compare-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: var(--tag-bg);
+    padding: 8px 12px;
+    gap: 4px;
+  }
+  .compare-header span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--gold);
+    text-align: center;
+  }
+  .compare-header span:first-child { text-align: left; }
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    gap: 4px;
+    align-items: center;
+  }
+  .compare-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+  .compare-row span { font-size: 12px; text-align: center; }
+  .compare-row span:first-child { text-align: left; color: var(--muted); font-weight: 500; }
+
+  /* ── DECISION CARD ── */
+  .decision-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .d-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .d-content { flex: 1; min-width: 0; }
+  .d-situation { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .d-camera { font-size: 11px; color: var(--sky); font-weight: 600; margin-bottom: 3px; }
+  .d-setting { font-size: 12px; color: var(--muted); }
+
+  /* ── RULES ── */
+  .rule-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+  .rule-item:last-child { border-bottom: none; }
+  .rule-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gold);
+    opacity: 0.35;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 32px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .rule-content { flex: 1; }
+  .rule-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+  .rule-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── LIGHT WINDOW ── */
+  .light-window {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+  }
+  .lw-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .lw-content { flex: 1; }
+  .lw-title { font-size: 14px; font-weight: 700; color: var(--text); }
+  .lw-time { font-size: 11px; color: var(--muted); margin: 2px 0 6px; }
+  .lw-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .lw-tag {
+    background: var(--tag-bg);
+    border-radius: 20px;
+    padding: 3px 9px;
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── ROCK ID ── */
+  .rock-tip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .rock-tip-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+  .rock-tip-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── MODE COMPARE ── */
+  .mode-cards { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .mode-card-title {
+    font-size: 14px; font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 2px;
+  }
+  .mode-card-sub { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+  .mode-card-body { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-eyebrow">Photography Field Guide</div>
+  <h1>North Georgia<br>Mountains</h1>
+  <div class="header-sub">Scene-by-scene settings · Live coaching reference · GoPro night playbook</div>
+  <div class="kit-row">
+    <span class="kit-badge">📱 iPhone 16 Pro</span>
+    <span class="kit-badge">🎥 GoPro 11</span>
+    <span class="kit-badge">📷 Canon 300mm</span>
+  </div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tab-nav" id="tabNav">
+  <button class="tab-btn active" onclick="showTab('scenes')">Scenes</button>
+  <button class="tab-btn" onclick="showTab('gopro')">GoPro Night</button>
+  <button class="tab-btn" onclick="showTab('decide')">Quick Pick</button>
+  <button class="tab-btn" onclick="showTab('light')">Light Windows</button>
+  <button class="tab-btn" onclick="showTab('rules')">Field Rules</button>
+  <button class="tab-btn" onclick="showTab('rocks')">Rock ID</button>
+</div>
+
+<!-- ══ SCENES PANEL ══ -->
+<div class="panel active" id="panel-scenes">
+  <p class="section-label">Tap a scene to expand settings</p>
+
+  <!-- RIDGELINE -->
+  <div class="scene-card" onclick="toggleCard(this)">
+    <div class="scene-header">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(200,168,75,0.12)">🏔</div>
+        <div>
+          <div class="scene-title">Ridgeline & Vista</div>
+          <div class="scene-meta">Golden hour · Canon 300mm leads</div>
+        </div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+    <div class="scene-body">
+      <div class="cam-badge">📷 Canon EOS 300mm</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Mode</span><span class="s-value">Aperture Priority (Av)</span></div>
+        <div class="settings-row"><span class="s-label">Aperture</span><span class="s-value">f/7.1 – f/11</span></div>
+        <div class="settings-row"><span class="s-label">ISO</span><span class="s-value">100 – 200</span></div>
+        <div class="settings-row"><span class="s-label">Exp. Comp</span><span class="s-value">-1/3 to -2/3 EV</span></div>
+        <div class="settings-row"><span class="s-label">Metering</span><span class="s-value">Spot / Center-Weighted</span></div>
+        <div class="settings-row"><span class="s-label">Format</span><span class="s-value">RAW</span></div>
+      </div>
+      <div class="light-block">
+        <div class="light-label">💡 Light Strategy</div>
+        <div class="light-text">Position sun at 45° to your side — side lighting carves dimension into ridge layers. Semi-backlit shooting at golden hour creates the haze depth North Georgia is famous for.</div>
+      </div>
+      <div class="tip-block">
+        <div class="tip-label">📱 iPhone Backup</div>
+        <div class="tip-text">Shoot the same scene in ProRAW for a wider composition reference shot alongside the Canon compression.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WATERFALLS -->
+  <div class="scene-card" onclick="toggleCard(this)">
+    <div class="scene-header">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(74,158,191,0.12)">💧</div>
+        <div>
+          <div class="scene-title">Waterfalls & Streams</div>
+          <div class="scene-meta">Overcast midday · iPhone leads</div>
+        </div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+    <div class="scene-body">
+      <div class="cam-badge">📱 iPhone 16 Pro — Primary</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Best method</span><span class="s-value">Live Photo + Long Exposure</span></div>
+        <div class="settings-row"><span class="s-label">Manual (Halide)</span><span class="s-value">1/4–1s · ISO 32</span></div>
+        <div class="settings-row"><span class="s-label">Format</span><span class="s-value">ProRAW</span></div>
+      </div>
+      <div class="cam-badge" style="color:#5A9E6F">🎥 GoPro 11 — Wide Shot</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Lens</span><span class="s-value">Linear</span></div>
+        <div class="settings-row"><span class="s-label">ISO</span><span class="s-value">100</span></div>
+        <div class="settings-row"><span class="s-label">Shutter</span><span class="s-value">1/2 second</span></div>
+      </div>
+      <div class="cam-badge">📷 Canon — Step Back Move</div>
+      <div class="tip-block">
+        <div class="tip-label">🎯 Canon Trick</div>
+        <div class="tip-text">Use 300mm from a distance to compress the waterfall against surrounding forest. A perspective most people never try — and it's dramatic.</div>
+      </div>
+      <div class="light-block">
+        <div class="light-label">💡 Light Strategy</div>
+        <div class="light-text">Overcast = giant natural softbox. Eliminates harsh gorge shadows, lets water luminosity pop. In direct sun, shoot from the shaded side of the falls.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOREST -->
+  <div class="scene-card" onclick="toggleCard(this)">
+    <div class="scene-header">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(90,158,111,0.12)">🌲</div>
+        <div>
+          <div class="scene-title">Forest & Canopy</div>
+          <div class="scene-meta">Overcast or light shafts · iPhone leads</div>
+        </div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+    <div class="scene-body">
+      <div class="cam-badge">📱 iPhone 16 Pro</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Mode</span><span class="s-value">ProRAW</span></div>
+        <div class="settings-row"><span class="s-label">Direction</span><span class="s-value">Shoot upward into canopy</span></div>
+        <div class="settings-row"><span class="s-label">Exposure</span><span class="s-value">Slightly underexposed — recover post</span></div>
+      </div>
+      <div class="light-block">
+        <div class="light-label">💡 Light Shafts Window</div>
+        <div class="light-text">Appear when low-angle sun hits morning mist. They last only 4–8 minutes — be ready before the window opens, not after.</div>
+      </div>
+      <div class="tip-block">
+        <div class="tip-label">🎯 Composition Principle</div>
+        <div class="tip-text">Dark trunks vs bright sky gaps — don't try to balance the contrast, embrace it. That tension IS the shot. iPhone handles this dynamic range better than the Canon here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WILDLIFE -->
+  <div class="scene-card" onclick="toggleCard(this)">
+    <div class="scene-header">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(212,114,74,0.12)">🦅</div>
+        <div>
+          <div class="scene-title">Wildlife & Distant Subjects</div>
+          <div class="scene-meta">Morning golden hour · Canon leads</div>
+        </div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+    <div class="scene-body">
+      <div class="cam-badge">📷 Canon EOS 300mm — This is its moment</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Mode</span><span class="s-value">Shutter Priority (Tv)</span></div>
+        <div class="settings-row"><span class="s-label">Shutter (birds)</span><span class="s-value">1/500s minimum</span></div>
+        <div class="settings-row"><span class="s-label">Shutter (still deer)</span><span class="s-value">1/250s</span></div>
+        <div class="settings-row"><span class="s-label">ISO</span><span class="s-value">Auto · ceiling 1600</span></div>
+        <div class="settings-row"><span class="s-label">AF Mode</span><span class="s-value">AI Servo (Continuous)</span></div>
+        <div class="settings-row"><span class="s-label">Drive</span><span class="s-value">Burst — always</span></div>
+        <div class="settings-row"><span class="s-label">Format</span><span class="s-value">RAW</span></div>
+      </div>
+      <div class="light-block">
+        <div class="light-label">💡 Light Strategy</div>
+        <div class="light-text">Light at your back or quartering toward subject. Use dark tree line as natural backdrop to isolate the animal — don't fight a cluttered background.</div>
+      </div>
+      <div class="tip-block">
+        <div class="tip-label">🎯 Backlit Warning</div>
+        <div class="tip-text">A backlit deer at golden hour is beautiful — but hard to expose correctly without experience. Front-quartering light gives you detail AND warmth. Pick your shot.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SILHOUETTES -->
+  <div class="scene-card" onclick="toggleCard(this)">
+    <div class="scene-header">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(200,168,75,0.10)">🌅</div>
+        <div>
+          <div class="scene-title">Silhouettes & Dramatic Sky</div>
+          <div class="scene-meta">Last 15 min golden hour to blue hour</div>
+        </div>
+      </div>
+      <div class="chevron">›</div>
+    </div>
+    <div class="scene-body">
+      <div class="cam-badge">📱 iPhone 16 Pro</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Meter on</span><span class="s-value">Tap the SKY (not subject)</span></div>
+        <div class="settings-row"><span class="s-label">Format</span><span class="s-value">ProRAW</span></div>
+        <div class="settings-row"><span class="s-label">Effect</span><span class="s-value">Subject goes dark · sky stays rich</span></div>
+      </div>
+      <div class="cam-badge">📷 Canon EOS</div>
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Metering</span><span class="s-value">Spot on brightest sky area</span></div>
+        <div class="settings-row"><span class="s-label">Mode</span><span class="s-value">Aperture Priority f/8</span></div>
+        <div class="settings-row"><span class="s-label">ISO</span><span class="s-value">Let it ride · shoot RAW</span></div>
+      </div>
+      <div class="tip-block">
+        <div class="tip-label">🎯 The Window</div>
+        <div class="tip-text">10–20 minutes total. The sky is your canvas — the silhouette is the story. A lone tree, ridge, or person on an overlook. Move fast, don't overthink the subject.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ GOPRO NIGHT PANEL ══ -->
+<div class="panel" id="panel-gopro">
+  <p class="section-label">GoPro 11 Night Playbook</p>
+
+  <!-- Nav reminder -->
+  <div class="mode-card" style="margin-bottom:12px; border-color: var(--gold-dim)">
+    <div class="mode-card-title">Menu Navigation</div>
+    <div class="mode-card-body" style="color:var(--muted)">Swipe down from top → Tap mode icon (left side) → Time Lapse → Night Lapse Video → Tap pencil icon for settings</div>
+  </div>
+
+  <!-- Mode Compare -->
+  <p class="section-label">Modes Explained</p>
+  <div class="mode-cards">
+    <div class="mode-card">
+      <div class="mode-card-title">Time Lapse</div>
+      <div class="mode-card-sub">Camera stationary · World moves</div>
+      <div class="mode-card-body">Clouds rolling, mist burning off valleys, shadows shifting. Fixed mount required. Best for daylight slow-change scenes.</div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-card-title">Night Lapse Video</div>
+      <div class="mode-card-sub">Camera stationary · Low light</div>
+      <div class="mode-card-body">Your star trails and moon lapse tool. Outputs directly as video — no stacking required. Mount is non-negotiable.</div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-card-title">TimeWarp</div>
+      <div class="mode-card-sub">Camera moving · Stabilized + accelerated</div>
+      <div class="mode-card-body">Hiking trails, driving mountain roads, walking to a waterfall. Auto speed is underrated — let GoPro read your motion.</div>
+    </div>
+  </div>
+
+  <!-- Star Trails -->
+  <p class="section-label" style="margin-top:16px">Star Trail Video — Hazy Sky, No Moon</p>
+  <div class="scene-card open" style="cursor:default">
+    <div class="scene-header" style="cursor:default">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(200,168,75,0.10)">⭐</div>
+        <div>
+          <div class="scene-title">Star Trails Settings</div>
+          <div class="scene-meta">Night Lapse Video mode</div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-body" style="display:block">
+      <div class="settings-table">
+        <div class="settings-row"><span class="s-label">Shutter</span><span class="s-value">30 seconds</span></div>
+        <div class="settings-row"><span class="s-label">ISO Max</span><span class="s-value">1600</span></div>
+        <div class="settings-row"><span class="s-label">ISO Min</span><span class="s-value">400</span></div>
+        <div class="settings-row"><span class="s-label">White Balance</span><span class="s-value">4500K</span></div>
+        <div class="settings-row"><span class="s-label">Interval</span><span class="s-value">Auto</span></div>
+        <div class="settings-row"><span class="s-label">Lens</span><span class="s-value">Linear</span></div>
+        <div class="settings-row"><span class="s-label">Resolution</span><span class="s-value">4K</span></div>
+      </div>
+      <div class="tip-block">
+        <div class="tip-label">🎯 Runtime</div>
+        <div class="tip-text">45 min minimum for visible trails. 90 min is the sweet spot. Power bank required — cold + long exposure drains fast.</div>
+      </div>
+      <div class="light-block">
+        <div class="light-label">💡 Direction Tips</div>
+        <div class="light-text">Point North → circular rotation trails around Polaris. Point East/West → dramatic arcing streaks. Always anchor with foreground — a ridgeline or tree silhouette makes it a photograph, not a screensaver.</div>
+      </div>
+      <div class="tip-block">
+        <div class="tip-label">🎯 Hazy Sky Adjustment</div>
+        <div class="tip-text">If stars look weak after your test clip → bump ISO Max to 1600. If too noisy/grainy → drop ISO Max to 800. Always run a 2–3 min test before committing to 90 minutes.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Moon Lapse -->
+  <p class="section-label" style="margin-top:16px">Moon Lapse Video — Moon as Subject</p>
+  <div class="scene-card open" style="cursor:default">
+    <div class="scene-header" style="cursor:default">
+      <div class="scene-left">
+        <div class="scene-icon" style="background:rgba(74,158,191,0.10)">🌙</div>
+        <div>
+          <div class="scene-title">Moon Lapse Settings</div>
+          <div class="scene-meta">Night Lapse Video mode — completely different exposure</div>
+        </div>
+      </div>
+    </div>
+    <div class="scene-body" style="display:block">
+      <div class="tip-block">
+        <div class="tip-label">⚠️ Key Principle</div>
+        <div class="tip-text">The moon reflects direct sunlight. It is bright. Star trail settings will blow it out to a white blob. Dial back hard on shutter and ISO.</div>
+      </div>
+      <p class="section-label" style="margin-top:10px">Side-by-Side Comparison</p>
+      <div class="compare-table">
+        <div class="compare-header">
+          <span>Setting</span>
+          <span>⭐ Stars</span>
+          <span>🌙 Moon</span>
+        </div>
+        <div class="compare-row"><span>Shutter</span><span style="color:var(--text)">30s</span><span style="color:var(--sky)">1/4s – 1s</span></div>
+        <div class="compare-row"><span>ISO Max</span><span style="color:var(--text)">1600</span><span style="color:var(--sky)">200</span></div>
+        <div class="compare-row"><span>ISO Min</span><span style="color:var(--text)">400</span><span style="color:var(--sky)">100</span></div>
+        <div class="compare-row"><span>White Bal</span><span style="color:var(--text)">4500K</span><span style="color:var(--sky)">4000K</span></div>
+        <div class="compare-row"><span>Interval</span><span style="color:var(--text)">Auto</span><span style="color:var(--sky)">5s or 10s</span></div>
+        <div class="compare-row"><span>Lens</span><span style="color:var(--text)">Linear</span><span style="color:var(--sky)">Linear</span></div>
+      </div>
+      <div class="light-block">
+        <div class="light-label">💡 Composition Play</div>
+        <div class="light-text">Foreground goes dark — lean into it. Moon tracking above a silhouetted ridgeline is dramatic and clean. The contrast is the art.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUICK PICK PANEL ══ -->
+<div class="panel" id="panel-decide">
+  <p class="section-label">What's in front of you? Pick your play.</p>
+
+  <div class="decision-item">
+    <div class="d-icon">🏔</div>
+    <div class="d-content">
+      <div class="d-situation">Golden hour vista / ridgeline</div>
+      <div class="d-camera">📷 Canon EOS 300mm</div>
+      <div class="d-setting">Av · f/8 · -1/3 EV · spot meter sky · RAW</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">💧</div>
+    <div class="d-content">
+      <div class="d-situation">Waterfall — overcast</div>
+      <div class="d-camera">📱 iPhone 16 Pro</div>
+      <div class="d-setting">Live Photo + Long Exposure · or Halide 1/4s · ProRAW</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🌊</div>
+    <div class="d-content">
+      <div class="d-situation">Waterfall — wide environmental</div>
+      <div class="d-camera">🎥 GoPro 11</div>
+      <div class="d-setting">Linear lens · ISO 100 · 1/2s shutter</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🦅</div>
+    <div class="d-content">
+      <div class="d-situation">Wildlife — moving</div>
+      <div class="d-camera">📷 Canon EOS 300mm</div>
+      <div class="d-setting">Tv · 1/500s · AI Servo AF · Burst mode</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🌲</div>
+    <div class="d-content">
+      <div class="d-situation">Forest canopy / detail</div>
+      <div class="d-camera">📱 iPhone 16 Pro</div>
+      <div class="d-setting">ProRAW · shoot upward · slightly underexpose</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🌅</div>
+    <div class="d-content">
+      <div class="d-situation">Silhouette / dramatic sky</div>
+      <div class="d-camera">📱 iPhone or 📷 Canon</div>
+      <div class="d-setting">Tap sky to meter (iPhone) · Spot meter brightest sky (Canon)</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">⭐</div>
+    <div class="d-content">
+      <div class="d-situation">Star trails — hazy, no moon</div>
+      <div class="d-camera">🎥 GoPro 11</div>
+      <div class="d-setting">Night Lapse Video · 30s · ISO Max 1600 · 4500K · 90 min</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🌙</div>
+    <div class="d-content">
+      <div class="d-situation">Moon lapse</div>
+      <div class="d-camera">🎥 GoPro 11</div>
+      <div class="d-setting">Night Lapse Video · 1/4s–1s · ISO Max 200 · 4000K</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🥾</div>
+    <div class="d-content">
+      <div class="d-situation">Trail walk / hiking</div>
+      <div class="d-camera">🎥 GoPro 11</div>
+      <div class="d-setting">TimeWarp · Auto speed · Linear lens</div>
+    </div>
+  </div>
+
+  <div class="decision-item">
+    <div class="d-icon">🚗</div>
+    <div class="d-content">
+      <div class="d-situation">Driving mountain road</div>
+      <div class="d-camera">🎥 GoPro 11</div>
+      <div class="d-setting">TimeWarp · 5x or Auto · Wide lens</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LIGHT WINDOWS PANEL ══ -->
+<div class="panel" id="panel-light">
+  <p class="section-label">Know the light before you arrive</p>
+
+  <div class="light-window">
+    <div class="lw-dot" style="background:#F5C842"></div>
+    <div class="lw-content">
+      <div class="lw-title">Golden Hour — Morning</div>
+      <div class="lw-time">30 min before → 60 min after sunrise</div>
+      <div class="lw-tags">
+        <span class="lw-tag">Valley mist</span>
+        <span class="lw-tag">Warm ridgeline glow</span>
+        <span class="lw-tag">Long shadows</span>
+        <span class="lw-tag">Dramatic skies</span>
+        <span class="lw-tag">Wildlife active</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="light-window">
+    <div class="lw-dot" style="background:#AAAAAA"></div>
+    <div class="lw-content">
+      <div class="lw-title">Midday</div>
+      <div class="lw-time">10am – 3pm · Harsh and flat in direct sun</div>
+      <div class="lw-tags">
+        <span class="lw-tag">Waterfalls (overcast)</span>
+        <span class="lw-tag">Forest canopy</span>
+        <span class="lw-tag">Macro details</span>
+        <span class="lw-tag">GoPro action</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="light-window">
+    <div class="lw-dot" style="background:#D4724A"></div>
+    <div class="lw-content">
+      <div class="lw-title">Golden Hour — Evening</div>
+      <div class="lw-time">90 min before → 15 min after sunset</div>
+      <div class="lw-tags">
+        <span class="lw-tag">Color drama</span>
+        <span class="lw-tag">Silhouettes</span>
+        <span class="lw-tag">Layered ridgelines</span>
+        <span class="lw-tag">Canon compression</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="light-window">
+    <div class="lw-dot" style="background:#4A5FA0"></div>
+    <div class="lw-content">
+      <div class="lw-title">Blue Hour</div>
+      <div class="lw-time">20 min after sunset</div>
+      <div class="lw-tags">
+        <span class="lw-tag">GoPro Night Lapse setup</span>
+        <span class="lw-tag">Sky transitions</span>
+        <span class="lw-tag">Deep blue tone</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="light-window">
+    <div class="lw-dot" style="background:#C8A84B"></div>
+    <div class="lw-content">
+      <div class="lw-title">Full Dark</div>
+      <div class="lw-time">Post blue hour · No moon = best</div>
+      <div class="lw-tags">
+        <span class="lw-tag">Star trails</span>
+        <span class="lw-tag">Moon lapse</span>
+        <span class="lw-tag">Night Lapse Video</span>
+        <span class="lw-tag">Milky Way</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip-block" style="margin-top:4px">
+    <div class="tip-label">🎯 North Georgia Mist Rule</div>
+    <div class="tip-text">If there's fog in the valleys at morning golden hour — drop everything and shoot it immediately. It burns off fast and it's the most distinctive landscape feature in these mountains.</div>
+  </div>
+</div>
+
+<!-- ══ FIELD RULES PANEL ══ -->
+<div class="panel" id="panel-rules">
+  <p class="section-label">5 principles that don't change</p>
+
+  <div class="rule-item">
+    <div class="rule-num">1</div>
+    <div class="rule-content">
+      <div class="rule-title">Arrive before the light, not with it.</div>
+      <div class="rule-body">The setup window closes fast. Scouting while the light builds is how you catch the shot — not scrambling after it arrives.</div>
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-num">2</div>
+    <div class="rule-content">
+      <div class="rule-title">Change elevation before you change settings.</div>
+      <div class="rule-body">Get low. Get high. The angle is usually the difference between a snapshot and a story. Move your body first.</div>
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-num">3</div>
+    <div class="rule-content">
+      <div class="rule-title">Mist is magic — shoot it immediately.</div>
+      <div class="rule-body">North Georgia valley fog at morning golden hour is the most distinctive feature of these mountains. It burns off in minutes. Drop everything.</div>
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-num">4</div>
+    <div class="rule-content">
+      <div class="rule-title">Shoot RAW on everything you care about.</div>
+      <div class="rule-body">Fix it in post. Don't lose it in the field chasing the perfect in-camera JPEG. Recover latitude is everything in mountain light.</div>
+    </div>
+  </div>
+
+  <div class="rule-item">
+    <div class="rule-num">5</div>
+    <div class="rule-content">
+      <div class="rule-title">GoPro needs a mount at night. No exceptions.</div>
+      <div class="rule-body">Zero movement tolerance in Night Lapse mode. Wind vibration on a loose mount ruins the arc continuity on every single frame. Mount it solid.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROCK ID PANEL ══ -->
+<div class="panel" id="panel-rocks">
+  <p class="section-label">North Georgia Geology & Artifact ID</p>
+
+  <div class="tip-block">
+    <div class="tip-label">📍 What You'll Find</div>
+    <div class="tip-text">Granite, quartz veins, mica schist, feldspar, and metamorphic formations from the ancient Appalachian uplift. These ridges also carry significant Cherokee heritage and pre-Columbian history — keep an eye out.</div>
+  </div>
+
+  <p class="section-label" style="margin-top:16px">How to Shoot for Best ID</p>
+
+  <div class="rock-tip">
+    <div class="rock-tip-title">📐 Fill the Frame</div>
+    <div class="rock-tip-body">Get close and fill the frame with the rock surface. Texture, grain, crystal structure, and layering patterns are the identification clues — don't shoot from distance.</div>
+  </div>
+
+  <div class="rock-tip">
+    <div class="rock-tip-title">📏 Include Scale</div>
+    <div class="rock-tip-body">Always include something for scale — your hand, a coin, or your boot. Size context changes the identification significantly.</div>
+  </div>
+
+  <div class="rock-tip">
+    <div class="rock-tip-title">☀️ Natural Light Only</div>
+    <div class="rock-tip-body">No flash — it flattens the surface and kills the texture detail that makes ID possible. Natural sidelight is ideal to show relief and grain.</div>
+  </div>
+
+  <div class="rock-tip">
+    <div class="rock-tip-title">🔄 Multiple Angles</div>
+    <div class="rock-tip-body">If layering, crystal structure, or color variation is visible, shoot multiple angles. One flat-on photo often isn't enough for a confident read.</div>
+  </div>
+
+  <div class="rock-tip">
+    <div class="rock-tip-title">🪶 Artifact Signals</div>
+    <div class="rock-tip-body">Look for: unusual symmetry, chipped or knapped edges, repeated geometric shape, or tool-like proportions. Cherokee and pre-Columbian artifacts have been found throughout these ridges. Photograph, don't disturb.</div>
+  </div>
+
+  <div class="light-block" style="margin-top:4px">
+    <div class="light-label">💡 How to Use Real-Time ID</div>
+    <div class="light-text">Send the photo in-session. Describe what you're seeing and where you found it. You'll get a read with a confidence level — "almost certainly..." vs "worth investigating further." For anything that looks genuinely significant, I'll tell you exactly who to contact.</div>
+  </div>
+</div>
+
+<script>
+  function showTab(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleCard(card) {
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>

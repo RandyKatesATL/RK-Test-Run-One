@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GoPro Field Guide</title>
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --bg-raised: #171717;
+    --bg-card: #1c1c1c;
+    --line: #333333;
+    --text: #ededed;
+    --text-dim: #9a9a9a;
+    --accent: #d6432c;
+    --accent-dim: #7a2a1f;
+    --mono: 'SF Mono', 'Menlo', monospace;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    padding-bottom: 40px;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 18px 20px 0 20px;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  nav.tabs {
+    display: flex;
+    gap: 4px;
+  }
+
+  nav.tabs button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 0;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+  }
+
+  nav.tabs button.active {
+    color: var(--text);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  main {
+    padding: 16px 16px 0 16px;
+  }
+
+  section.view {
+    display: none;
+  }
+
+  section.view.active {
+    display: block;
+  }
+
+  .section-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 18px 4px 8px 4px;
+  }
+
+  .section-label:first-child {
+    margin-top: 4px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .card-head {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: none;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text);
+    font-family: inherit;
+  }
+
+  .card-head .name {
+    font-size: 15.5px;
+    font-weight: 600;
+  }
+
+  .card-head .quick {
+    font-size: 12px;
+    color: var(--accent);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+
+  .card-head .chev {
+    color: var(--text-dim);
+    font-size: 13px;
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+    margin-left: 10px;
+  }
+
+  .card.open .chev {
+    transform: rotate(180deg);
+  }
+
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+  }
+
+  .card.open .card-body {
+    max-height: 900px;
+  }
+
+  .card-body-inner {
+    padding: 0 16px 16px 16px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13.5px;
+    border-bottom: 1px solid #262626;
+  }
+
+  .row:last-of-type { border-bottom: none; }
+
+  .row .k { color: var(--text-dim); }
+  .row .v { font-family: var(--mono); color: var(--text); text-align: right; }
+
+  .note {
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #cfcfcf;
+    margin-top: 10px;
+  }
+
+  .why {
+    font-size: 12.5px;
+    color: var(--accent);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-top: 8px;
+    margin-right: 4px;
+  }
+
+  footer {
+    text-align: center;
+    color: #555;
+    font-size: 11px;
+    margin-top: 28px;
+    padding: 0 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-row">
+    <h1><span class="dot"></span>GoPro Field Guide</h1>
+  </div>
+  <nav class="tabs">
+    <button class="active" data-tab="scenarios">Scenarios</button>
+    <button data-tab="functions">Functions</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- SCENARIOS -->
+  <section class="view active" id="scenarios">
+
+    <div class="section-label">Riding</div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Trail Ride — flow / singletrack</div>
+          <div class="quick">TimeWarp 15x</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Speed</span><span class="v">15x fixed</span></div>
+        <div class="row"><span class="k">Stabilization</span><span class="v">AutoBoost</span></div>
+        <div class="row"><span class="k">FOV</span><span class="v">Wide</span></div>
+        <div class="row"><span class="k">Resolution</span><span class="v">2.7K · 4:3</span></div>
+        <div class="row"><span class="k">Capture</span><span class="v">QuikCapture</span></div>
+        <p class="note">Repetitive scenery (trees, dirt, trail) compresses fine at higher speed. Run continuous for the whole ride, no stop/start.</p>
+        <div class="why">Why: visual content is repetitive, so faster compression doesn't lose anything worth seeing.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Campus / Mixed Scenic Ride</div>
+          <div class="quick">TimeWarp 10x</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Speed</span><span class="v">10x fixed</span></div>
+        <div class="row"><span class="k">Stabilization</span><span class="v">AutoBoost</span></div>
+        <div class="row"><span class="k">FOV</span><span class="v">Wide</span></div>
+        <div class="row"><span class="k">Resolution</span><span class="v">2.7K · 4:3</span></div>
+        <div class="row"><span class="k">Coverage</span><span class="v">Continuous, whole ride</span></div>
+        <p class="note">Buildings, paths, varied areas need more breathing room per second than open trail. Record more of the ride, not less — partial coverage means missed moments.</p>
+        <div class="why">Why: varied scenery needs lower compression so nothing gets reduced to a blur.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Known / Linear Route (rail trail)</div>
+          <div class="quick">TimeWarp 10x + planned ramps</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Speed</span><span class="v">10x fixed</span></div>
+        <div class="row"><span class="k">Speed Ramp</span><span class="v">Pre-planned, 3–5 spots</span></div>
+        <div class="row"><span class="k">Hold length</span><span class="v">5–8 sec</span></div>
+        <div class="row"><span class="k">Overheat risk</span><span class="v">Low — TimeWarp only</span></div>
+        <p class="note">Since the route is known in advance, scout 3–5 scenic spots ahead of time and plan the taps rather than reacting blind. TimeWarp is light enough to run the whole route without heat issues.</p>
+        <div class="why">Why: a known route removes the guesswork — you can plan instead of react.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Car Windshield</div>
+          <div class="quick">TimeWarp 5–10x</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Mixed roads</span><span class="v">10x</span></div>
+        <div class="row"><span class="k">Highway / scenic stretch</span><span class="v">5x</span></div>
+        <div class="row"><span class="k">Mount</span><span class="v">Dash, vibration-dampened</span></div>
+        <p class="note">Go lower than bike speeds, not higher. Vehicle speed (60–70 mph) already compresses scenery more than biking before TimeWarp factors in. Speed Ramp is your only tool for a "what was that" moment since you can't slow your own pace.</p>
+        <div class="why">Why: higher base speed means less multiplier is needed, not more.</div>
+      </div></div>
+    </div>
+
+    <div class="section-label">Light &amp; Weather</div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Sunset — Light to Dark</div>
+          <div class="quick">Night Lapse · Auto/Auto</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Mode</span><span class="v">Night Lapse</span></div>
+        <div class="row"><span class="k">Shutter</span><span class="v">Auto</span></div>
+        <div class="row"><span class="k">Interval</span><span class="v">Auto</span></div>
+        <div class="row"><span class="k">Start time</span><span class="v">−20 to −30 min</span></div>
+        <div class="row"><span class="k">Run past sunset</span><span class="v">30–45 min</span></div>
+        <div class="row"><span class="k">Mount</span><span class="v">Tripod — required</span></div>
+        <p class="note">Standard Time Lapse can't handle the full brightness swing. Auto/Auto lets shutter and interval both lengthen together as light fades — no manual mid-shoot changes.</p>
+        <div class="why">Why: Night Lapse is built for exactly this transition; standard Time Lapse isn't.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Storm Rolling In</div>
+          <div class="quick">Time Lapse · 1–5 sec interval</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Mode</span><span class="v">Time Lapse (daylight)</span></div>
+        <div class="row"><span class="k">Interval — fast clouds</span><span class="v">1–2 sec</span></div>
+        <div class="row"><span class="k">Interval — slow system</span><span class="v">2–5 sec</span></div>
+        <div class="row"><span class="k">EV Comp</span><span class="v">Slightly negative</span></div>
+        <div class="row"><span class="k">FOV</span><span class="v">Wide</span></div>
+        <div class="row"><span class="k">Mount</span><span class="v">Tripod, secured/weighted</span></div>
+        <p class="note">Negative EV protects highlight detail against huge sky dynamic range. Set a hard personal safety cutoff — capture the approach, not the inside of the storm.</p>
+        <div class="why">Why: faster intervals read roiling cloud motion better than stretched-out ones.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Lightning — Night Storm</div>
+          <div class="quick">Night Lapse Photo · continuous</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Mode</span><span class="v">Night Lapse Photo</span></div>
+        <div class="row"><span class="k">Shutter</span><span class="v">2–5 sec (or Auto)</span></div>
+        <div class="row"><span class="k">ISO min/max</span><span class="v">100 / 100</span></div>
+        <div class="row"><span class="k">Interval</span><span class="v">Auto, continuous</span></div>
+        <p class="note">Locking ISO low underexposes ambient light so a strike doesn't blow out. You're playing odds with continuous shooting, not timing one shot. Composite two frames with different strikes together afterward — legitimate technique.</p>
+        <div class="why">Why: a long open shutter "catches" anything that happens inside it.</div>
+        <span class="tag">If you can hear thunder, you're in range</span>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div>
+          <div class="name">Lightning — Daytime Storm</div>
+          <div class="quick">Video · 120–240fps</div>
+        </div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">Mode</span><span class="v">Normal video</span></div>
+        <div class="row"><span class="k">Frame rate</span><span class="v">120–240fps</span></div>
+        <div class="row"><span class="k">Resolution</span><span class="v">4K+</span></div>
+        <div class="row"><span class="k">Extraction</span><span class="v">Frame grab in Quik, after</span></div>
+        <p class="note">Daylight shutter speeds are too fast for single-photo timing. Continuous high frame rate is the only real workaround — pull the still afterward rather than trying to time the button press.</p>
+        <div class="why">Why: video captures continuously; a photo needs the strike inside one instant.</div>
+        <span class="tag">If you can hear thunder, you're in range</span>
+      </div></div>
+    </div>
+
+  </section>
+
+  <!-- FUNCTIONS -->
+  <section class="view" id="functions">
+
+    <div class="section-label">Speed &amp; Motion</div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">TimeWarp Speed — Auto vs Fixed</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <p class="note"><strong>Auto:</strong> reacts to motion but is a black box — GoPro doesn't publish exactly how it decides. Tends to run near 30x for biking, which compresses too aggressively and causes missed moments.</p>
+        <p class="note"><strong>Fixed (10x/15x):</strong> total predictability — you know exactly what you're getting every time. Trade-off: no automatic adjustment for pace changes.</p>
+        <div class="why">Benefit of fixed: removes guesswork entirely. Cost: none that matters for riding.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">Speed Ramp</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <p class="note">Drops TimeWarp down to real-speed (1x) or half-speed on a tap, then resumes on a second tap. Best triggered by the front Mode button (assign via Settings → Shortcuts) rather than the touchscreen — easier to hit blind while riding.</p>
+        <p class="note">Use opportunistically on unfamiliar trails, planned in advance on known routes. Hold 5–8 sec for scenery, 10–15 sec for something you'll trim down later (bridges, buildings).</p>
+        <div class="why">Benefit: gives a moment real screen time. Cost: requires a physical tap — skip it if riding demands full attention.</div>
+      </div></div>
+    </div>
+
+    <div class="section-label">Image &amp; Stabilization</div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">HyperSmooth — AutoBoost</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <p class="note">Digital stabilization. AutoBoost starts as wide as standard HyperSmooth and only crops in tighter when it detects a rough section — then backs back out. Standard HyperSmooth applies a fixed crop all the time, whether needed or not.</p>
+        <div class="why">Benefit: widest FOV most of the time, extra smoothing exactly when needed. No real cost — always the better pick for biking.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">Resolution — 2.7K vs 4K</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">2.7K (4:3)</span><span class="v">Taller FOV, less drain</span></div>
+        <div class="row"><span class="k">4K (16:9 only)</span><span class="v">More detail, crop room</span></div>
+        <p class="note">4:3 only exists at 2.7K/1440p — 4K forces a wider 16:9 crop, less ideal for POV mounts. 4K also uses more battery/heat/storage.</p>
+        <div class="why">Benefit of 2.7K: better suited to POV mounts, lighter on the camera. Use 4K only for planned shoots needing post-crop flexibility.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">Field of View (FOV)</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <p class="note"><strong>Wide/Superwide:</strong> reads as faster, more immersive — default for riding.</p>
+        <p class="note"><strong>Linear:</strong> more stable, no distortion — better for architecture with strong vertical lines (avoids bent verticals that Wide introduces).</p>
+        <div class="why">Trade-off: Wide feels faster but bends straight lines; Linear is accurate but loses the sense of speed.</div>
+      </div></div>
+    </div>
+
+    <div class="section-label">Night &amp; Timelapse</div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">Night Lapse Interval — 5 sec vs 10 sec</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <div class="row"><span class="k">5 sec</span><span class="v">Smoother, more editable</span></div>
+        <div class="row"><span class="k">10 sec</span><span class="v">More compression, jumpier</span></div>
+        <p class="note">5-sec is the safer default — more captured frames means more room to trim/adjust pacing in post. Reserve 10-sec+ for very slow, still subjects (calm sky, minimal cloud motion) where you're deliberately compressing hours into a short clip.</p>
+        <div class="why">Benefit of 5-sec: real editing flexibility. Cost: more storage, longer real-time shoot for the same output length.</div>
+      </div></div>
+    </div>
+
+    <div class="section-label">Reliability</div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">QuikCapture</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <p class="note">Single button press starts recording immediately from off — no menu navigation, no mode-then-shutter sequence. Run it per-ride, not per-scene.</p>
+        <div class="why">Benefit: removes the "did that actually register" uncertainty — one motion, one button.</div>
+      </div></div>
+    </div>
+
+    <div class="card">
+      <button class="card-head" onclick="toggleCard(this)">
+        <div><div class="name">Confirming It's Recording</div></div>
+        <span class="chev">▾</span>
+      </button>
+      <div class="card-body"><div class="card-body-inner">
+        <p class="note">Beep and front screen exist, but aren't realistic to check mid-ride at speed. Trust QuikCapture — the failure mode is usually a missed press, not a recording error. Do any real check at a natural stop, not while moving.</p>
+        <div class="why">Benefit of trusting it: removes a genuine safety risk (checking a light while riding). Real safety net is a post-ride card check.</div>
+      </div></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>Set it, trust it, ride.</footer>
+
+<script>
+  function toggleCard(btn) {
+    btn.parentElement.classList.toggle('open');
+  }
+
+  document.querySelectorAll('nav.tabs button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('nav.tabs button').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('section.view').forEach(function(s) { s.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
