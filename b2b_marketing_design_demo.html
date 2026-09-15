@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B2B Marketing Materials & Brand Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F0D14;
+    --bg-panel: #17141F;
+    --purple: #9B6BFF;
+    --purple-dim: #5B3FA8;
+    --purple-deep: #2A1F4D;
+    --text: #F3F0FA;
+    --text-dim: #A79FC2;
+    --line: #2B2538;
+    --font-head: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    overflow: hidden;
+  }
+
+  .deck {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6vw 9vw;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .slide.active {
+    display: flex;
+    opacity: 1;
+  }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--purple);
+    letter-spacing: 0.02em;
+    margin-bottom: 1.2rem;
+  }
+
+  h1 {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 5.2vw, 4.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+
+  h2 {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+    line-height: 1.12;
+    margin-bottom: 2.2rem;
+  }
+
+  p.lede {
+    font-size: clamp(1.05rem, 1.4vw, 1.35rem);
+    color: var(--text-dim);
+    max-width: 640px;
+    margin-top: 1.4rem;
+    line-height: 1.55;
+  }
+
+  /* ---- Slide 1: Opening ---- */
+  #slide-1 {
+    background:
+      radial-gradient(ellipse 900px 500px at 15% 20%, var(--purple-deep), transparent 60%),
+      var(--bg);
+  }
+  #slide-1 .mark {
+    width: 46px; height: 46px;
+    border-radius: 3px;
+    background: linear-gradient(135deg, var(--purple), var(--purple-dim));
+    margin-bottom: 2.4rem;
+  }
+  #slide-1 .brand-line {
+    margin-top: 3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+  }
+  #slide-1 .brand-line .divider {
+    width: 28px; height: 1px; background: var(--line);
+  }
+
+  /* ---- Slide 2: Quote ---- */
+  #slide-2 {
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .quote-mark {
+    font-family: var(--font-head);
+    font-size: 5rem;
+    color: var(--purple-dim);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  blockquote {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: clamp(1.9rem, 3.8vw, 3.1rem);
+    line-height: 1.22;
+    max-width: 900px;
+  }
+  .quote-attr {
+    margin-top: 2rem;
+    color: var(--text-dim);
+    font-size: 1.05rem;
+  }
+  .quote-attr::before {
+    content: "";
+    display: inline-block;
+    width: 22px; height: 1px;
+    background: var(--purple);
+    margin-right: 0.7rem;
+    vertical-align: middle;
+  }
+
+  /* ---- Slide 3: Agenda ---- */
+  .agenda-list {
+    display: flex;
+    flex-direction: column;
+    max-width: 720px;
+    margin-top: 1rem;
+  }
+  .agenda-item {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: baseline;
+    gap: 1.4rem;
+    padding: 1.1rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .agenda-item:first-child { border-top: 1px solid var(--line); }
+  .agenda-num {
+    font-family: var(--font-head);
+    color: var(--purple);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .agenda-text {
+    font-family: var(--font-head);
+    font-size: clamp(1.2rem, 1.9vw, 1.55rem);
+    font-weight: 500;
+  }
+
+  /* ---- Principle slides (4 & 5) ---- */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3.5rem;
+    max-width: 1100px;
+    margin-top: 0.5rem;
+  }
+  .principle {
+    border-left: 1px solid var(--line);
+    padding-left: 1.8rem;
+  }
+  .principle h3 {
+    font-family: var(--font-head);
+    font-size: clamp(1.25rem, 2vw, 1.6rem);
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+  }
+  .principle p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* ---- CTA slide ---- */
+  #slide-6 {
+    background:
+      radial-gradient(ellipse 800px 500px at 85% 75%, var(--purple-deep), transparent 60%),
+      var(--bg);
+  }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 2.4rem;
+    padding: 0.95rem 1.9rem;
+    background: var(--purple);
+    color: #17111F;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1.02rem;
+    border-radius: 5px;
+    width: fit-content;
+  }
+
+  /* ---- Contact slide ---- */
+  .contact-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 2.2rem;
+  }
+  .contact-row {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    font-size: 1.1rem;
+  }
+  .contact-label {
+    color: var(--text-dim);
+    width: 110px;
+    font-size: 0.9rem;
+  }
+  .contact-value {
+    font-family: var(--font-head);
+    font-weight: 500;
+  }
+
+  /* ---- Nav controls ---- */
+  .nav {
+    position: fixed;
+    bottom: 2.4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+    z-index: 10;
+  }
+  .nav button {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    color: var(--text);
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease;
+  }
+  .nav button:hover { border-color: var(--purple); }
+  .nav button:disabled { opacity: 0.3; cursor: default; }
+  .nav button:disabled:hover { border-color: var(--line); }
+  .nav .counter {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    min-width: 48px;
+    text-align: center;
+  }
+
+  .progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--purple);
+    transition: width 0.35s ease;
+    z-index: 10;
+  }
+
+  .slide-tag {
+    position: fixed;
+    top: 2.4vh;
+    right: 3vw;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+
+  @media (max-width: 720px) {
+    .principle-grid { grid-template-columns: 1fr; gap: 1.8rem; }
+    .slide { padding: 10vw 7vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="slide-tag">B2B BRAND DESIGN</div>
+
+<div class="deck">
+
+  <!-- Slide 1: Opening -->
+  <section class="slide active" id="slide-1">
+    <div class="mark"></div>
+    <h1>Marketing materials aren't decoration.<br>They're your argument.</h1>
+    <p class="lede">A working session on how B2B brands use design to make their message stick — and their sales process easier.</p>
+    <div class="brand-line">
+      <span>Alpha Growth Group</span>
+      <span class="divider"></span>
+      <span>Brand & Presentation Design</span>
+    </div>
+  </section>
+
+  <!-- Slide 2: Quote -->
+  <section class="slide" id="slide-2">
+    <div class="quote-mark">&ldquo;</div>
+    <blockquote>Design is not just what it looks like. Design is how it works.</blockquote>
+    <div class="quote-attr">Steve Jobs</div>
+  </section>
+
+  <!-- Slide 3: Agenda -->
+  <section class="slide" id="slide-3">
+    <div class="eyebrow">AGENDA</div>
+    <h2>What we're covering</h2>
+    <div class="agenda-list">
+      <div class="agenda-item"><span class="agenda-num">01</span><span class="agenda-text">Why design is a B2B growth lever, not a finishing touch</span></div>
+      <div class="agenda-item"><span class="agenda-num">02</span><span class="agenda-text">Focused message & customer insight — starting from the buyer, not the brand</span></div>
+      <div class="agenda-item"><span class="agenda-num">03</span><span class="agenda-text">Contrast & proximity — the two principles doing most of the work</span></div>
+      <div class="agenda-item"><span class="agenda-num">04</span><span class="agenda-text">Where to start this week</span></div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Principles Part 1 -->
+  <section class="slide" id="slide-4">
+    <div class="eyebrow">DESIGN PRINCIPLES — PART 1</div>
+    <h2>Start with the buyer, not the deck</h2>
+    <div class="principle-grid">
+      <div class="principle">
+        <h3>Focused Message</h3>
+        <p>One slide, one idea. Every extra bullet is a tax on comprehension. If a slide needs a paragraph to explain it, it's two slides wearing a trench coat.</p>
+      </div>
+      <div class="principle">
+        <h3>Customer Insight</h3>
+        <p>Your buyer doesn't care how the product works — they care what breaks if they don't fix it. Build the message from their problem, not your spec sheet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Principles Part 2 -->
+  <section class="slide" id="slide-5">
+    <div class="eyebrow">DESIGN PRINCIPLES — PART 2</div>
+    <h2>The two rules that do the heavy lifting</h2>
+    <div class="principle-grid">
+      <div class="principle">
+        <h3>Contrast</h3>
+        <p>Size, weight, and color aren't decoration — they're a hierarchy. If everything is emphasized, nothing is. Let one element on each slide carry the weight.</p>
+      </div>
+      <div class="principle">
+        <h3>Proximity</h3>
+        <p>Related things sit close together; unrelated things get space. Most "cluttered" decks aren't over-designed — they're just missing this one rule.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6: Call to Action -->
+  <section class="slide" id="slide-6">
+    <div class="eyebrow">NEXT STEP</div>
+    <h1>Audit one deck.<br>Not your whole brand.</h1>
+    <p class="lede">Pick your most-used sales deck. Run it through these four filters — focused message, customer insight, contrast, proximity. Fix what fails first.</p>
+    <div class="cta-btn">Start the audit</div>
+  </section>
+
+  <!-- Slide 7: Contact -->
+  <section class="slide" id="slide-7">
+    <div class="eyebrow">LET'S TALK</div>
+    <h2>Get in touch</h2>
+    <div class="contact-grid">
+      <div class="contact-row"><span class="contact-label">Name</span><span class="contact-value">Randy Kates</span></div>
+      <div class="contact-row"><span class="contact-label">Firm</span><span class="contact-value">Alpha Growth Group</span></div>
+      <div class="contact-row"><span class="contact-label">Email</span><span class="contact-value">[your email]</span></div>
+      <div class="contact-row"><span class="contact-label">LinkedIn</span><span class="contact-value">[your LinkedIn]</span></div>
+    </div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prevBtn" aria-label="Previous slide">&#8592;</button>
+  <span class="counter" id="counter">1 / 7</span>
+  <button id="nextBtn" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const counter = document.getElementById('counter');
+  const progress = document.getElementById('progress');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function showSlide(n) {
+    current = Math.max(0, Math.min(n, total - 1));
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    counter.textContent = (current + 1) + ' / ' + total;
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  prevBtn.addEventListener('click', () => showSlide(current - 1));
+  nextBtn.addEventListener('click', () => showSlide(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') showSlide(current + 1);
+    if (e.key === 'ArrowLeft') showSlide(current - 1);
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>
