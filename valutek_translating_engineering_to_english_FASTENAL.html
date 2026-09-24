@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Valutek | Translating Engineering to English</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f6f4; --card:#ffffff; --ink:#111111; --muted:#5b5b5b; --line:#e2e2de; --soft:#f1f1ee;
+  --blue:#1d77bd; --green:#5aba47; --lgreen:#8ac54a; --yellow:#faa61c; --orange:#f68922; --red:#e2263f; --purple:#843685; --dred:#af1f30;
+  --btn:#111111; --btnink:#ffffff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101112; --card:#1a1b1d; --ink:#f2f2f0; --muted:#a6a6a2; --line:#2c2d30; --soft:#232427;
+    --btn:#f2f2f0; --btnink:#111111;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101112; --card:#1a1b1d; --ink:#f2f2f0; --muted:#a6a6a2; --line:#2c2d30; --soft:#232427;
+  --btn:#f2f2f0; --btnink:#111111;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Montserrat",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.5;-webkit-text-size-adjust:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 18px 48px}
+header{background:#fff;border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;border:1px solid var(--line);position:relative;overflow:hidden}
+header .logo{height:46px;width:auto;display:block;max-width:100%}
+header .title{flex:1;min-width:220px;color:#111}
+header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.01em}
+header p{margin:2px 0 0;font-size:13px;color:#555}
+.strip{display:flex;height:6px;margin:10px 0 0;border-radius:6px;overflow:hidden}
+.strip i{flex:1}
+.big{margin:18px 0 6px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.big div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-top:5px solid var(--c)}
+.big b{display:block;font-size:14px;font-weight:800}
+.big span{font-size:12.5px;color:var(--muted)}
+.lead{margin:16px 2px 10px;font-size:14px;color:var(--muted)}
+.lead strong{color:var(--ink)}
+.grid-head,.row-main{display:grid;grid-template-columns:1.05fr 1.5fr 1.15fr 1.7fr 130px;gap:0}
+.grid-head{padding:0 16px 8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.grid-head div{padding:0 10px}
+.row{background:var(--card);border:1px solid var(--line);border-left:8px solid var(--c);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.row-main{padding:16px;align-items:start}
+.row-main>div{padding:0 10px}
+.k{display:none;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.job b{font-size:16px;font-weight:800;line-height:1.25;display:block}
+.job small{color:var(--muted);font-size:12px}
+.prod .name{font-weight:700;font-size:14.5px;line-height:1.3}
+.prod .meta{font-size:12px;color:var(--muted);margin:3px 0 10px}
+.prod .meta a{color:inherit}
+.eng{font-size:13.5px;color:var(--muted)}
+.eng em{font-style:normal;font-weight:700;color:var(--ink)}
+.eng2{font-size:15px}
+.tag{display:inline-block;background:var(--c);color:var(--tc);font-weight:800;font-size:13px;padding:8px 12px;border-radius:999px;text-align:center;line-height:1.2}
+.pcol{text-align:right}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font:inherit;font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:8px;border:2px solid var(--btn);background:transparent;color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;line-height:1.1}
+.btn.fill{background:var(--btn);color:var(--btnink)}
+.btn.spec{background:var(--orange);border-color:var(--orange);color:#111111}
+.btn:hover{opacity:.85}
+.btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.btn .chev{transition:transform .2s;display:inline-block}
+.btn[aria-expanded="true"] .chev{transform:rotate(180deg)}
+.panel{display:none;border-top:1px solid var(--line);background:var(--soft);padding:18px 22px 20px}
+.panel.open{display:block}
+.panel h3{margin:0 0 10px;font-size:15px;font-weight:800}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.vs>div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.vs .val{border-top:5px solid var(--c)}
+.vs .ul{border-top:5px solid #9a9a95}
+.vs h4{margin:0 0 6px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.vs p{margin:0;font-size:13.5px}
+.vs .pn{font-weight:700}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:16px}
+.panel ul{margin:0;padding-left:18px}
+.panel li{margin:0 0 6px;font-size:14px}
+.panel li::marker{color:var(--c)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.box h4{margin:0 0 4px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.box p{margin:0;font-size:14px}
+.links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.gloss{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px}
+.gloss b{font-weight:800}
+footer{margin-top:20px;font-size:12px;color:var(--muted)}
+@media (max-width:900px){
+  .grid-head{display:none}
+  .row-main{grid-template-columns:1fr;gap:12px;padding:16px 12px}
+  .row-main>div{padding:0}
+  .k{display:block}
+  .pcol{text-align:left;order:-1}
+  .big,.gloss,.vs,.two{grid-template-columns:1fr}
+  header h1{font-size:19px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img class="logo" alt="Valutek" src="data:image/png;base64,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">
+    <div class="title">
+      <h1>Translating Engineering to English</h1>
+      <p>Prepared for the AESC Blythewood conversation: EV battery module repack for BMW</p>
+    </div>
+  </header>
+  <div class="strip" aria-hidden="true">
+    <i style="background:var(--blue)"></i><i style="background:var(--lgreen)"></i><i style="background:var(--green)"></i><i style="background:var(--yellow)"></i><i style="background:var(--orange)"></i><i style="background:var(--red)"></i><i style="background:var(--purple)"></i><i style="background:var(--dred)"></i>
+  </div>
+
+  <div class="big" aria-label="The big idea">
+    <div style="--c:var(--blue)"><b>Keep contamination out</b><span>Tacky Mats at the door</span></div>
+    <div style="--c:var(--green)"><b>Keep contamination off</b><span>Gloves between hands and product</span></div>
+    <div style="--c:var(--orange)"><b>Take contamination off</b><span>Dry and Pre-Sat Wipers on surfaces</span></div>
+  </div>
+  <p class="lead"><strong>Say it this way:</strong> "Keep contamination from getting in, keep contamination from getting on, and take contamination off." Tap <strong>Valutek vs Uline</strong> on any row for the differences, or <strong>Product Specs</strong> for the data sheet.</p>
+
+  <div class="grid-head" aria-hidden="true">
+    <div>The job</div><div>Valutek solution</div><div>Engineering says</div><div>English says</div><div class="pcol">Product</div>
+  </div>
+  <div id="rows"></div>
+
+  <div class="gloss">
+    <div><b>"Class 100"</b> is the old cleanroom label you'll see on Uline listings. It is roughly today's <b>ISO Class 5</b>.</div>
+    <div><b>"LaserSeal"</b> means the wipe edge is sealed with a laser. A cut edge sheds fibers. A sealed edge holds them in.</div>
+  </div>
+  <footer>Fastenal prices are from the 9/24/26 cross reference. Uline pricing is not included, so check the Uline listing for current numbers before quoting.</footer>
+</div>
+
+<script>
+const DATA=[
+{
+  n:1, tag:"Tacky Mats", c:"var(--blue)", tc:"#ffffff",
+  job:"Keep contamination out", jobsub:"At the entrance",
+  name:"Microtek AM5 Mat, 36 x 60, Blue", vt:"VT36604P30L-B",
+  pack:"30 layers per mat, 4 mats per case (120 sheets)", price:"$100.80 per case, about $0.84 per sheet",
+  fast:"924869780", fastUrl:"https://www.fastenal.com/product?query=924869780&fsi=1",
+  spec:"https://www.valutek.com/hubfs/Technical%20Data%20Sheets%20-%202023/Adhesive%20Mats/Valutek%20Adhesive%20Mats.pdf",
+  uline:"Uline H-1571BLU", ulinePack:"Clean Mat Replacement Pad, 36 x 60, Blue. 30 sheets.",
+  ulineUrl:"https://www.uline.com/Product/Detail/H-1571BLU/Cleanroom-Supplies/Clean-Mat-Replacement-Pad-36-x-60-Blue?keywords=H-1571blu",
+  eng:"30-layer tacky mat", en:"A sticky floor mat at the door. Shoes and cart wheels step on it and leave contamination behind. Peel the top sheet when it's dirty.",
+  diffs:[
+    "Built for cleanroom entrances, gowning rooms and workstations, not a general facility mat.",
+    "Every removable layer carries its own adhesive coating that traps particles and stops them from being tracked in.",
+    "One case gives 120 fresh sheets: 4 mats of 30 layers each.",
+    "A matching Valutek mat frame is available if they use one."
+  ],
+  ask:"Where do people and carts enter the controlled area, and how often do you change the sheets?",
+  check:"Confirm what they use today: a loose pad, or a mat in a frame. Then confirm the 36 x 60 size fits."
+},
+{
+  n:2, tag:"Gloves", c:"var(--green)", tc:"#111111",
+  job:"Keep contamination off", jobsub:"At the point of touch",
+  name:"Microtek G5 White Nitrile 12, Small", vt:"VTGNPFB12-SM",
+  pack:"100 per bag, 10 bags per case (1,000 gloves)", price:"$179.85 per case, about $0.18 per glove",
+  fast:"924872257", fastUrl:"https://www.fastenal.com/product?query=924872257&fsi=1",
+  spec:"https://help.valutek.com/hubfs/Technical%20Data%20Sheets%20-%202023/Gloves/VTGNPFB12.pdf",
+  uline:"Uline S-13046S", ulinePack:"Non-Sterile Cleanroom Nitrile Gloves, Small. 100 per bag.",
+  ulineUrl:"https://www.uline.com/Product/Detail/S-13046S/Cleanroom-Gloves/Non-Sterile-Cleanroom-Nitrile-Gloves-Small?keywords=S-13046S+Non-Sterile+Cleanroom+Nitrile+Gloves+-+Small",
+  eng:"Cleanroom nitrile, non-sterile", en:"A clean barrier between hands and product. It keeps skin oils and lint off the module and protects the worker.",
+  diffs:[
+    "Rated by Valutek for ISO 5 to 6 (Class 100 to 1,000) critical environments. The class is published, not implied.",
+    "100% synthetic nitrile. No latex, no fillers, no silicones.",
+    "12-inch cuff, powder-free, with a beaded cuff and textured fingertips for grip and dexterity.",
+    "Packaged in a cleanroom and made in ISO-compliant facilities under Valutek inspection."
+  ],
+  ask:"Who handles the modules, and do you have any complaints on fit, comfort or tears?",
+  check:"The cross reference shows Small only. Get the full size range from the customer before quoting."
+},
+{
+  n:3, tag:"Dry Wipers", c:"var(--orange)", tc:"#111111",
+  job:"Take contamination off", jobsub:"On surfaces and parts",
+  name:"Nanotek W3 PolyKnit LaserSeal, 9 x 9", vt:"VTPNWLS-99",
+  pack:"150 per bag, 8 bags per case (1,200 wipers)", price:"$167.20 per case, about $0.14 per wiper",
+  fast:"924871979", fastUrl:"https://www.fastenal.com/product?query=924871979&fsi=1",
+  spec:"https://help.valutek.com/hubfs/Technical%20Data%20Sheets%20-%202023/Wipers/VTPNWLS.pdf",
+  uline:"Uline S-18512", ulinePack:"Class 100 Cleanroom Wipes, 9 x 9. 150 per pack.",
+  ulineUrl:"https://www.uline.com/Product/Detail/S-18512/Cleanroom-Wipes/Class-100-Cleanroom-Wipes-9-x-9",
+  eng:"PolyKnit, LaserSeal edge", en:"A lint-free wipe. The edges are laser-sealed so the wipe itself doesn't shed loose fibers.",
+  diffs:[
+    "Knit polyester with a laser-sealed edge that holds fibers in place.",
+    "Same 150-count bag and 9 x 9 size as the Uline listing, so it is an easy like-for-like swap.",
+    "Case of 8 bags (1,200 wipers) means fewer reorders.",
+    "Full Valutek technical data sheet is one click away to back up the claim."
+  ],
+  ask:"What are your technicians wiping, and what do they wipe it with today?",
+  check:"Ask what they use with the wipe (alcohol, other solvent, or dry) so you can position Dry vs Pre-Sat."
+},
+{
+  n:4, tag:"Pre-Sat Wipers", c:"var(--red)", tc:"#ffffff",
+  job:"Take contamination off, faster", jobsub:"Wipe and clean in one step",
+  name:"Nanotek PW3 PolyKnit LaserSeal, 70% IPA", vt:"VTPNWLSI70-99",
+  pack:"150 per bag, 2 bags per case (300 wipers)", price:"$98.44 per case, about $0.33 per wiper",
+  fast:"924869986", fastUrl:"https://www.fastenal.com/product?query=924869986&fsi=1",
+  spec:"https://www.valutek.com/hubfs/Technical%20Data%20Sheets%20-%202023/Wipers/VTPNWLSI.pdf",
+  uline:"Uline S-20209", ulinePack:"Class 100 Presaturated Cleanroom Wipes. 30 per pack.",
+  ulineUrl:"https://www.uline.com/Product/Detail/S-20209/Cleanroom-Wipes/Class-100-Presaturated-Cleanroom-Wipes",
+  eng:"Presaturated, 70% isopropyl alcohol", en:"10X the capacity, 60 day saturation guarantee, pre-saturated with 70% alcohol. Easy access and closing benchtop dispensing system.",
+  diffs:[
+    "150 wipes per bag and 300 per case, versus 30 per Uline pack. Fewer packs to open, stock and reorder.",
+    "Resealable pail configuration. Refill bags (VTPNWLSI70R-99) are available for ongoing use.",
+    "Pre-wetted polyester with a laser-sealed edge and a 70% IPA and DI water blend.",
+    "Other IPA strengths are available from Valutek if their process calls for it."
+  ],
+  ask:"Is anyone spraying IPA onto a wipe today, and how much gets wasted?",
+  check:"Confirm IPA strength and any site rules on solvents before you quote."
+}
+];
+
+const rows=document.getElementById('rows');
+DATA.forEach((d,i)=>{
+  const el=document.createElement('div');
+  el.className='row';
+  el.style.setProperty('--c',d.c);
+  el.style.setProperty('--tc',d.tc);
+  el.innerHTML=`
+  <div class="row-main">
+    <div class="job"><div class="k">The job</div><b>${d.n}. ${d.job}</b><small>${d.jobsub}</small></div>
+    <div class="prod">
+      <div class="k">Valutek solution</div>
+      <div class="name">${d.name}</div>
+      <div class="meta">${d.vt} &middot; Fastenal <a href="${d.fastUrl}" target="_blank" rel="noopener">${d.fast}</a><br>${d.pack}<br>${d.price}</div>
+      <div class="btns">
+        <a class="btn spec" href="${d.spec}" target="_blank" rel="noopener">Product Specs &#8599;</a>
+        <button class="btn fill" type="button" aria-expanded="false" aria-controls="p${i}">Valutek vs Uline <span class="chev">&#9662;</span></button>
+      </div>
+    </div>
+    <div class="eng"><div class="k">Engineering says</div><em>${d.eng}</em></div>
+    <div class="eng2"><div class="k">English says</div>${d.en}</div>
+    <div class="pcol"><div class="k">Product</div><span class="tag">${d.n}) ${d.tag}</span></div>
+  </div>
+  <div class="panel" id="p${i}">
+    <h3>Valutek vs Uline: ${d.tag}</h3>
+    <div class="vs">
+      <div class="ul"><h4>Uline</h4><p class="pn">${d.uline}</p><p>${d.ulinePack}</p></div>
+      <div class="val"><h4>Valutek</h4><p class="pn">${d.vt}</p><p>${d.pack}</p></div>
+    </div>
+    <div class="two">
+      <div class="box"><h4>What sets Valutek apart</h4><ul>${d.diffs.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div>
+        <div class="box"><h4>Ask the customer</h4><p>${d.ask}</p></div>
+        <div class="box"><h4>Check before you quote</h4><p>${d.check}</p></div>
+      </div>
+    </div>
+    <div class="links">
+      <a class="btn spec" href="${d.spec}" target="_blank" rel="noopener">Valutek Specs &#8599;</a>
+      <a class="btn" href="${d.ulineUrl}" target="_blank" rel="noopener">Uline Listing &#8599;</a>
+      <a class="btn" href="${d.fastUrl}" target="_blank" rel="noopener">Fastenal Item ${d.fast} &#8599;</a>
+    </div>
+  </div>`;
+  rows.appendChild(el);
+});
+
+rows.addEventListener('click',e=>{
+  const b=e.target.closest('button[aria-expanded]');
+  if(!b) return;
+  const open=b.getAttribute('aria-expanded')==='true';
+  rows.querySelectorAll('button[aria-expanded]').forEach(x=>{
+    x.setAttribute('aria-expanded','false');
+    document.getElementById(x.getAttribute('aria-controls')).classList.remove('open');
+  });
+  if(!open){
+    b.setAttribute('aria-expanded','true');
+    document.getElementById(b.getAttribute('aria-controls')).classList.add('open');
+  }
+});
+</script>
+</body>
+</html>
