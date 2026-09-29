@@ -157,6 +157,7 @@
   <button data-tab="scenario" class="active"><span class="ic">🎬</span><span class="lb">Scenario</span></button>
   <button data-tab="function"><span class="ic">⚙️</span><span class="lb">Function</span></button>
   <button data-tab="trouble"><span class="ic">🛠️</span><span class="lb">Troubleshoot</span></button>
+  <button data-tab="compress"><span class="ic">🗜️</span><span class="lb">Compress</span></button>
   <button data-tab="resources"><span class="ic">🎥</span><span class="lb">Videos</span></button>
 </nav>
 
@@ -911,6 +912,118 @@ const RESOURCES = [
 
 /* ========================================================================= */
 
+
+/* -------------------------------------------------------------------------
+   COMPRESSION (Shutter Encoder x GoPro)
+   Uses `gorder` (group order) and `order` (card order) so the bitrate ladder
+   and workflow stay in logical sequence instead of alphabetical.
+   ------------------------------------------------------------------------- */
+const COMPRESSION = [
+  {
+    id: "cmp-gopro-scenarios", group: "1 \u00b7 GoPro Camera Settings", gorder: 1, order: 1,
+    emoji: "\ud83c\udfa5", title: "GoPro Settings by Scenario",
+    subtitle: "Start at the source \u2014 the biggest lever you have",
+    tags: ["GoPro 11", "Resolution", "Frame Rate", "Bitrate"],
+    settings: [
+      {k:"Default Everyday", v:"4K / 30fps / Standard \u2014 best all-around: YouTube, PC, mobile", crit:true},
+      {k:"Maximum Quality", v:"5.3K / 24fps / High \u2014 large screen display, serious editing"},
+      {k:"Slow Motion", v:"4K / 60fps / Standard \u2014 editing flexibility, smooth motion"},
+      {k:"Intentional Slow Mo", v:"1080p / 120fps+ / Standard \u2014 dedicated slow-mo clips only"},
+      {k:"Casual / Fun", v:"1080p / 30fps / Standard \u2014 social, quick shares, nothing critical"},
+      {k:"Cinematic Scenic", v:"4K / 24fps / Standard \u2014 landscape, travel, non-action footage"}
+    ],
+    tips: [
+      "Set 4K/30/Standard as the default and only upgrade intentionally.",
+      "Don\u2019t leave bitrate on High by default \u2014 Standard covers ~95% of uses and cuts card usage dramatically.",
+      "Don\u2019t leave 120fps+ on by default \u2014 file sizes explode. Reserve it for intentional slow motion."
+    ],
+    seeAlso: [{label:"Compression rules \u2192", target:"cmp-rules"}]
+  },
+  {
+    id: "cmp-gopro-filesize", group: "1 \u00b7 GoPro Camera Settings", gorder: 1, order: 2,
+    emoji: "\ud83d\udcbe", title: "GoPro File Size per Minute",
+    subtitle: "Card and storage planning",
+    tags: ["GoPro 11", "Storage"],
+    settings: [
+      {k:"5.3K / 60fps / High", v:"~1.5 GB per min"},
+      {k:"4K / 60fps / High", v:"~1.0 GB per min"},
+      {k:"4K / 30fps / Standard", v:"~400 MB per min", crit:true},
+      {k:"2.7K / 30fps / Standard", v:"~250 MB per min"},
+      {k:"1080p / 30fps / Standard", v:"~130 MB per min"}
+    ],
+    tips: [
+      "4K/30/Standard is roughly a quarter of the size of 5.3K/60/High \u2014 and for most viewing nobody can tell the difference."
+    ]
+  },
+  {
+    id: "cmp-se-bitrate", group: "2 \u00b7 Shutter Encoder", gorder: 2, order: 1,
+    emoji: "\ud83c\udfaf", title: "Bitrate by Destination",
+    subtitle: "Match compression to where the clip is going",
+    tags: ["Shutter Encoder", "H.265", "VBR", "Max Quality"],
+    settings: [
+      {k:"60\u2033 Monitor / Client Facing", v:"Video 10,000\u201312,000 kb/s \u00b7 Audio 256 \u00b7 ~40\u201350% smaller"},
+      {k:"Balanced (large screen + mobile)", v:"Video 8,000 kb/s \u00b7 Audio 256 \u00b7 ~60\u201370% smaller", crit:true},
+      {k:"PC and Mobile Primary", v:"Video 6,000 kb/s \u00b7 Audio 128 \u00b7 ~65\u201375% smaller"},
+      {k:"Mobile / Social Only", v:"Video 4,000 kb/s \u00b7 Audio 128 \u00b7 ~75\u201380% smaller"},
+      {k:"Hard Limit (under 5MB)", v:"Video 2,000 kb/s \u00b7 Audio 128 \u00b7 ~85\u201390% smaller"}
+    ],
+    tips: [
+      "VBR = On and Max Quality = On for every row above.",
+      "A clip headed for a 60\u2033 client screen needs 10\u201312k. The same clip on a phone needs 4\u20136k. One universal setting is the common mistake.",
+      "Multiple destinations? Compress separately from the original for each one \u2014 never compress a compressed file."
+    ]
+  },
+  {
+    id: "cmp-se-base", group: "2 \u00b7 Shutter Encoder", gorder: 2, order: 2,
+    emoji: "\ud83d\udd27", title: "Shutter Encoder Base Settings",
+    subtitle: "Same on every preset \u2014 only bitrate changes",
+    tags: ["Shutter Encoder", "H.265"],
+    settings: [
+      {k:"Function", v:"H.265", crit:true},
+      {k:"Output", v:".mp4"},
+      {k:"Scale", v:"Source \u2014 keep at Source for large screens", crit:true},
+      {k:"VBR", v:"On"},
+      {k:"Max Quality", v:"On"},
+      {k:"Frame Rate", v:"Never change it", crit:true}
+    ],
+    tips: [
+      "H.264 to H.265 is the most efficient quality-preserving move available: 50\u201370% smaller with virtually no visible loss. If you do nothing else, do this."
+    ]
+  },
+  {
+    id: "cmp-rules", group: "3 \u00b7 Rules & Workflow", gorder: 3, order: 1,
+    emoji: "\ud83d\udeab", title: "The Non-Negotiable Rules",
+    subtitle: "Break these and quality can\u2019t be recovered",
+    tags: ["Rules", "Quality"],
+    settings: [
+      {k:"Compress once, from the original", v:"Double compression creates blocky artifacts, soft edges, color banding \u2014 brutal on action footage", crit:true},
+      {k:"Never change frame rate", v:"Altering it in Shutter Encoder causes choppy, unwatchable playback", crit:true},
+      {k:"Keep Scale at Source (large screens)", v:"Downscaling shows as softness on a 60\u2033 monitor"},
+      {k:"Don\u2019t default GoPro to High bitrate", v:"Standard is enough for ~95% of uses and saves card space"},
+      {k:"Don\u2019t default to 120fps+", v:"File sizes explode \u2014 intentional slow-mo only"}
+    ],
+    warning: "<b>Protect your originals.</b> Never delete or overwrite raw GoPro files. Storage is cheap; re-compressing a compressed file is a quality trap you can never undo. Archive the originals and always compress from source.",
+    seeAlso: [{label:"Bitrate by Destination \u2192", target:"cmp-se-bitrate"}]
+  },
+  {
+    id: "cmp-workflow", group: "3 \u00b7 Rules & Workflow", gorder: 3, order: 2,
+    emoji: "\u2705", title: "Default Workflow (One Pass)",
+    subtitle: "Covers large screen, PC, and mobile in a single output",
+    tags: ["Workflow", "H.265", "Default"],
+    settings: [
+      {k:"1 \u00b7 Shoot", v:"GoPro at 4K / 30fps / Standard", crit:true},
+      {k:"2 \u00b7 Encode", v:"Shutter Encoder: H.265 / 8,000 kb/s / VBR On / Max Quality On", crit:true},
+      {k:"3 \u00b7 Result", v:"One clean file, 60\u201370% smaller than the original"},
+      {k:"4 \u00b7 Archive", v:"Keep the raw GoPro original untouched"}
+    ],
+    tips: [
+      "Only go to 10\u201312k kb/s when the destination is a 60\u2033 screen or client-facing. Drop to 4\u20136k for phone-only.",
+      "Upgrade GoPro settings (5.3K, 60fps, High) intentionally, not by default."
+    ],
+    seeAlso: [{label:"GoPro Settings by Scenario \u2192", target:"cmp-gopro-scenarios"}]
+  }
+];
+
 let activeTab = "scenario";
 
 function cardTemplate(item, kind){
@@ -1012,6 +1125,18 @@ function render(){
     if (!items.length){ html = emptyState(); }
     else { html = items.slice().sort(byTitle).map(i=>cardTemplate(i)).join(""); }
   }
+  else if (activeTab === "compress"){
+    const items = COMPRESSION.filter(matches);
+    if (!items.length){ html = emptyState(); }
+    else {
+      const byGroup = {};
+      items.forEach(i=>{ (byGroup[i.group] = byGroup[i.group]||[]).push(i); });
+      Object.keys(byGroup).sort((a,b)=>byGroup[a][0].gorder-byGroup[b][0].gorder).forEach(g=>{
+        html += `<div class="group-label">${g}</div>`;
+        html += byGroup[g].slice().sort((a,b)=>a.order-b.order).map(i=>cardTemplate(i)).join("");
+      });
+    }
+  }
   else if (activeTab === "resources"){
     const items = RESOURCES.filter(matches);
     if (!items.length){ html = emptyState("No videos added yet \u2014 send the list and they\u2019ll show up here."); }
@@ -1057,6 +1182,7 @@ document.getElementById("main").addEventListener("click", (e)=>{
     if (SCENARIOS.find(s=>s.id===targetId)) targetTab = "scenario";
     else if (FUNCTIONS.find(f=>f.id===targetId)) targetTab = "function";
     else if (TROUBLESHOOTING.find(t=>t.id===targetId)) targetTab = "trouble";
+    else if (COMPRESSION.find(c=>c.id===targetId)) targetTab = "compress";
     else if (RESOURCES.find(r=>r.id===targetId)) targetTab = "resources";
     if (targetTab && targetTab !== activeTab){
       activeTab = targetTab;
