@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiper Comparison Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: header band + tab bar; Compare tab = summary, product cards, then a three-level table; product tabs = key facts + accordion of the full data sheet. */
+:root{
+  --navy:#0B2545;
+  --blue:#1F5FA8;
+  --blue-tint:#E8F0FA;
+  --grey-900:#27303B;
+  --grey-600:#5B6675;
+  --grey-300:#C9D1DB;
+  --grey-100:#F3F5F8;
+  --white:#FFFFFF;
+  --orange:#C2410C;
+  --orange-bright:#F97316;
+  --orange-tint:#FFF1E6;
+  --display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow",Arial,Helvetica,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--grey-100);color:var(--grey-900);font-family:var(--body);font-size:16px;line-height:1.5}
+a{color:var(--orange);font-weight:600;text-underline-offset:3px}
+a:hover{color:#9A3412}
+:focus-visible{outline:3px solid var(--orange-bright);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);color:var(--navy);margin:0;text-wrap:balance;line-height:1.15}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* header */
+.top{background:var(--navy);color:var(--white);padding:26px 0 0}
+.top .eyebrow{font-family:var(--display);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:#F9B27C}
+.top h1{color:var(--white);font-size:clamp(26px,4.2vw,40px);font-weight:700;margin-top:4px}
+.top p{margin:8px 0 0;color:#C7D5E8;max-width:70ch}
+.tabs{display:flex;gap:4px;margin-top:22px;overflow-x:auto}
+.tab{appearance:none;border:0;background:transparent;color:#C7D5E8;font-family:var(--display);font-weight:600;font-size:17px;padding:12px 18px;border-radius:8px 8px 0 0;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block}
+.tab small{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:#9FB4D0}
+.tab:hover{background:#163762;color:var(--white)}
+.tab[aria-selected="true"]{background:var(--grey-100);color:var(--navy)}
+.tab[aria-selected="true"] small{color:var(--grey-600)}
+
+main{padding:28px 0 56px}
+section.block{margin-bottom:30px}
+.lede{color:var(--grey-600);margin:6px 0 14px;max-width:75ch}
+
+/* summary */
+.lead-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.lead-card{background:var(--white);border:1px solid var(--grey-300);border-radius:10px;padding:18px 20px}
+.lead-card.v{border-top:5px solid var(--blue)}
+.lead-card.t{border-top:5px solid var(--grey-600)}
+.lead-card h3{font-size:20px;margin-bottom:10px}
+.lead-card ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.lead-card li{padding-left:18px;position:relative}
+.lead-card li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;border-radius:2px;background:var(--orange-bright)}
+.lead-card.t li::before{background:var(--grey-300)}
+.key{color:var(--orange);font-weight:700}
+
+/* product cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.pcard{background:var(--white);border:1px solid var(--grey-300);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.pcard.v{border-top:5px solid var(--blue)}
+.pcard.t{border-top:5px solid var(--grey-600)}
+.tag{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 9px;border-radius:99px;align-self:flex-start}
+.tag.v{background:var(--blue-tint);color:var(--blue)}
+.tag.t{background:var(--grey-100);color:var(--grey-600);border:1px solid var(--grey-300)}
+.pcard h3{font-size:22px}
+.pcard .big{font-family:var(--display);font-weight:700;font-size:34px;color:var(--orange);line-height:1}
+.pcard .big small{display:block;font-family:var(--body);font-size:13px;font-weight:500;color:var(--grey-600);margin-top:4px}
+.pcard .meta{color:var(--grey-600);font-size:15px;margin:0}
+.pcard .go{margin-top:auto;padding-top:6px}
+
+/* segmented control */
+.seg{display:inline-flex;background:var(--white);border:1px solid var(--grey-300);border-radius:10px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{appearance:none;border:0;background:transparent;font-family:var(--display);font-weight:600;font-size:16px;color:var(--grey-600);padding:8px 16px;border-radius:7px;cursor:pointer}
+.seg button:hover{background:var(--grey-100)}
+.seg button[aria-pressed="true"]{background:var(--blue);color:var(--white)}
+
+/* comparison table */
+.tablewrap{overflow-x:auto;background:var(--white);border:1px solid var(--grey-300);border-radius:10px;margin-top:14px}
+table{border-collapse:collapse;width:100%;min-width:760px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:11px 14px;vertical-align:top;border-bottom:1px solid var(--grey-100)}
+thead th{font-family:var(--display);font-size:16px;color:var(--navy);background:var(--white);border-bottom:2px solid var(--grey-300);position:relative}
+thead th.v{border-top:4px solid var(--blue)}
+thead th.t{border-top:4px solid var(--grey-600)}
+thead th span{display:block;font-family:var(--body);font-weight:500;font-size:12px;color:var(--grey-600)}
+tbody th{font-weight:600;color:var(--navy);width:19%;background:var(--grey-100)}
+tbody tr.row:hover td,tbody tr.row:hover th{background:var(--blue-tint)}
+.rowbtn{appearance:none;border:0;background:none;padding:0;font:inherit;font-weight:600;color:var(--navy);cursor:pointer;display:flex;gap:8px;align-items:flex-start;text-align:left}
+.rowbtn::before{content:"";flex:none;margin-top:.5em;border-left:6px solid var(--orange-bright);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+.rowbtn[aria-expanded="true"]::before{transform:rotate(90deg)}
+tr.note td{background:var(--orange-tint);border-bottom:1px solid #F6D2B5;color:var(--grey-900)}
+tr.note td div{max-width:90ch}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.pill.v{background:var(--blue);color:var(--white)}
+.pill.t{background:var(--grey-600);color:var(--white)}
+.pill.e{border:1px solid var(--grey-300);color:var(--grey-600);background:var(--white)}
+.pill.g{border:1px dashed var(--orange);color:var(--orange);background:var(--white)}
+.hint{font-size:14px;color:var(--grey-600);margin:10px 2px 0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:14px;color:var(--grey-600)}
+
+/* product page */
+.phead{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.phead h2{font-size:clamp(24px,3.4vw,34px)}
+.phead p{margin:4px 0 0;color:var(--grey-600)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.tile{background:var(--white);border:1px solid var(--grey-300);border-left:5px solid var(--orange-bright);border-radius:8px;padding:12px 14px}
+.tile .n{font-family:var(--display);font-weight:700;font-size:26px;color:var(--orange);line-height:1.1}
+.tile .l{font-size:13px;color:var(--grey-600);margin-top:2px}
+details.acc{background:var(--white);border:1px solid var(--grey-300);border-radius:10px;margin-bottom:10px}
+details.acc>summary{cursor:pointer;list-style:none;padding:14px 18px;font-family:var(--display);font-weight:600;font-size:19px;color:var(--navy);display:flex;align-items:center;gap:10px}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary::before{content:"";flex:none;border-left:7px solid var(--orange-bright);border-top:5px solid transparent;border-bottom:5px solid transparent;transition:transform .15s}
+details.acc[open]>summary::before{transform:rotate(90deg)}
+details.acc[open]>summary{border-bottom:1px solid var(--grey-100)}
+.acc .body{padding:14px 18px 18px}
+.acc .body p{margin:0 0 10px;max-width:80ch}
+.acc .body ul{margin:0 0 8px;padding-left:20px;max-width:80ch}
+.acc .body li{margin-bottom:6px}
+.acc .body h4{font-family:var(--display);font-size:16px;color:var(--blue);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.04em}
+.acc .tablewrap{margin-top:6px}
+.acc table{min-width:560px}
+.acc thead th{background:var(--grey-100)}
+.acc tbody th{width:auto;background:transparent;font-weight:500;color:var(--grey-900)}
+tr.hl td,tr.hl th{background:var(--orange-tint)!important;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--blue-tint);color:var(--navy);padding:3px 12px;border-radius:99px;font-size:14px}
+.sub{font-weight:600;background:var(--grey-100)}
+.foot{margin-top:34px;padding:18px 20px;background:var(--navy);color:#C7D5E8;border-radius:10px;font-size:15px}
+.foot b{color:var(--white)}
+.foot a{color:#F9B27C}
+.back{display:inline-block;margin-bottom:12px}
+
+@media (max-width:820px){
+  .lead-grid,.cards{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .rowbtn::before,details.acc>summary::before{transition:none}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Distributor Sales Guide</div>
+    <h1>Pre-Saturated IPA Wipers: Valutek vs Texwipe</h1>
+    <p>See the differences in under a minute, then click down into the full technical data for each product.</p>
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <a class="tab" role="tab" href="#compare" id="tab-compare">Compare<small>All three side by side</small></a>
+      <a class="tab" role="tab" href="#texwipe" id="tab-texwipe">Texwipe TX1051<small>Competitor</small></a>
+      <a class="tab" role="tab" href="#vtsntri" id="tab-vtsntri">Valutek VTSNTRI<small>Spunlace</small></a>
+      <a class="tab" role="tab" href="#vtpnwsi" id="tab-vtpnwsi">Valutek VTPNWSI<small>Polyester</small></a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap" id="view" tabindex="-1"></div>
+</main>
+
+<script>
+/* ---------- helpers ---------- */
+const K = t => '<b class="key">' + t + '</b>';
+const EDGE = {v:['v','Valutek'], t:['t','Texwipe'], e:['e','Even'], g:['g','Data gap']};
+const pill = e => e ? '<span class="pill ' + EDGE[e][0] + '">' + EDGE[e][1] + '</span>' : '';
+const dt = (heads, rows, hlIndex) =>
+  '<div class="tablewrap"><table><thead><tr>' + heads.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' +
+  rows.map((r, i) => '<tr' + (i === hlIndex ? ' class="hl"' : '') + '>' + r.map((c, j) => (j === 0 ? '<th scope="row">' : '<td>') + c + (j === 0 ? '</th>' : '</td>')).join('') + '</tr>').join('') +
+  '</tbody></table></div>';
+const ul = items => '<ul>' + items.map(i => '<li>' + i + '</li>').join('') + '</ul>';
+
+/* ---------- comparison data ---------- */
+const COMPARE = {
+  glance: [
+    {a:'Substrate', t:'100% melt-blown polypropylene', s:'55% cellulose / 45% polyester spunlace, no chemical binders', p:'100% continuous filament, double-knit polyester',
+     n:'Three different materials. Texwipe is a soft, light polypropylene. VTSNTRI is a hydro-entangled blend. VTPNWSI is a heavy knit polyester built for abrasion resistance.'},
+    {a:'Cleanroom rating', t:'ISO 5-8 (Class 100 to 100,000)', s:K('ISO 3-4 (Class 1-10)'), p:K('ISO 3-4 (Class 1-10)'), e:'v',
+     n:'Both Valutek wipers are recommended for Class 1-10 critical environments as part of the Nanotek family. The Texwipe sheet lists ISO 5-8, Class 100 to 100,000 and EU Grade B to D.'},
+    {a:'Wiper size', t:'9" x 11" (23 x 28 cm)', s:'9" x 9" (23 x 23 cm)', p:'9" x 9" (23 x 23 cm)', e:'t',
+     n:'The Texwipe wiper is about 18% larger by area (99 sq in vs 81 sq in). Factor that into any cost-per-wipe or cost-per-use conversation.'},
+    {a:'IPA / DI water blends', t:'70/30 only', s:K('5 blends') + ': 6, 10, 70, 90, 99', p:K('7 blends') + ': 5, 10, 50, 70, 90, 99, 100', e:'v',
+     n:'Valutek lets a customer match the blend to the job, including lower-flammability blends. TX1051 is fixed at 70% IPA / 30% DI water. A direct comparison is the 70/30 part number on each Valutek wiper.'},
+    {a:'Solution purity', t:'0.2 &micro;m filtered 70% IPA / 30% DIW; USP grade IPA', s:K('99.99% VLSI-grade IPA') + ' with 18 megohm DI water', p:K('99.99% VLSI-grade IPA') + ' with 18 megohm DI water', e:'v',
+     n:'Texwipe states 0.2 micron filtration and, in its notes, USP grade IPA for the non-sterile parts. Valutek states VLSI-grade IPA and 18 megohm DI water, described as "unmatched assayed purity."'},
+    {a:'Packaging and case count', t:'50 per flexpack, 24 flexpacks = 1,200 per case', s:'Pail: 75 per bag x 2 = 150 per case. Refill: 75 per bag x 18 = 1,350 per case', p:'Pail: 150 per bag x 2 = 300 per case. Refill: 600 per case (1,200 for 90 and 100% IPA)', e:'v',
+     n:'Valutek offers a reusable pail and a lower-cost refill pack for every blend. Texwipe TX1051 ships in a flexpack. The Texwipe family also includes bags with a reclosable container (TX8727).'},
+    {a:'Data basis', t:'Typical values', s:'Upper / lower specification limits', p:'Upper / lower specification limits', e:'v',
+     n:'Valutek lists limits, with lot-specific Certificates of Analysis and 36-month lot trend analysis available on request. Texwipe states that its table represents typical analyses.'}
+  ],
+  tech: [
+    {a:'Basis weight', t:'34 g/m2', s:'68 &plusmn; 3 g/m2', p:'135 &plusmn; 5 g/m2', e:'v',
+     n:'Heavier fabric means more body and durability in use. Valutek tested to TAPPI T-410. Texwipe tested to IEST-RP-CC004.3.'},
+    {a:'Edge', t:'Cut edge', s:'Cold knife cut edge', p:'Cold knife cut edge', e:'v'},
+    {a:'Abrasion and durability', t:'Soft; "will not easily snag or abrade" on abrasive surfaces', s:'Not stated', p:K('High abrasion resistance'), e:'v',
+     n:'Texwipe positions PolySat as gentle on sensitive and abrasive surfaces. Valutek positions VTPNWSI as the durable option.'},
+    {a:'Chemical binders', t:'Not stated', s:K('None'), p:'Not applicable (continuous filament)', e:'v'},
+    {a:'Where it is made', t:'Cleanroom manufactured (Made in USA)', s:'Mixed and cleanroom vacuum sealed under documented inspection and process control', p:K('Assembled in a Class 10 cleanroom'), e:'v'},
+    {a:'Package protection', t:'Reclosable flexpack, bags and tubs; peel-and-reseal', s:'Double poly bags, vacuum sealed, flat packed in carton with liner', p:'Double poly bags, vacuum sealed, flat packed in carton with liner', e:'e',
+     n:'Texwipe emphasizes reclosable packaging to preserve wetness after opening. Valutek emphasizes double bagging and vacuum sealing before opening.'},
+    {a:'Traceability', t:'Individually lot coded', s:'Lot traceable; retention samples held ' + K('36 months'), p:'Lot traceable; retention samples held ' + K('36 months'), e:'v'},
+    {a:'Shelf life', t:'3 years from date of manufacture', s:'Not stated', p:'Not stated', e:'t'},
+    {a:'Sterile versions', t:'Yes, in the PolySat family (TX3213, TX3216)', s:'Not listed', p:'Not listed', e:'t',
+     n:'TX1051 itself is non-sterile. Sterile PolySat is gamma irradiated to SAL 10^-6. If a customer needs sterile, this is a gap.'},
+    {a:'Regulatory notes', t:'Meets USP &lt;797&gt; and &lt;800&gt; wiper requirements. NSF rated (A1) for TX8723 only', s:'Not stated', p:'Not stated', e:'t'}
+  ],
+  perf: [
+    {a:'Liquid particles &ge;0.5 &micro;m', t:'13 x 10^6 /m2', s:'Not reported (airborne count, see below)', p:K('&lt;11 x 10^6 /m2'), e:'v',
+     n:'A modest edge. Texwipe reports a typical value; Valutek lists a limit below it. The gap is small, so position it as "at or better than," not "far better."'},
+    {a:'Airborne particles &ge;0.5 &micro;m', t:'Not reported', s:'&lt;1,200 counts/ft3', p:'Not reported', e:'g',
+     n:'VTSNTRI reports an airborne particle count (APC). That is a different test from the liquid particle count Texwipe reports, so the two cannot be compared directly.'},
+    {a:'Fibers &gt;100 &micro;m', t:'4,500 /m2', s:'Not reported', p:'Not reported', e:'g',
+     n:'Texwipe reports fibers per ASTM E2090-12. Neither Valutek sheet lists a fiber count. Ask Valutek for lot data if a customer raises it.'},
+    {a:'NVR, IPA extractant', t:'0.001 g/m2', s:'Not reported', p:'0.1 g/m2', e:'t',
+     n:'Texwipe\'s typical value is well below the Valutek limit. Valutek lists a specification limit, so actual lot results on the Certificate of Analysis are likely lower. Request lot CoA data before this comes up.'},
+    {a:'NVR, DI water extractant', t:'0.005 g/m2', s:'Not reported', p:'0.02 g/m2', e:'t',
+     n:'Same caveat as the IPA extractant row: typical value vs specification limit.'},
+    {a:'Sodium (Na+)', t:'0.3 ppm', s:'Not reported', p:K('&lt;0.2 ppm'), e:'v'},
+    {a:'Potassium (K+)', t:'0.2 ppm', s:'Not reported', p:'&lt;0.2 ppm', e:'e'},
+    {a:'Chloride (Cl-)', t:'0.15 ppm', s:'Not reported', p:'&lt;0.2 ppm', e:'t',
+     n:'Texwipe\'s typical chloride value sits below the Valutek limit.'},
+    {a:'Ion panel breadth', t:'3 ions reported', s:'None reported', p:K('12 ions reported'), e:'v',
+     n:'VTPNWSI reports Na, K, Ca, Mg, NH4, NO3, F, NO2, Br, PO4, Cl and SO4. Texwipe reports Na, K and Cl.'},
+    {a:'Sorptive capacity', t:'360 mL/m2', s:'&ge;315 mL/m2', p:'310 mL/m2', e:'t',
+     n:'Texwipe absorbs more per square meter, and its wiper is larger. By a simple calculation, roughly 23 mL per TX1051 wiper vs about 16 mL per 9" x 9" Valutek wiper. Calculated from the data sheets, not a published figure.'},
+    {a:'Sorptive rate', t:'&lt;0.3 sec', s:'&le;0.8 sec', p:'&lt;1 sec', e:'t'},
+    {a:'Sorptive efficiency', t:'Not reported', s:'4.2 mL/g', p:'2 mL/g'}
+  ]
+};
+const VIEWS = {glance:'At a glance', tech:'Technology', perf:'Performance'};
+let cmpView = 'glance';
+
+function compareTable(key){
+  const rows = COMPARE[key];
+  let h = '<div class="tablewrap"><table><thead><tr>' +
+    '<th>Attribute</th>' +
+    '<th class="t">Texwipe TX1051<span>Competitor</span></th>' +
+    '<th class="v">Valutek VTSNTRI<span>Spunlace</span></th>' +
+    '<th class="v">Valutek VTPNWSI<span>Polyester</span></th>' +
+    '<th>Edge</th></tr></thead><tbody>';
+  rows.forEach((r, i) => {
+    const id = 'n-' + key + '-' + i;
+    const head = r.n
+      ? '<button class="rowbtn" aria-expanded="false" aria-controls="' + id + '" data-note="' + id + '">' + r.a + '</button>'
+      : r.a;
+    h += '<tr class="row"><th scope="row">' + head + '</th><td>' + r.t + '</td><td>' + r.s + '</td><td>' + r.p + '</td><td>' + pill(r.e) + '</td></tr>';
+    if (r.n) h += '<tr class="note" id="' + id + '" hidden><td colspan="5"><div>' + r.n + '</div></td></tr>';
+  });
+  return h + '</tbody></table></div>';
+}
+
+function renderCompare(){
+  return `
+  <section class="block">
+    <h2>The short version</h2>
+    <p class="lede">Lead with class rating, purity and flexibility. Be ready on absorbency and residue.</p>
+    <div class="lead-grid">
+      <div class="lead-card v">
+        <h3>Where Valutek leads</h3>
+        <ul>
+          <li>Cleanroom rating of ${K('ISO 3-4')} vs ISO 5-8 for the Texwipe wiper</li>
+          <li>Specification limits backed by lot CoAs and ${K('36-month')} trend data</li>
+          <li>${K('5 to 7')} IPA blends vs a single 70/30 option</li>
+          <li>VLSI-grade IPA with 18 megohm DI water</li>
+          <li>${K('12-ion')} panel on VTPNWSI vs 3 ions on PolySat</li>
+          <li>Reusable pail and refill pack formats</li>
+        </ul>
+      </div>
+      <div class="lead-card t">
+        <h3>Where Texwipe leads</h3>
+        <ul>
+          <li>Higher sorptive capacity (360 mL/m2) and faster rate (&lt;0.3 sec)</li>
+          <li>Lower reported residue: 0.001 g/m2 NVR in IPA</li>
+          <li>A larger 9" x 11" wiper</li>
+          <li>Sterile versions in the PolySat family, plus USP &lt;797&gt;/&lt;800&gt; claims</li>
+          <li>Stated 3-year shelf life</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>The three products</h2>
+    <p class="lede">Click a product to open its full data sheet.</p>
+    <div class="cards">
+      <article class="pcard t">
+        <span class="tag t">Competitor</span>
+        <h3>Texwipe PolySat TX1051</h3>
+        <div class="big">ISO 5-8<small>Cleanroom environment</small></div>
+        <p class="meta">100% melt-blown polypropylene. 9" x 11". Pre-wetted 70% IPA / 30% DI water. 1,200 wipers per case.</p>
+        <a class="go" href="#texwipe">Open full data sheet &rarr;</a>
+      </article>
+      <article class="pcard v">
+        <span class="tag v">Valutek</span>
+        <h3>VTSNTRI Spunlace</h3>
+        <div class="big">ISO 3-4<small>Cleanroom environment</small></div>
+        <p class="meta">55% cellulose / 45% polyester, no chemical binders. 9" x 9". Five IPA blends. Pail and refill packs.</p>
+        <a class="go" href="#vtsntri">Open full data sheet &rarr;</a>
+      </article>
+      <article class="pcard v">
+        <span class="tag v">Valutek</span>
+        <h3>VTPNWSI Polyester</h3>
+        <div class="big">ISO 3-4<small>Cleanroom environment</small></div>
+        <p class="meta">100% continuous filament polyester, high abrasion resistance. 9" x 9". Seven IPA blends. Pail and refill packs.</p>
+        <a class="go" href="#vtpnwsi">Open full data sheet &rarr;</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2>Side by side</h2>
+    <p class="lede">Pick a level of detail. Click any row with an arrow for the talking point behind it.</p>
+    <div class="seg" role="group" aria-label="Level of detail">
+      ${Object.keys(VIEWS).map(k => '<button type="button" data-view="' + k + '" aria-pressed="' + (k === cmpView) + '">' + VIEWS[k] + '</button>').join('')}
+    </div>
+    <div id="cmp">${compareTable(cmpView)}</div>
+    <div class="legend">
+      <span>Edge:</span> <span class="pill v">Valutek</span> <span class="pill t">Texwipe</span> <span class="pill e">Even</span> <span class="pill g">Data gap</span>
+    </div>
+    <p class="hint">Data notes: Texwipe values are typical. Valutek values are specification limits (Certificates of Analysis available). Texwipe cites IEST-RP-CC004.3 (2004) and Valutek cites IEST-RP-CC004.4, so treat close calls as directional. Pricing is not included.</p>
+  </section>`;
+}
+
+/* ---------- product data ---------- */
+const PRODUCTS = {
+  texwipe: {
+    title:'Texwipe PolySat TX1051', sub:'Competitor | Technical Data Sheet TEX-LIT-TDS-013 Rev.00-05/18',
+    tiles:[['ISO 5-8','Cleanroom environment'],['70/30','IPA / DI water, one blend'],['360 mL/m2','Sorptive capacity'],['&lt;0.3 sec','Sorptive rate'],['13 x 10^6','Particles &ge;0.5 &micro;m per m2'],['3 years','Shelf life']],
+    sections:[
+      {t:'Overview', open:true, h:`
+        <p>PolySat is made from 100% melt-blown polypropylene with a cut edge, cleanroom manufactured. Available in non-sterile, pre-wetted (PolySat) and sterile, pre-wetted (Sterile PolySat). Made in USA. Custom products available upon request.</p>
+        <h4>Applications</h4>
+        ${ul(['Wiping and cleaning surfaces, equipment and parts.','Removing lubricants, adhesives and other solutions and processing aids.','Cleaning gloves, notebooks, phones or any other item entering the cleanroom.'])}
+        <h4>Industries</h4>
+        <div class="chips">${['Aerospace','Animal Laboratory','Biologics','Cleanroom Design/Build','Compounding Pharmacies','Data Storage','Facilities Maintenance','Industrial','Laboratory','Medical Device','Microelectronics','Pharmaceutical','Printing/Graphics','Semiconductor','USP &lt;797&gt; / USP &lt;800&gt;','Food Processing'].map(c => '<span class="chip">' + c + '</span>').join('')}</div>`},
+      {t:'Features and benefits', h:ul([
+        'Constructed from 100% melt-blown polypropylene creating a soft wiper ideal for use on sensitive surfaces.',
+        'PolySat products are pre-wet with 0.2 &micro;m filtered 70% IPA / 30% DIW for ease of use.',
+        'PolySat wipers provide a consistent, optimized cleaning efficiency with repeatable wetness and VOC levels.',
+        'PolySat wipers are packaged in easy-to-use, reclosable slider bags, tubs, and peel-and-reseal bags reducing solution evaporation that preserves the consistent wiper wetness level.',
+        'Manufactured to provide low levels of particles and extractables creating a wiper suitable for general cleaning and wiping.',
+        'Designed for use on abrasive surfaces. This wiper will not easily snag or abrade releasing particles and fibers into the process or environment.',
+        'Meets USP &lt;797&gt; and &lt;800&gt; wiper requirements.',
+        'Individually lot coded for ease of traceability and quality control.'])},
+      {t:'Cleanroom environment, shelf life and NSF rating', h:`
+        <h4>Cleanroom environment</h4>
+        ${ul(['ISO Class 5 to 8','Class 100 to 100,000','EU Grade B to D'])}
+        <h4>Shelf life</h4>
+        ${ul(['Non-Sterile (Pre-Wetted): 3 years from date of manufacture','Sterile (Dry &amp; Pre-Wetted): 3 years from the date of manufacture'])}
+        <h4>NSF rated</h4>
+        <p>TX8723 PolySat Wipers are NSF rated to be acceptable for use as a general cleaner (A1) on all surfaces in and around food processing areas, where its use is not intended for direct food contact. Use of TX8723 in food processing or handling facilities requires that all food products and packaging materials be removed or protected prior to use of product. A potable water rinse of cleaned surfaces is required after use of this product. When used according to instructions, TX8723 PolySat Wipers will not exhibit a noticeable odor nor will it leave a visible residue.</p>`},
+      {t:'Product numbers and packaging', open:true, h:
+        dt(['Number','Description','Sterile','Packaging','Case'],[
+          ['TX1040','7" x 11" (17 cm x 28 cm) pre-wetted with 70% IPA','No','200 wipers/reclosable bag','4 bags'],
+          ['TX1051 (this product)','9" x 11" (23 cm x 28 cm) pre-wetted with 70% IPA','No','50 wipers/flexpack','24 flexpacks'],
+          ['TX3213','9" x 11" (23 cm x 28 cm) pre-wetted with 70% IPA, sterile','Yes','50 wipers/flexpack','20 flexpacks'],
+          ['TX3216','9" x 11" (23 cm x 28 cm) pre-wetted with 70% IPA, sterile','Yes','20 wipers/flexpack','24 flexpacks'],
+          ['TX8723','6" x 11" (15 cm x 28 cm) pre-wetted with 70% IPA','No','75 wipers/bag','24 bags'],
+          ['TX8727','6" x 11" (15 cm x 28 cm) pre-wetted with 70% IPA refills','No','75 wipers/refill bag','20 bags, 1 reclosable container']
+        ], 1)},
+      {t:'Performance characteristics', open:true, h:
+        dt(['Property','Typical value','Test method*'],[
+          ['<span class="sub">Particles and fibers</span>','',''],
+          ['LPC: &ge;0.5 &micro;m','13 x 10^6 particles/m2','1, TM22'],
+          ['Fibers: &gt;100 &micro;m','4,500 fibers/m2','2, TM22'],
+          ['<span class="sub">Nonvolatile residue</span>','',''],
+          ['IPA extractant','0.001 g/m2','1, TM1'],
+          ['DIW extractant','0.005 g/m2','1, TM1'],
+          ['<span class="sub">Ions</span>','',''],
+          ['Sodium','0.3 ppm','1, TM18'],
+          ['Potassium','0.2 ppm','1, TM18'],
+          ['Chloride','0.15 ppm','1, TM18']
+        ]) + '<h4>Physical characteristics</h4>' +
+        dt(['Property','Typical value','Test method*'],[
+          ['<span class="sub">Absorbency</span>','',''],
+          ['Sorptive capacity','360 mL/m2','1, TM20'],
+          ['Sorptive rate','&lt;0.3 seconds','1, TM20'],
+          ['Basis weight','34 g/m2','1, TM20']
+        ])},
+      {t:'Test methods and notes', h:`
+        <h4>*Test methods</h4>
+        ${ul(['1: "Evaluating Wiping Materials Used in Cleanroom and Other Controlled Environments," IEST-RP-CC004.3, Institute for Environmental Sciences and Technology, Rolling Meadows, IL, 2004; www.iest.org.','2: E2090-12, "Standard Test Method for Size-Differentiated Counting of Particles and Fibers Released from Cleanroom Wipers Using Optical and Scanning Electron Microscopy," ASTM International, West Conshohocken, PA, 2012; www.astm.org.','TM: Refers to Texwipe Test Method, available upon request from Texwipe Customer Service.'])}
+        <p><b>Note:</b> The data in this table represent typical analyses.</p>
+        <h4>Non-sterile products</h4>
+        ${ul(['TX1040, TX1051, TX8723, TX8727 are filled using USP grade IPA.'])}
+        <h4>Sterile products</h4>
+        ${ul(['Gamma irradiated to a Sterility Assurance Level of 10^-6 according to AAMI Guidelines.','Certificates of Compliance, Analysis and Irradiation attached to each case.','Sterile Validation Documentation available upon request.','TX3213, TX3216 are filled using USP grade IPA.'])}
+        <p>Texwipe holds ISO 9001 registration. All Texwipe products conform to GHS classification for labeling (where applicable). Shipping classification based on weight of inner package.</p>`}
+    ],
+    foot:'Source: Texwipe PolySat Technical Data Sheet, TEX-LIT-TDS-013 Rev.00-05/18. Americas +1 336 996 7046 | EMEA +31 88 1307 410 | Philippines +63 49 543 0241 | China +86 512 6303 3700 | <a href="https://www.texwipe.com" target="_blank" rel="noopener">www.texwipe.com</a>'
+  },
+
+  vtsntri: {
+    title:'Valutek VTSNTRI Pre-Saturated Spunlace Wiper', sub:'Valutek | Data Sheet Version 3.2, 06.25.2025',
+    tiles:[['ISO 3-4','Class 1-10 environments'],['5 blends','6, 10, 70, 90, 99% IPA'],['55 / 45','Cellulose / polyester'],['&ge;315 mL/m2','Sorptive capacity'],['&le;0.8 sec','Sorptive rate'],['&lt;1,200 /ft3','Airborne particles &ge;0.5 &micro;m']],
+    sections:[
+      {t:'Overview', open:true, h:`
+        <p>Valutek's pre-saturated spunlace non-woven wiper is composed of a hydro-entangled, nonwoven blend containing 55% cellulose and 45% polyester, with various saturation levels of isopropyl alcohol and DI water.</p>
+        <p>The pre-saturated format enhances the wiper's absorbent capacity, effectiveness, and reduces airborne contamination compared to traditional solvent bottle dispensers, sprays, and spills.</p>
+        <p>All Valutek pre-saturated wipers are mixed and cleanroom vacuum sealed under documented inspection, and process control to meet Valutek quality standards and product specifications.</p>
+        <p><b>Part number:</b> VTSNTRI</p>`},
+      {t:'Features and application', open:true, h:`
+        <h4>Features</h4>
+        ${ul(['55% cellulose and 45% polyester blend with cold knife cut edge.','Contains no chemical binders.','Pre-saturated with consistent IPA/DI Water concentrations and saturation levels.','99.99% IPA VLSI grade mixed with 18 megohm DI water for unmatched assayed purity.','Available in a variety of sizes to suit most applications.','The pre-saturated solution increases both cleaning efficiency and cleaning protocol consistency.'])}
+        <h4>Application</h4>
+        <p>As part of the Valutek Nanotek product family, this product is recommended for use in cleanroom Class 1-10 (ISO 3-4) critical environments.</p>
+        <p>This wiper is also commonly utilized in a wide variety of applications, including cleaning medical device products, cleaning video displays, cleaning instrument panels, and general wiping and cleaning in the semiconductor and microelectronics industry.</p>`},
+      {t:'Sizes, IPA concentration and packaging', open:true, h:
+        '<h4>Reusable pail package</h4>' +
+        dt(['Part number','Size','IPA / DI H2O (%)','Packaging'],[
+          ['VTSNTRI06-99','9" x 9" | 23 cm x 23 cm','6/94','75 ea/bag, 2 bags/case, 150 ea/case'],
+          ['VTSNTRI10-99','9" x 9" | 23 cm x 23 cm','10/90','75 ea/bag, 2 bags/case, 150 ea/case'],
+          ['VTSNTRI70-99','9" x 9" | 23 cm x 23 cm','70/30','75 ea/bag, 2 bags/case, 150 ea/case'],
+          ['VTSNTRI90-99','9" x 9" | 23 cm x 23 cm','90/10','75 ea/bag, 2 bags/case, 150 ea/case'],
+          ['VTSNTRI99-99','9" x 9" | 23 cm x 23 cm','99/1','75 ea/bag, 2 bags/case, 150 ea/case']
+        ], 2) +
+        '<h4>Refill pack package</h4>' +
+        dt(['Part number','Size','IPA / DI H2O (%)','Packaging'],[
+          ['VTSNTRI06R-99','9" x 9" | 23 cm x 23 cm','6/94','75 ea/bag, 18 bags/case, 1350 ea/case'],
+          ['VTSNTRI10R-99','9" x 9" | 23 cm x 23 cm','10/90','75 ea/bag, 18 bags/case, 1350 ea/case'],
+          ['VTSNTRI70R-99','9" x 9" | 23 cm x 23 cm','70/30','75 ea/bag, 18 bags/case, 1350 ea/case'],
+          ['VTSNTRI90R-99','9" x 9" | 23 cm x 23 cm','90/10','75 ea/bag, 18 bags/case, 1350 ea/case'],
+          ['VTSNTRI99R-99','9" x 9" | 23 cm x 23 cm','99/1','75 ea/bag, 18 bags/case, 1350 ea/case']
+        ], 2) +
+        '<h4>Packing and quality</h4>' +
+        ul(['All wipers are packed in double poly bags, vacuum sealed, flat packed in carton boxes and with a carton liner.','Critical environment compatible.','All wipers are lot traceable with retention samples held in Quality Control for 36 months from manufacturing.']) +
+        '<p class="hint">The highlighted row is the 70/30 blend, the direct match to Texwipe TX1051.</p>'},
+      {t:'Technical performance (dry state)', open:true, h:
+        dt(['Attribute','Value','Units','Test method'],[
+          ['Basis weight','68 &plusmn; 3','g/m2','TAPPI T-410'],
+          ['<span class="sub">Absorbency</span>','','',''],
+          ['Sorptive efficiency','4.2','mL/g','IEST-RP.CC004.4, Sec 9.1 / Sec 9.2'],
+          ['Sorptive capacity','&ge;315','mL/m2','IEST-RP.CC004.4, Sec 9.1 / Sec 9.2'],
+          ['Sorptive rate','&le;0.8','second','IEST-RP.CC004.4, Sec 9.1 / Sec 9.2'],
+          ['<span class="sub">Particle counts</span>','','',''],
+          ['APC: &ge;0.5 &micro;m','&lt;1200','Counts/ft3','IEST-RP.CC004.4, Sec 7.1.3 / Sec 7.2.1']
+        ]) +
+        '<p class="hint">Technical data listed reflects upper/lower limits. Certificates of Analysis available upon request for actual lot-to-lot test data. 36 month lot trend analysis available upon request. No NVR, liquid particle, fiber or ion data appears on this data sheet.</p>'}
+    ],
+    foot:'Source: Valutek Pre-Saturated Spunlace Non-Woven Wiper data sheet, Version 3.2, 06.25.2025. Valutek WEST Phoenix, AZ | Valutek EAST Albany, NY | Valutek ASIA Penang, Malaysia | 1.800.763.1250 | orderdesk@valutek.com | <a href="https://www.valutek.com" target="_blank" rel="noopener">valutek.com</a>'
+  },
+
+  vtpnwsi: {
+    title:'Valutek VTPNWSI Pre-Saturated Polyester Wiper', sub:'Valutek | Data Sheet Version 3.1, 04.07.2025',
+    tiles:[['ISO 3-4','Class 1-10 environments'],['7 blends','5, 10, 50, 70, 90, 99, 100% IPA'],['100%','Continuous filament polyester'],['&lt;11 x 10^6','Particles &ge;0.5 &micro;m per m2'],['12 ions','All below 0.5 ppm'],['135 g/m2','Basis weight']],
+    sections:[
+      {t:'Overview', open:true, h:`
+        <p>Valutek's pre-saturated polyester wiper is made from 100% continuous filament polyester fabric with varying saturation levels of isopropyl alcohol and DI water.</p>
+        <p>The pre-saturated format enhances the wiper's absorbent capacity, effectiveness, and reduces airborne contamination compared to traditional solvent bottle dispensers, sprays, and spills.</p>
+        <p>All Valutek pre-saturated wipers are assembled in a Class 10 cleanroom under Valutek's inspection and strict process control to uphold Valutek quality standards and meet product specifications.</p>
+        <p><b>Part number:</b> VTPNWSI</p>`},
+      {t:'Features and application', open:true, h:`
+        <h4>Features</h4>
+        ${ul(['100% continuous filament, double-knit polyester fiber with cold knife cut edge.','99.99% IPA VLSI grade mixed with 18 megohm DI water for unmatched assayed purity.','Saturated with consistent IPA/DI water concentrations and saturation levels.','Available in both reusable pail packaging and refill pack packaging.','The pre-saturated solution increases both cleaning efficiency and cleaning protocol consistency.','Very low levels of particles, fibers, ions and extractable.','High abrasion resistance.'])}
+        <h4>Application</h4>
+        <p>As part of the Valutek Nanotek product family, this product is recommended for use in cleanroom Class 1-10 (ISO 3-4) critical environments.</p>
+        <p>This product is designed for wet cleaning of critical surfaces in environments where strict control of flammable solvents and solvent concentrations is necessary. It offers various IPA blend levels, making it ideal for effectively removing different cleaning and disinfecting residues in controlled environments.</p>`},
+      {t:'Sizes, IPA concentration and packaging', open:true, h:
+        '<h4>Reusable pail package</h4>' +
+        dt(['Part number','Size','IPA / DI H2O (%)','Packaging'],[
+          ['VTPNWSI05-99','9" x 9" | 23 cm x 23 cm','5/95','150 ea/bag, 2 bags/case, 300 ea/case'],
+          ['VTPNWSI10-99','9" x 9" | 23 cm x 23 cm','10/90','150 ea/bag, 2 bags/case, 300 ea/case'],
+          ['VTPNWSI50-99','9" x 9" | 23 cm x 23 cm','50/50','150 ea/bag, 2 bags/case, 300 ea/case'],
+          ['VTPNWSI70-99','9" x 9" | 23 cm x 23 cm','70/30','150 ea/bag, 2 bags/case, 300 ea/case'],
+          ['VTPNWSI90-99','9" x 9" | 23 cm x 23 cm','90/10','150 ea/bag, 2 bags/case, 300 ea/case'],
+          ['VTPNWSI99-99','9" x 9" | 23 cm x 23 cm','99/1','150 ea/bag, 2 bags/case, 300 ea/case'],
+          ['VTPNWSI100-99','9" x 9" | 23 cm x 23 cm','100/0','150 ea/bag, 2 bags/case, 300 ea/case']
+        ], 3) +
+        '<h4>Refill pack package</h4>' +
+        dt(['Part number','Size','IPA / DI H2O (%)','Packaging'],[
+          ['VTPNWSI05R-99','9" x 9" | 23 cm x 23 cm','5/95','75 ea/bag, 2 bags/pack, 4 packs/case, 600 ea/case'],
+          ['VTPNWSI10R-99','9" x 9" | 23 cm x 23 cm','10/90','75 ea/bag, 2 bags/pack, 4 packs/case, 600 ea/case'],
+          ['VTPNWSI50R-99','9" x 9" | 23 cm x 23 cm','50/50','75 ea/bag, 2 bags/pack, 4 packs/case, 600 ea/case'],
+          ['VTPNWSI70R-99','9" x 9" | 23 cm x 23 cm','70/30','75 ea/bag, 2 bags/pack, 4 packs/case, 600 ea/case'],
+          ['VTPNWSI90R-99','9" x 9" | 23 cm x 23 cm','90/10','75 ea/bag, 2 bags/pack, 8 packs/case, 1200 ea/case'],
+          ['VTPNWSI99R-99','9" x 9" | 23 cm x 23 cm','99/1','75 ea/bag, 2 bags/pack, 4 packs/case, 600 ea/case'],
+          ['VTPNWSI100R-99','9" x 9" | 23 cm x 23 cm','100/0','75 ea/bag, 2 bags/pack, 8 packs/case, 1200 ea/case']
+        ], 3) +
+        '<h4>Packing and quality</h4>' +
+        ul(['All wipers are packed in double poly bags, vacuum sealed, flat packed in carton boxes and with a carton liner.','Critical environment compatible.','All wipers are lot traceable with retention samples held in Quality Control for 36 months from manufacturing.']) +
+        '<p class="hint">The highlighted row is the 70/30 blend, the direct match to Texwipe TX1051.</p>'},
+      {t:'Technical performance (dry state)', open:true, h:
+        dt(['Attribute','Value','Units','Test method'],[
+          ['Basis weight','135 &plusmn; 5','g/m2','TAPPI T-410'],
+          ['<span class="sub">Absorbency</span>','','',''],
+          ['Sorptive efficiency','2','mL/g','IEST-RP.CC004.4, Sec 9.1 / Sec 9.2'],
+          ['Sorptive capacity','310','mL/m2','IEST-RP.CC004.4, Sec 9.1 / Sec 9.2'],
+          ['Sorptive rate','&lt;1','second','IEST-RP.CC004.4, Sec 9.1 / Sec 9.2'],
+          ['<span class="sub">Particle counts</span>','','',''],
+          ['LPC: &ge;0.5 &micro;m','&lt;11','10^6 particles/m2','IEST-RP.CC004.4, Sec 6.1.3 / Sec 7.2.1'],
+          ['<span class="sub">Non volatile residue (NVR)</span>','','',''],
+          ['DI water extractant','0.02','g/m2','IEST-RP.CC004.4, Sec 8.1.2'],
+          ['IPA extractant','0.1','g/m2','IEST-RP.CC004.4, Sec 8.1.2']
+        ]) +
+        '<h4>Extractable counts (ions)</h4>' +
+        dt(['Ion','Limit','Ion','Limit'],[
+          ['Sodium (Na+)','&lt;0.2 ppm','Fluoride (F-)','&lt;0.2 ppm'],
+          ['Potassium (K+)','&lt;0.2 ppm','Nitrite (NO2-)','&lt;0.2 ppm'],
+          ['Calcium (Ca2+)','&lt;0.5 ppm','Bromide (Br-)','&lt;0.2 ppm'],
+          ['Magnesium (Mg2+)','&lt;0.2 ppm','Phosphate (PO43-)','&lt;0.3 ppm'],
+          ['Ammonium (NH4+)','&lt;0.3 ppm','Chloride (Cl-)','&lt;0.2 ppm'],
+          ['Nitrate (NO3-)','&lt;0.3 ppm','Sulfate (SO42-)','&lt;0.2 ppm']
+        ]) +
+        '<p class="hint">Ion test method: IEST-RP.CC004.4, Sec 8.2.2. Technical data listed reflects upper/lower limits. Certificates of Analysis available upon request for actual lot-to-lot test data. 36 month lot trend analysis available upon request.</p>'}
+    ],
+    foot:'Source: Valutek Pre-Saturated Polyester Wiper data sheet, Version 3.1, 04.07.2025. Valutek WEST Phoenix, AZ | Valutek EAST Albany, NY | Valutek ASIA Penang, Malaysia | 1.800.763.1250 | orderdesk@valutek.com | <a href="https://www.valutek.com" target="_blank" rel="noopener">valutek.com</a>'
+  }
+};
+
+function renderProduct(id){
+  const p = PRODUCTS[id];
+  return `
+  <a class="back" href="#compare">&larr; Back to comparison</a>
+  <div class="phead">
+    <div>
+      <h2>${p.title}</h2>
+      <p>${p.sub}</p>
+    </div>
+  </div>
+  <div class="tiles">${p.tiles.map(t => '<div class="tile"><div class="n">' + t[0] + '</div><div class="l">' + t[1] + '</div></div>').join('')}</div>
+  ${p.sections.map(s => '<details class="acc"' + (s.open ? ' open' : '') + '><summary>' + s.t + '</summary><div class="body">' + s.h + '</div></details>').join('')}
+  <div class="foot">${p.foot}</div>`;
+}
+
+/* ---------- routing ---------- */
+const view = document.getElementById('view');
+const TABS = ['compare','texwipe','vtsntri','vtpnwsi'];
+
+function route(){
+  let id = (location.hash || '#compare').slice(1);
+  if (!TABS.includes(id)) id = 'compare';
+  view.innerHTML = id === 'compare' ? renderCompare() : renderProduct(id);
+  TABS.forEach(t => document.getElementById('tab-' + t).setAttribute('aria-selected', String(t === id)));
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('click', e => {
+  const seg = e.target.closest('[data-view]');
+  if (seg) {
+    cmpView = seg.dataset.view;
+    document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === cmpView)));
+    document.getElementById('cmp').innerHTML = compareTable(cmpView);
+    return;
+  }
+  const row = e.target.closest('[data-note]');
+  if (row) {
+    const note = document.getElementById(row.dataset.note);
+    const open = row.getAttribute('aria-expanded') === 'true';
+    row.setAttribute('aria-expanded', String(!open));
+    note.hidden = open;
+  }
+});
+
+window.addEventListener('hashchange', route);
+route();
+</script>
+</body>
+</html>
