@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Valutek Branch Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a sticky question bar over one big answer graphic per screen. Black and white with a single blue accent. */
+:root{
+  --bg:#f7f6f3; --card:#ffffff; --ink:#111110; --ink2:#55534e; --line:#dedbd4; --accent:#2a78d6; --accent-ink:#ffffff;
+  --muted-bar:#c9c6bd;
+  --font:'Archivo',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121211; --card:#1b1b19; --ink:#f1f0ec; --ink2:#b4b2a7; --line:#34332f; --accent:#3987e5; --accent-ink:#ffffff; --muted-bar:#4a4944;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121211; --card:#1b1b19; --ink:#f1f0ec; --ink2:#b4b2a7; --line:#34332f; --accent:#3987e5; --accent-ink:#ffffff; --muted-bar:#4a4944;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.35}
+body{min-height:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+.num{font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:2px solid var(--ink)}
+.bar-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;gap:16px;align-items:center}
+.brand{font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-size:14px;white-space:nowrap;background:none;border:0;padding:0}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:1}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tab b{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:11px}
+.tab[aria-current="page"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.tab[aria-current="page"] b{background:var(--accent);color:var(--accent-ink)}
+
+
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo{height:34px;width:auto;background:#fff;border-radius:8px;padding:3px 8px;display:block}
+.brand .ttl{font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-size:13px;padding-left:12px;border-left:2px solid var(--ink);line-height:1.1}
+@media(max-width:700px){.brand .ttl{display:none}.brand .logo{height:28px}}
+
+main{max-width:1180px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:clamp(28px,5vw,48px);line-height:1.02;font-weight:800;letter-spacing:-.02em;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--ink2);margin:0 0 20px;font-size:16px}
+h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;color:var(--ink2);font-weight:700}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:16px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.gap16{display:flex;flex-direction:column;gap:16px}
+
+/* home */
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.kpi{border-top:3px solid var(--ink);padding-top:8px}
+.kpi .v{font-size:clamp(26px,4.5vw,44px);font-weight:800;letter-spacing:-.02em}
+.kpi .l{color:var(--ink2);font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:900px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.tiles{grid-template-columns:1fr}}
+.qt{text-align:left;background:var(--card);border:1.5px solid var(--ink);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px;min-height:190px;transition:transform .12s, box-shadow .12s}
+.qt:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 var(--ink)}
+.qt .n{font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.08em}
+.qt .q{font-size:21px;font-weight:800;line-height:1.1;letter-spacing:-.01em;text-wrap:balance}
+.qt .big{margin-top:auto;display:flex;align-items:baseline;gap:8px}
+.qt .big .v{font-size:34px;font-weight:800;color:var(--accent);letter-spacing:-.02em}
+.qt .big .l{font-size:13px;color:var(--ink2)}
+.go{font-weight:700;font-size:13px}
+
+/* controls */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--card);padding:7px 13px;font-size:13px;font-weight:500}
+.seg button+button{border-left:1.5px solid var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tog{display:inline-flex;gap:8px;align-items:center;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:500}
+.tog i{width:30px;height:16px;border-radius:99px;background:var(--muted-bar);position:relative;flex:none}
+.tog i::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--card);transition:left .12s}
+.tog[aria-pressed="true"]{border-color:var(--ink)}
+.tog[aria-pressed="true"] i{background:var(--accent)}
+.tog[aria-pressed="true"] i::after{left:16px}
+.btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:8px 14px;font-size:13px;font-weight:700}
+.btn.ghost{background:var(--card);color:var(--ink)}
+.btn:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* map */
+.map{container-type:inline-size}
+.mapgrid{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:4px}
+.tile{aspect-ratio:1;border:1.5px solid var(--line);border-radius:7px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;font-size:11px;position:relative;line-height:1.1}
+.tile .c{font-weight:800;font-size:clamp(10px,3.6cqw,15px)}
+.tile .m,.tile .br{display:none;font-size:clamp(9px,2cqw,11px)}
+@container (min-width:500px){.tile .m,.tile .br{display:block}}
+.tile.l0{border-style:dashed;color:var(--ink2)}
+.tile.l1{background:color-mix(in srgb,var(--accent) 16%,var(--card))}
+.tile.l2{background:color-mix(in srgb,var(--accent) 38%,var(--card))}
+.tile.l3{background:color-mix(in srgb,var(--accent) 66%,var(--card));color:#fff}
+.tile.l4{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tile.cr{border:3px solid var(--ink)}
+.tile.dim{opacity:.28}
+.tile.sel{outline:3px solid var(--accent);outline-offset:2px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:12px;align-items:center}
+.legend span{display:inline-flex;gap:5px;align-items:center}
+.sw{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--line);display:inline-block}
+.hero{display:flex;gap:18px;flex-wrap:wrap;align-items:baseline;margin-bottom:14px}
+.hero .v{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em}
+.hero .l{font-size:13px;color:var(--ink2)}
+
+/* lists */
+.list{display:flex;flex-direction:column}
+.li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:9px 0;border-top:1px solid var(--line);align-items:center}
+.li:first-child{border-top:0}
+.li .t{font-weight:700;font-size:14px}
+.li .s{font-size:12px;color:var(--ink2)}
+.li .v{font-weight:800;text-align:right}
+.li .barw{grid-column:1/-1;height:6px;background:var(--line);border-radius:4px;overflow:hidden}
+.li .barw i{display:block;height:100%;background:var(--accent);border-radius:0 4px 4px 0}
+.pill{display:inline-block;border:1.5px solid var(--ink);border-radius:99px;padding:1px 8px;font-size:11px;font-weight:700;white-space:nowrap}
+.pill.fill{background:var(--ink);color:var(--bg)}
+.pill.acc{border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;background:var(--line);border-radius:6px;padding:1px 7px;font-size:11px;margin:2px 4px 0 0}
+.scroll{max-height:520px;overflow:auto}
+
+/* dots */
+.dots{display:flex;flex-wrap:wrap;gap:5px}
+.dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--muted-bar);background:transparent}
+.dot.on{background:var(--accent);border-color:var(--accent)}
+.meter{display:flex;gap:18px;flex-wrap:wrap;align-items:flex-end;margin:6px 0 14px}
+.meter .v{font-size:clamp(34px,6vw,64px);font-weight:800;letter-spacing:-.03em;line-height:1}
+.meter .l{font-size:13px;color:var(--ink2);max-width:210px}
+.ceiling{border:2px dashed var(--ink);border-radius:12px;padding:12px 14px}
+.ceiling .v{font-size:28px;font-weight:800}
+.ceiling .l{font-size:12px;color:var(--ink2)}
+
+/* wins */
+.wins{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:980px){.wins{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.wins{grid-template-columns:1fr}}
+.win{display:flex;flex-direction:column;gap:10px}
+.win .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.win .name{font-weight:800;font-size:17px;line-height:1.1}
+.win .amt{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--accent);line-height:1}
+.win svg{width:100%;height:auto;display:block}
+.win .line{font-size:14px;font-weight:500}
+svg text{fill:var(--ink2);font-family:var(--font)}
+
+/* portfolio */
+.lad{display:grid;grid-template-columns:110px minmax(0,1fr) 84px;gap:6px 10px;align-items:center}
+.lad .g{font-weight:700;font-size:13px}
+.lad .tr{height:22px;background:var(--line);border-radius:5px;position:relative;overflow:hidden}
+.lad .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--accent)}
+.lad .tr b{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:12px}
+.lad .d{font-size:12px;text-align:right;font-weight:700}
+.lad button.g{background:none;border:0;text-align:left;padding:0}
+.lad button.g:hover{color:var(--accent)}
+.stairs{display:flex;gap:10px;align-items:flex-end;height:170px}
+.stair{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;border:0;background:none;padding:0;gap:4px}
+.stair i{display:block;background:var(--muted-bar);border-radius:6px 6px 0 0;min-height:4px}
+.stair[aria-pressed="true"] i{background:var(--accent)}
+.stair .n{font-weight:800;font-size:20px;text-align:center}
+.stair .k{font-size:12px;text-align:center;color:var(--ink2)}
+
+/* rhythm */
+.hrow{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}
+.hrow:first-child{border-top:0}
+.strip{display:grid;grid-template-columns:repeat(10,13px);gap:2px}
+.strip i{height:20px;border-radius:3px;border:1px solid var(--line)}
+.strip i.on{border-color:transparent}
+.mhead{display:grid;grid-template-columns:repeat(10,13px);gap:2px;font-size:9px;color:var(--ink2);text-align:center}
+@media(max-width:520px){.strip,.mhead{grid-template-columns:repeat(10,10px)}.hrow{gap:6px}}
+
+/* cleanroom */
+.crrow{display:grid;grid-template-columns:28px 120px minmax(0,1fr) 92px;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);width:100%;text-align:left;background:none;border-left:0;border-right:0;border-bottom:0}
+.crrow:first-child{border-top:0}
+.crrow .rk{width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-size:12px;font-weight:800}
+.crrow .nm{font-weight:800;font-size:14px;line-height:1.1}
+.crrow .nm small{display:block;font-weight:400;color:var(--ink2);font-size:12px}
+.crrow .tr{height:18px;background:var(--line);border-radius:4px;position:relative}
+.crrow .tr i{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:4px}
+.crrow .ps{text-align:right}
+.crrow.sel{background:color-mix(in srgb,var(--accent) 10%,var(--card))}
+@media(max-width:560px){.crrow{grid-template-columns:24px 88px minmax(0,1fr);}.crrow .ps{display:none}}
+
+.note{font-size:12px;color:var(--ink2);margin-top:10px}
+footer{max-width:1180px;margin:0 auto;padding:0 16px 40px;color:var(--ink2);font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;place-items:center;z-index:20;padding:16px}
+.modal.on{display:grid}
+.modal .box{background:var(--card);border-radius:14px;padding:16px;width:min(560px,100%);display:flex;flex-direction:column;gap:10px}
+.modal textarea{width:100%;height:220px;font:13px/1.4 ui-monospace,Menlo,monospace;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:8px;padding:8px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-weight:700;font-size:13px;display:none;z-index:30}
+.toast.on{display:block}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <button class="brand" data-act="nav" data-v="home" aria-label="Home, Branch Playbook"><img class="logo" alt="Valutek" src="data:image/png;base64,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"><span class="ttl">Branch<br>Playbook</span></button>
+  <nav class="tabs" id="tabs" aria-label="Questions"></nav>
+</div></header>
+<main id="view"></main>
+<footer id="foot"></footer>
+<div class="modal" id="modal" role="dialog" aria-label="Copy list"><div class="box">
+  <strong>Select all and copy</strong><textarea id="ta" readonly></textarea>
+  <div class="row"><button class="btn" data-act="closemodal">Done</button></div>
+</div></div>
+<div class="toast" id="toast">Copied</div>
+
+<script>
+const D={"branches":[{"code":"RMWA","city":"Redmond, WA","st":"WA","y25":25224,"y26":35430.64,"m25":[0,9600,0,0,0,0,10080,0,0,5544],"m26":[0,6476.4,2661.9,6171,0,7124.4,861,6087.9,0,6048],"g25":{"Adhesive Mats":25224.0},"g26":{"Adhesive Mats":33089.7,"Apparel":257.5,"Gloves":1543.44,"Clean/Maint":540.0}},{"code":"HRAR","city":"Harrison, AR","st":"AR","y25":30263.88,"y26":35209.43,"m25":[331,4350,1993,6016,0,2818.6,4785,3127.3,6843,0],"m26":[0,2058,0,7837.4,6843,0,6843,4785,6843,0],"g25":{"Fingercots":2796.58,"Dry Wiper":18270.0,"Adhesive Mats":9197.3},"g26":{"Adhesive Mats":10290.0,"Dry Wiper":24563.0,"Fingercots":356.43}},{"code":"DNSC","city":"Duncan, SC","st":"SC","y25":0,"y26":31773.6,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[2080.1,829.4,6995.2,808.9,1386.7,4432.3,1386.7,6355.8,2236.7,5261.8],"g25":{},"g26":{"Paper":31773.6}},{"code":"SPRI","city":"Springfield, OH","st":"OH","y25":0,"y26":16831.3,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,354.2,0,0,0,16477.1,0],"g25":{},"g26":{"Dry Wiper":16831.3}},{"code":"SPOH","city":"Miamisburg, OH","st":"OH","y25":0,"y26":15974,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,8150,7824],"g25":{},"g26":{"Dry Wiper":15974.0}},{"code":"HBAL","city":"Huntsville, AL","st":"AL","y25":1846.72,"y26":10638.96,"m25":[0,0,0,0,0,0,0,0,0,1846.7],"m26":[1633.9,1793.4,516.6,1276.8,516.6,1276.8,2222.7,0,1402.2,0],"g25":{"Apparel":1846.72},"g26":{"Apparel":8572.56,"Adhesive Mats":2066.4}},{"code":"COMO","city":"Columbia, MO","st":"MO","y25":0,"y26":9708.44,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,4480,0,4854.2,374.2],"g25":{},"g26":{"Wet Wiper":9708.44}},{"code":"ROMN","city":"Saint Paul, MN","st":"MN","y25":0,"y26":7931.5,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,1657.2,2768.8,3505.5],"g25":{},"g26":{"Apparel":4010.0,"Dry Wiper":2842.4,"Gloves":1079.1}},{"code":"EYIN","city":"Indianapolis, IN","st":"IN","y25":0,"y26":7319.7,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,1151.7,1731.9,0,1160,290,0,2986.1,0],"g25":{},"g26":{"Adhesive Mats":7319.7}},{"code":"CJMX","city":"Ciudad Juarez, MX","st":"MX","y25":2352,"y26":6174.0,"m25":[1176,0,0,1176,0,0,0,0,0,0],"m26":[0,1234.8,1234.8,0,0,1234.8,0,1234.8,1234.8,0],"g25":{"Adhesive Mats":2352.0},"g26":{"Adhesive Mats":6174.0}},{"code":"MSAZ","city":"Chandler, AZ","st":"AZ","y25":5676.8,"y26":6171.38,"m25":[848,314,0,0,314,2048.7,510.6,0,382.5,1258.9],"m26":[0,716.1,0,1011.0,667.1,1844.8,0,382.5,333.5,1216.4],"g25":{"Clean/Maint":762.0,"Dry Wiper":837.2,"Gloves":3613.86,"Wet Wiper":205.44,"Adhesive Mats":258.3},"g26":{"Dry Wiper":885.5,"Gloves":4669.56,"Wet Wiper":616.32}},{"code":"MPPA","city":"Mt Pleasant, PA","st":"PA","y25":0,"y26":4852.4,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,504,504,1462.4,1802,580,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":4852.4}},{"code":"WFMN","city":"Rochester, MN","st":"MN","y25":4374.5,"y26":3831.25,"m25":[518,596,522,0,596,190,555,698.8,601.2,97.5],"m26":[48.8,500,528.8,0,507.5,548.8,0,790,97.5,810],"g25":{"Apparel":4374.5},"g26":{"Apparel":3831.25}},{"code":"MCFL","city":"Palm Bay, FL","st":"FL","y25":3152.0,"y26":3630.0,"m25":[836,0,492,51,165,181.5,0,726,0,700.5],"m26":[907.5,0,363,0,726,544.5,544.5,0,363,181.5],"g25":{"Adhesive Mats":506.0,"Dry Wiper":1765.5,"Paper":492.0,"Apparel":388.5},"g26":{"Dry Wiper":3630.0}},{"code":"LGCO","city":"Longmont, CO","st":"CO","y25":0,"y26":3350.25,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,115.5,1746.2,387.5,1101.0],"g25":{},"g26":{"Dry Wiper":1386.0,"Adhesive Mats":220.5,"Apparel":1743.75}},{"code":"CLSC","city":"Columbia, SC","st":"SC","y25":0,"y26":3142.6,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,3142.6],"g25":{},"g26":{"Gloves":2158.2,"Wet Wiper":984.4}},{"code":"ANPA","city":"Allentown, PA","st":"PA","y25":0,"y26":2991.25,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[202.5,542.5,473.8,137.5,412.5,137.5,405,202.5,271.2,206.2],"g25":{},"g26":{"Apparel":2991.25}},{"code":"AWME","city":"Auburn, ME","st":"ME","y25":2839.75,"y26":2833.75,"m25":[0,0,120,81,600,950,1025,0,0,63.8],"m26":[0,243.8,220,733.8,0,360,220,292.5,646.2,117.5],"g25":{"Apparel":2839.75},"g26":{"Apparel":2833.75}},{"code":"MCMX","city":"Mexicali, MX","st":"MX","y25":0,"y26":2127.16,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,607.8,0,0,607.8,0,911.6,0],"g25":{},"g26":{"Wet Wiper":2127.16}},{"code":"KEFL","city":"Kennedy Space Center, FL","st":"FL","y25":0,"y26":1864.8,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,1512,352.8,0,0],"g25":{},"g26":{"Adhesive Mats":1864.8}},{"code":"LTNH","city":"Littleton, NH","st":"NH","y25":0,"y26":1672.5,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[557.5,0,0,0,557.5,0,0,557.5,0,0],"g25":{},"g26":{"Glove Liner":1672.5}},{"code":"MRNC","city":"Morrisville, NC","st":"NC","y25":0,"y26":1370.16,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[381,0,381,0,0,444,0,0,0,164.2],"g25":{},"g26":{"Clean/Maint":762.0,"Recycle":444.0,"Paper":164.16}},{"code":"RVOH","city":"Akron, OH","st":"OH","y25":0,"y26":1337.7,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[51.5,0,0,0,0,0,0,1286.2,0,0],"g25":{},"g26":{"Adhesive Mats":1337.7}},{"code":"CBMO","city":"Columbia, MO","st":"MO","y25":2964.5,"y26":1309.0,"m25":[637,0,294,490,0,205.8,308.7,514.5,205.8,308.7],"m26":[0,154.3,0,331.4,360.1,0,0,0,463.1,0],"g25":{"Adhesive Mats":2964.5},"g26":{"Adhesive Mats":1131.9,"Dry Wiper":177.1}},{"code":"FRMA","city":"Fall River, MA","st":"MA","y25":0,"y26":1275,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,1275,0,0,0,0],"g25":{},"g26":{"Apparel":1275.0}},{"code":"CN7V","city":"Saint-Hubert, QC","st":"QC","y25":0,"y26":1188,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,1188],"g25":{},"g26":{"Gloves":1188.0}},{"code":"BTNC","city":"Burlington, NC","st":"NC","y25":0,"y26":1033.2,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,1033.2,0,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":1033.2}},{"code":"WHMA","city":"Greenfield, MA","st":"MA","y25":0,"y26":1026.78,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,526.5,0,333.5,0,0,0,0,166.8],"g25":{},"g26":{"Gloves":1026.78}},{"code":"TTFL","city":"Titusville, FL","st":"FL","y25":0,"y26":926.1,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,705.6,220.5,0,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":926.1}},{"code":"APCA","city":"Santa Paula, CA","st":"CA","y25":0,"y26":901,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[135,0,766,0,0,0,0,0,0,0],"g25":{},"g26":{"Clean/Maint":901.0}},{"code":"DBCT","city":"Brookfield, CT","st":"CT","y25":257.25,"y26":858.9,"m25":[0,0,0,0,0,0,0,0,0,257.2],"m26":[257.2,0,344.4,0,0,257.2,0,0,0,0],"g25":{"Adhesive Mats":257.25},"g26":{"Adhesive Mats":858.9}},{"code":"FTTX","city":"Fort Worth, TX","st":"TX","y25":0,"y26":810,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,135,0,0,0,0,0,675,0],"g25":{},"g26":{"Clean/Maint":810.0}},{"code":"DNCO","city":"Denver, CO","st":"CO","y25":0,"y26":810,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,135,0,0,0,675],"g25":{},"g26":{"Clean/Maint":810.0}},{"code":"TYMX","city":"Hermosillo, MX","st":"MX","y25":492,"y26":774.9,"m25":[246,246,0,0,0,0,0,0,0,0],"m26":[0,0,0,516.6,0,0,0,258.3,0,0],"g25":{"Adhesive Mats":492.0},"g26":{"Adhesive Mats":774.9}},{"code":"SLMD","city":"Salisbury, MD","st":"MD","y25":0,"y26":762,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,381,0,0,0,0,381,0,0,0],"g25":{},"g26":{"Clean/Maint":762.0}},{"code":"LGCA","city":"Carson, CA","st":"CA","y25":0,"y26":698.6,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,698.6,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":344.4,"Dry Wiper":354.2}},{"code":"SVWI","city":"Sturtevant, WI","st":"WI","y25":0,"y26":665.54,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,451.5,107,0,107,0,0],"g25":{},"g26":{"Wet Wiper":665.54}},{"code":"RHNY","city":"Rochester, NY","st":"NY","y25":0,"y26":575.85,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,179.8,0,0,0,0,0,396],"g25":{},"g26":{"Gloves":179.85,"Clean/Maint":396.0}},{"code":"SMIL","city":"Tinley Park, IL","st":"IL","y25":0,"y26":565.0,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,423.8,0,0,0,0,141.2,0,0],"g25":{},"g26":{"Apparel":565.0}},{"code":"BTMO","city":"St Charles, MO","st":"MO","y25":0,"y26":470.85,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,46.2,0,0,424.6],"g25":{},"g26":{"Apparel":46.25,"Dry Wiper":424.6}},{"code":"SETX","city":"Seguin, TX","st":"TX","y25":0,"y26":395.85,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,91.3,0,213.2,0,0,0,0,91.3,0],"g25":{},"g26":{"Adhesive Mats":395.85}},{"code":"RSNY","city":"Rochester, NY","st":"NY","y25":0,"y26":371.8,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,371.8,0,0,0,0,0,0],"g25":{},"g26":{"Dry Wiper":371.8}},{"code":"BFME","city":"Biddeford, ME","st":"ME","y25":0,"y26":363.8,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[245.0,0,0,0,0,0,0,0,0,118.8],"g25":{},"g26":{"Wet Wiper":363.8}},{"code":"SBMA","city":"Marlborough, MA","st":"MA","y25":0,"y26":346.68,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,115.6,0,0,115.6,0,115.6],"g25":{},"g26":{"Paper":346.68}},{"code":"EAFL","city":"West Melbourne, FL","st":"FL","y25":0,"y26":344.54,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,344.5,0,0],"g25":{},"g26":{"Wet Wiper":344.54}},{"code":"PIAZ","city":"Phoenix, AZ","st":"AZ","y25":0,"y26":301.25,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,301.2],"g25":{},"g26":{"Apparel":301.25}},{"code":"FGND","city":"Fargo, ND","st":"ND","y25":3300,"y26":282.5,"m25":[1040,0,2260,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,282.5,0,0],"g25":{"Apparel":3300.0},"g26":{"Apparel":282.5}},{"code":"CDKY","city":"Corbin, KY","st":"KY","y25":0,"y26":278.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,278.8,0,0],"g25":{},"g26":{"Glove Liner":278.75}},{"code":"DAYT","city":"Dayton, OH","st":"OH","y25":0,"y26":270,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,135,0,0,0,135,0],"g25":{},"g26":{"Clean/Maint":270.0}},{"code":"LWID","city":"Spokane Valley, WA","st":"WA","y25":0,"y26":258.3,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,86.1,0,172.2,0],"g25":{},"g26":{"Adhesive Mats":258.3}},{"code":"BAVT","city":"Berlin, VT","st":"VT","y25":0,"y26":256.2,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,256.2,0,0],"g25":{},"g26":{"Adhesive Mats":256.2}},{"code":"LOMA","city":"Chelmsford, MA","st":"MA","y25":0,"y26":231.12,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,231.1,0,0,0,0],"g25":{},"g26":{"Paper":231.12}},{"code":"CPTX","city":"Grapevine, TX","st":"TX","y25":0,"y26":228.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,76.2,0,0,0,152.5],"g25":{},"g26":{"Apparel":228.75}},{"code":"TSCA","city":"Fremont, CA","st":"CA","y25":0,"y26":228.09,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,93.1,135,0,0,0],"g25":{},"g26":{"Wet Wiper":93.09,"Clean/Maint":135.0}},{"code":"TRNJ","city":"Trenton, NJ","st":"NJ","y25":0,"y26":192.15,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,192.2],"g25":{},"g26":{"Adhesive Mats":192.15}},{"code":"RFTX","city":"Corpus Christi, TX","st":"TX","y25":0,"y26":186.18,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,186.2],"g25":{},"g26":{"Wet Wiper":186.18}},{"code":"NCUT","city":"Ogden, UT","st":"UT","y25":0,"y26":181.5,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,181.5],"g25":{},"g26":{"Dry Wiper":181.5}},{"code":"MADN","city":"Madison, WI","st":"WI","y25":0,"y26":172.2,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,86.1,0,0,86.1,0,0],"g25":{},"g26":{"Adhesive Mats":172.2}},{"code":"VGTX","city":"Greenville, TX","st":"TX","y25":0,"y26":166.77,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[166.8,0,0,0,0,0,0,0,0,0],"g25":{},"g26":{"Gloves":166.77}},{"code":"HROH","city":"Harrison, OH","st":"OH","y25":0,"y26":155,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,155,0,0,0,0,0,0],"g25":{},"g26":{"Apparel":155.0}},{"code":"WIMI","city":"Wixom, MI","st":"MI","y25":0,"y26":154.78,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,154.8,0,0,0,0,0],"g25":{},"g26":{"Gloves":154.78}},{"code":"CRTX","city":"Houston, TX","st":"TX","y25":0,"y26":138.24,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,138.2,0,0,0,0,0],"g25":{},"g26":{"Paper":138.24}},{"code":"NJES","city":"East Rutherford, NJ","st":"NJ","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,135,0,0,0,0,0,0,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"PLMN","city":"Plymouth, MN","st":"MN","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,135,0,0,0,0,0,0,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"COWA","city":"Lewiston, ID","st":"ID","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,135,0,0,0,0,0,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"CLCO","city":"Colorado Springs, CO","st":"CO","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,135,0,0,0,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"EAUC","city":"Eau Claire, WI","st":"WI","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,135,0,0,0,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"ESCA","city":"San Marcos, CA","st":"CA","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,135,0,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"UNKS","city":"Kansas City, KS","st":"KS","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,135,0,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"TMTX","city":"Temple, TX","st":"TX","y25":0,"y26":135,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,135,0],"g25":{},"g26":{"Clean/Maint":135.0}},{"code":"RLVT","city":"Rutland, VT","st":"VT","y25":0,"y26":132.3,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,132.3,0],"g25":{},"g26":{"Adhesive Mats":132.3}},{"code":"HFMX","city":"Hermosillo, MX","st":"MX","y25":0,"y26":116.55,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,116.5,0,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":116.55}},{"code":"SVMO","city":"Saint Louis, MO","st":"MO","y25":0,"y26":116.55,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,116.5,0,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":116.55}},{"code":"LDNH","city":"Londonderry, NH","st":"NH","y25":0,"y26":108.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,108.8,0,0,0,0,0,0,0],"g25":{},"g26":{"Apparel":108.75}},{"code":"TGTX","city":"Brownsville, TX","st":"TX","y25":0,"y26":108.07,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,108.1],"g25":{},"g26":{"Wet Wiper":108.07}},{"code":"BAPR","city":"Barceloneta, PR","st":"PR","y25":0,"y26":91.35,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,91.3,0,0],"g25":{},"g26":{"Adhesive Mats":91.35}},{"code":"LAKS","city":"Lenexa, KS","st":"KS","y25":0,"y26":89.88,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,89.9,0,0,0,0,0,0],"g25":{},"g26":{"Wet Wiper":89.88}},{"code":"SITX","city":"San Antonio, TX","st":"TX","y25":0,"y26":88.2,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,88.2,0],"g25":{},"g26":{"Adhesive Mats":88.2}},{"code":"ABVA","city":"Abingdon, VA","st":"VA","y25":0,"y26":88.2,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,88.2],"g25":{},"g26":{"Adhesive Mats":88.2}},{"code":"BYNY","city":"Brooklyn, NY","st":"NY","y25":0,"y26":88.2,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,88.2],"g25":{},"g26":{"Adhesive Mats":88.2}},{"code":"WUWI","city":"Wausau, WI","st":"WI","y25":0,"y26":86.11,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,86.1,0,0,0,0,0],"g25":{},"g26":{"Gloves":86.11}},{"code":"FNOH","city":"Findlay, OH","st":"OH","y25":0,"y26":86.1,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,86.1,0,0],"g25":{},"g26":{"Adhesive Mats":86.1}},{"code":"SEWI","city":"Superior, WI","st":"WI","y25":0,"y26":80,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,80,0,0,0],"g25":{},"g26":{"Clean/Maint":80.0}},{"code":"SJCA","city":"San Jose, CA","st":"CA","y25":381,"y26":79.2,"m25":[0,0,0,0,0,0,0,381,0,0],"m26":[0,79.2,0,0,0,0,0,0,0,0],"g25":{"Clean/Maint":381.0},"g26":{"Dry Wiper":79.2}},{"code":"UPGA","city":"Atlanta, GA","st":"GA","y25":0,"y26":76.25,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,76.2,0,0,0,0],"g25":{},"g26":{"Apparel":76.25}},{"code":"HOIN","city":"East Chicago, IN","st":"IN","y25":0,"y26":74.9,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,74.9,0,0,0,0,0,0],"g25":{},"g26":{"Wet Wiper":74.9}},{"code":"ALGA","city":"Albany, GA","st":"GA","y25":0,"y26":67.5,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,67.5,0,0,0,0,0],"g25":{},"g26":{"Apparel":67.5}},{"code":"POTN","city":"Portland, TN","st":"TN","y25":0,"y26":67.5,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,67.5,0,0,0],"g25":{},"g26":{"Apparel":67.5}},{"code":"SFSD","city":"Sioux Falls, SD","st":"SD","y25":0,"y26":56.25,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,56.2,0,0,0,0,0,0,0,0],"g25":{},"g26":{"Apparel":56.25}},{"code":"FIVA","city":"Suffolk, VA","st":"VA","y25":0,"y26":38.85,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,38.9,0,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":38.85}},{"code":"KTTX","city":"Katy, TX","st":"TX","y25":0,"y26":38.85,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,38.9,0,0,0,0,0,0],"g25":{},"g26":{"Adhesive Mats":38.85}},{"code":"FRCA","city":"Fresno, CA","st":"CA","y25":0,"y26":33.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,33.8,0,0,0,0,0,0,0],"g25":{},"g26":{"Apparel":33.75}},{"code":"FNIN","city":"Fort Wayne, IN","st":"IN","y25":0,"y26":33.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,33.8,0,0,0,0,0],"g25":{},"g26":{"Apparel":33.75}},{"code":"EWIL","city":"Evanston, IL","st":"IL","y25":0,"y26":33.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,0,33.8,0,0,0,0],"g25":{},"g26":{"Apparel":33.75}},{"code":"SDOH","city":"Sandusky, OH","st":"OH","y25":0,"y26":23.75,"m25":[0,0,0,0,0,0,0,0,0,0],"m26":[0,0,0,0,23.8,0,0,0,0,0],"g25":{},"g26":{"Apparel":23.75}},{"code":"SEUT","city":"Salt Lake City, UT","st":"UT","y25":5311.2,"y26":0,"m25":[3540,0,0,738,0,516.6,0,516.6,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Gloves":3540.0,"Adhesive Mats":1771.2},"g26":{}},{"code":"SGMX","city":"Cuernavaca, MX","st":"MX","y25":20573.7,"y26":0,"m25":[1056,1512,2112,2112,2286,6890.4,2205,2400.3,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Adhesive Mats":12445.8,"Wet Wiper":2130.0,"Dry Wiper":210.0,"Gloves":5787.9},"g26":{}},{"code":"BEWA","city":"Bremerton, WA","st":"WA","y25":148,"y26":0,"m25":[0,0,0,148,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Recycle":148.0},"g26":{}},{"code":"DHNC","city":"Durham, NC","st":"NC","y25":186,"y26":0,"m25":[0,0,0,186,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Glove Liner":186.0},"g26":{}},{"code":"MBTN","city":"Murfreesboro, TN","st":"TN","y25":51,"y26":0,"m25":[0,0,0,51,0,0,0,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Apparel":51.0},"g26":{}},{"code":"GUTX","city":"McGregor, TX","st":"TX","y25":381,"y26":0,"m25":[0,0,0,0,0,0,381,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Clean/Maint":381.0},"g26":{}},{"code":"WSHA","city":"Waukesha, WI","st":"WI","y25":172.2,"y26":0,"m25":[0,0,0,0,0,0,172.2,0,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Adhesive Mats":172.2},"g26":{}},{"code":"JEID","city":"Jerome, ID","st":"ID","y25":381,"y26":0,"m25":[0,0,0,0,0,0,0,381,0,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Clean/Maint":381.0},"g26":{}},{"code":"LFMN","city":"Little Falls, MN","st":"MN","y25":926.25,"y26":0,"m25":[0,0,0,0,0,0,0,0,926.2,0],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Apparel":647.5,"Glove Liner":278.75},"g26":{}},{"code":"CECO","city":"Centennial, CO","st":"CO","y25":135,"y26":0,"m25":[0,0,0,0,0,0,0,0,0,135],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Clean/Maint":135.0},"g26":{}},{"code":"CLAL","city":"Cullman, AL","st":"AL","y25":67.5,"y26":0,"m25":[0,0,0,0,0,0,0,0,0,67.5],"m26":[0,0,0,0,0,0,0,0,0,0],"g25":{"Apparel":67.5},"g26":{}}],"groups":["Adhesive Mats","Dry Wiper","Paper","Apparel","Wet Wiper","Gloves","Clean/Maint","Glove Liner","Recycle","Fingercots"],"hq":-34000,"asof":"October 2026 YTD"};
+const B=D.branches, G=D.groups, HQ=D.hq;
+const CLEAN=['CA','AZ','MN','TX','NY','NJ','FL','NC','PR','PA','OR','IN','IL','MA'];
+const SNAME={CA:'California',AZ:'Arizona',MN:'Minnesota',TX:'Texas',NY:'New York',NJ:'New Jersey',FL:'Florida',NC:'North Carolina',PR:'Puerto Rico',PA:'Pennsylvania',OR:'Oregon',IN:'Indiana',IL:'Illinois',MA:'Massachusetts'};
+const LAYOUT=[
+ {ME:11},{WI:6,VT:10,NH:11},
+ {WA:1,ID:2,MT:3,ND:4,MN:5,IL:6,MI:7,NY:9,MA:10},
+ {OR:1,NV:2,WY:3,SD:4,IA:5,IN:6,OH:7,PA:8,NJ:9,CT:10,RI:11},
+ {CA:1,UT:2,CO:3,NE:4,MO:5,KY:6,WV:7,VA:8,MD:9,DE:10},
+ {AZ:2,NM:3,KS:4,AR:5,TN:6,NC:7,SC:8},
+ {OK:4,LA:5,MS:6,AL:7,GA:8},
+ {TX:4,FL:9,PR:11}
+];
+const MON=['J','F','M','A','M','J','J','A','S','O'];
+const MONL=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct'];
+
+/* ---------- data prep ---------- */
+const ACT=B.filter(b=>b.y26>0);
+B.forEach(b=>{
+  b.n26=b.m26.filter(x=>x>0).length;
+  b.grp=Object.keys(b.g26).filter(k=>b.g26[k]>0);
+  b.lead=b.grp.slice().sort((a,c)=>b.g26[c]-b.g26[a])[0]||null;
+});
+const T26=B.reduce((s,b)=>s+b.y26,0), T25=B.reduce((s,b)=>s+b.y25,0);
+const ST={};
+B.forEach(b=>{const s=ST[b.st]=ST[b.st]||{st:b.st,sales:0,y25:0,n:0,list:[]};s.sales+=b.y26;s.y25+=b.y25;if(b.y26>0)s.n++;s.list.push(b)});
+LAYOUT.forEach(r=>Object.keys(r).forEach(k=>{ST[k]=ST[k]||{st:k,sales:0,y25:0,n:0,list:[]}}));
+const MAPSTATES=LAYOUT.flatMap(r=>Object.keys(r));
+const stockers=g=>ACT.filter(b=>b.g26[g]>0);
+const nonStock=g=>ACT.filter(b=>!(b.g26[g]>0)).sort((a,c)=>c.y26-a.y26);
+const gTotal=g=>B.reduce((s,b)=>s+(b.g26[g]>0?b.g26[g]:0),0);
+function ceil(g,excl){
+  let S=stockers(g).map(b=>b.g26[g]).sort((a,c)=>c-a);
+  const nn=ACT.length-S.length; if(excl&&S.length>1)S=S.slice(1);
+  const avg=S.length?S.reduce((a,c)=>a+c,0)/S.length:0;
+  return {n:S.length,nn,avg,up:nn*avg};
+}
+const cleanAct=ACT.filter(b=>CLEAN.includes(b.st));
+const crSales=cleanAct.reduce((s,b)=>s+b.y26,0);
+const usMapSales=MAPSTATES.reduce((s,k)=>s+ST[k].sales,0);
+const usMapBr=MAPSTATES.reduce((s,k)=>s+ST[k].n,0);
+const zeroStates=MAPSTATES.filter(k=>ST[k].sales<=0).length;
+const PEN=G.map(g=>({g,n:stockers(g).length})).sort((a,c)=>c.n-a.n);
+const breadth={}; ACT.forEach(b=>{const k=Math.min(b.grp.length,4);(breadth[k]=breadth[k]||[]).push(b)});
+function cat(b){
+  if(b.y25>0&&b.y26<=0)return 'lapsed';
+  if(b.y25>=250&&b.y26>0&&b.y26<=0.5*b.y25)return 'fading';
+  if(b.y26<=0)return 'none';
+  if(b.n26>=3&&b.m26[9]<=0)return 'due';
+  if(b.n26<=1)return 'once';
+  return 'steady';
+}
+B.forEach(b=>b.cat=cat(b));
+const CATS={due:[],fading:[],lapsed:[],once:[],steady:[]};
+B.forEach(b=>{if(CATS[b.cat])CATS[b.cat].push(b)});
+CATS.due.sort((a,c)=>c.y26-a.y26);CATS.fading.sort((a,c)=>c.y25-a.y25);CATS.lapsed.sort((a,c)=>c.y25-a.y25);
+CATS.once.sort((a,c)=>c.y26-a.y26);CATS.steady.sort((a,c)=>c.y26-a.y26);
+
+/* ---------- helpers ---------- */
+const money=n=>{const a=Math.abs(n),s=n<0?'-':'';return a>=1000?s+'$'+(a/1000).toFixed(a>=10000?1:1)+'K':s+'$'+Math.round(a)};
+const usd=n=>(n<0?'-':'')+'$'+Math.round(Math.abs(n)).toLocaleString('en-US');
+const pct=n=>Math.round(n*100)+'%';
+const chg=(a,b)=>b>0?((a-b)/b):null;
+const lvl=v=>v<=0?0:v<5000?1:v<15000?2:v<30000?3:4;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S={group:'Paper',clean:false,excl:false,st:null,mapMode:'sales',seg:'due',cmode:'rank',cst:null,bk:1,all:false};
+const COPY={};
+const ROUTES=[
+  {id:'map',tab:'Where?',q:'Where are we strong, and where are we thin?'},
+  {id:'stock',tab:'Who is missing?',q:'Who is not buying this yet?'},
+  {id:'wins',tab:'What wins?',q:'What does a win look like?'},
+  {id:'portfolio',tab:'Full portfolio',q:'What is the full portfolio worth?'},
+  {id:'rhythm',tab:'Who is due?',q:'Who is due, and who is fading?'},
+  {id:'cleanroom',tab:'Cleanroom',q:'Where are the big cleanroom opportunities?'}
+];
+
+/* ---------- screens ---------- */
+function home(){
+  const c=ceil('Paper',false);
+  const tiles=[
+    [ROUTES[0],zeroStates,'states with no sales'],
+    [ROUTES[1],(ACT.length-stockers('Paper').length),'of '+ACT.length+' branches do not stock Paper'],
+    [ROUTES[2],money(B.find(b=>b.code==='DNSC').y26),'Duncan, SC buys Paper every month'],
+    [ROUTES[3],breadth[1].length,'of '+ACT.length+' branches buy one product group'],
+    [ROUTES[4],CATS.due.length,'branches are due to reorder'],
+    [ROUTES[5],pct(cleanAct.length/usMapBr),'of branches, but '+pct(crSales/usMapSales)+' of sales, are in cleanroom states']
+  ];
+  return `<h1>Ask the data. Get the call list.</h1><p class="sub">Six questions your team can answer in under a minute.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="v num">${usd(T26)}</div><div class="l">2026 product sales, ${chg(T26,T25)>0?'up '+pct(chg(T26,T25)):''} vs 2025</div></div>
+    <div class="kpi"><div class="v num">${ACT.length}</div><div class="l">active branches, ${ACT.filter(b=>b.y25<=0).length} new this year</div></div>
+    <div class="kpi"><div class="v num">${breadth[1].length}</div><div class="l">buy only one product group</div></div>
+  </div>
+  <div class="tiles">${tiles.map(([r,v,l],i)=>`<button class="qt" data-act="nav" data-v="${r.id}"><span class="n">QUESTION ${i+1}</span><span class="q">${r.q}</span><span class="big"><span class="v num">${v}</span><span class="l">${l}</span></span><span class="go">Open →</span></button>`).join('')}</div>`;
+}
+
+function tileHTML(k){
+  const s=ST[k]; const cr=CLEAN.includes(k);
+  let cls='tile l'+lvl(s.sales);
+  if(S.mapMode==='clean'){cls+=cr?' cr':' dim'}
+  if(S.st===k)cls+=' sel';
+  return `<button class="${cls}" data-act="state" data-v="${k}" title="${k}: ${usd(s.sales)}, ${s.n} active branches"><span class="c">${k}</span><span class="m num">${s.sales>0?money(s.sales):'$0'}</span><span class="br num">${s.n} br</span></button>`;
+}
+function stateDetail(k,showPlay){
+  if(!k)return `<div class="card"><h2>Tap a state</h2><p class="sub" style="margin:0">See its branches, what they buy, and the gap.</p></div>`;
+  const s=ST[k];const list=s.list.filter(b=>b.y26>0||b.y25>0).sort((a,c)=>c.y26-a.y26);
+  const max=Math.max(1,...list.map(b=>b.y26));
+  return `<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">${SNAME[k]||k}</h2>${CLEAN.includes(k)?'<span class="pill fill">Cleanroom state</span>':''}</div>
+  <div class="hero" style="margin:8px 0"><div><div class="v num">${usd(s.sales)}</div><div class="l">2026 YTD</div></div><div><div class="v num">${s.n}</div><div class="l">active branches</div></div></div>
+  ${list.length?`<div class="list scroll" style="max-height:340px">${list.map(b=>{const c=chg(b.y26,b.y25);return `<div class="li"><div><div class="t">${b.city}</div><div class="s">${b.code} · ${b.grp.length?b.grp.join(', '):'no 2026 purchases'}</div></div><div class="v num">${usd(b.y26)}</div><div class="barw"><i style="width:${b.y26/max*100}%"></i></div></div>`}).join('')}</div>`:`<p class="sub" style="margin:0">No active branches here yet. Who covers this state?</p>`}</div>`;
+}
+function mapScreen(){
+  const crShare=cleanAct.length/usMapBr;
+  return `<h1>${ROUTES[0].q}</h1><p class="sub">Tap any state. Switch to cleanroom view to see where the industry is.</p>
+  <div class="grid2"><div class="card map">
+    <div class="row" style="justify-content:space-between;margin-bottom:12px"><div class="seg" role="group" aria-label="Map view"><button data-act="mapmode" data-v="sales" aria-pressed="${S.mapMode==='sales'}">Sales</button><button data-act="mapmode" data-v="clean" aria-pressed="${S.mapMode==='clean'}">Cleanroom states</button></div>
+    <span class="pill">${zeroStates} states at $0</span></div>
+    <div class="mapgrid">${LAYOUT.map((r,ri)=>Array.from({length:11},(_,ci)=>{const k=Object.keys(r).find(x=>r[x]===ci+1);return k?tileHTML(k):'<span></span>'}).join('')).join('')}</div>
+    <div class="legend"><span><i class="sw" style="border-style:dashed"></i>$0</span><span><i class="sw" style="background:color-mix(in srgb,var(--accent) 16%,var(--card))"></i>Under $5K</span><span><i class="sw" style="background:color-mix(in srgb,var(--accent) 38%,var(--card))"></i>$5K+</span><span><i class="sw" style="background:color-mix(in srgb,var(--accent) 66%,var(--card))"></i>$15K+</span><span><i class="sw" style="background:var(--accent)"></i>$30K+</span><span><i class="sw" style="border:3px solid var(--ink)"></i>Cleanroom state</span></div>
+    <p class="note">Also: Mexico ${ST.MX?ST.MX.n:0} branches, ${usd(ST.MX?ST.MX.sales:0)}. Quebec ${ST.QC?ST.QC.n:0} branch, ${usd(ST.QC?ST.QC.sales:0)}.</p>
+  </div>
+  <div class="gap16">${S.mapMode==='clean'?`<div class="card"><h2>14 cleanroom states</h2><div class="hero" style="margin:0"><div><div class="v num">${pct(crShare)}</div><div class="l">of active branches</div></div><div><div class="v num" style="color:var(--accent)">${pct(crSales/usMapSales)}</div><div class="l">of sales</div></div></div></div>`:''}${stateDetail(S.st)}</div></div>`;
+}
+
+function listRows(arr,max,withNext){
+  const shown=S.all?arr:arr.slice(0,max);
+  return `<div class="list scroll">${shown.map(b=>`<div class="li"><div><div class="t">${b.city}</div><div class="s">${b.code}${b.grp.length?' · buys '+b.grp.join(', '):''}${withNext?' · try '+nextAdd(b):''}</div></div><div class="v num">${usd(b.y26)}</div></div>`).join('')}</div>${arr.length>max?`<div class="row" style="margin-top:8px"><button class="btn ghost" data-act="all">${S.all?'Show top '+max:'Show all '+arr.length}</button></div>`:''}`;
+}
+function nextAdd(b){const o=PEN.find(p=>!b.grp.includes(p.g));return o?o.g:'-'}
+function stockScreen(){
+  const g=S.group; let non=nonStock(g); if(S.clean)non=non.filter(b=>CLEAN.includes(b.st));
+  const c=ceil(g,S.excl); const stk=stockers(g).sort((a,b)=>b.g26[g]-a.g26[g]);
+  const dots=ACT.slice().sort((a,b)=>(b.g26[g]>0)-(a.g26[g]>0)||b.y26-a.y26).map(b=>`<span class="dot${b.g26[g]>0?' on':''}" title="${esc(b.city)}${b.g26[g]>0?': '+usd(b.g26[g]):''}"></span>`).join('');
+  COPY.stock=`${g}: ${non.length} branches not stocking${S.clean?' (cleanroom states only)':''}, ranked by 2026 sales\n`+non.map(b=>`${b.code} ${b.city} | ${usd(b.y26)} | buys: ${b.grp.join(', ')}`).join('\n');
+  return `<h1>${ROUTES[1].q}</h1><p class="sub">Pick a product group. Filled dots buy it. Hollow dots are your call list.</p>
+  <div class="chips" style="margin-bottom:14px">${G.map(x=>`<button class="chip" data-act="group" data-v="${x}" aria-pressed="${x===g}">${x}</button>`).join('')}</div>
+  <div class="grid2"><div class="card">
+    <div class="meter"><div class="v num">${c.n}<span style="color:var(--ink2);font-size:.5em"> of ${ACT.length}</span></div><div class="l">branches stock <b>${g}</b>. ${c.nn} do not.</div></div>
+    <div class="dots">${dots}</div>
+    <div class="row" style="margin-top:14px"><span class="tag" style="font-size:12px">Top buyers: ${stk.slice(0,3).map(b=>b.city+' '+money(b.g26[g])).join(', ')||'none'}</span></div>
+  </div>
+  <div class="gap16"><div class="ceiling"><div class="l">CEILING, NOT A FORECAST</div><div class="v num">${usd(c.up)}</div><div class="l">${c.nn} branches × ${usd(c.avg)} average per stocking branch</div></div>
+  <div class="row"><button class="tog" data-act="excl" aria-pressed="${S.excl}"><i></i>Leave out the top buyer</button><button class="tog" data-act="clean" aria-pressed="${S.clean}"><i></i>Cleanroom states only</button></div></div></div>
+  <div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between;margin-bottom:6px"><h2 style="margin:0">Call list: ${non.length} branches, best customers first</h2><button class="btn" data-act="copy" data-v="stock">Copy call list</button></div>${listRows(non,12,false)}</div>`;
+}
+
+const WINS=[
+ ['DNSC',b=>pct(b.g26.Paper/gTotal('Paper'))+' of all Paper sales. Ordered '+b.n26+' of 10 months.'],
+ ['SPRI',b=>pct(Math.max(...b.m26)/b.y26)+' landed in one month. Repeat is the next win.'],
+ ['SPOH',b=>'Started in September and reordered in October.'],
+ ['HBAL',b=>'Apparel from '+money(b.g25.Apparel||0)+' to '+money(b.g26.Apparel||0)+'. Added Mats.'],
+ ['COMO',b=>pct(b.g26['Wet Wiper']/gTotal('Wet Wiper'))+' of all Wet Wiper sales.'],
+ ['RMWA',b=>'Mats base, now '+b.grp.length+' product groups.'],
+];
+function monthly(b){
+  const mx=Math.max(1,...b.m26,...b.m25);const W=26,H=54;
+  const bars=b.m26.map((v,i)=>{const h25=b.m25[i]/mx*H,h26=v/mx*H,x=i*W+2;return `<rect x="${x}" y="${H-h25+4}" width="9" height="${h25}" rx="2" fill="var(--muted-bar)"/><rect x="${x+10}" y="${H-h26+4}" width="9" height="${h26}" rx="2" fill="var(--accent)"><title>${MONL[i]}: ${usd(v)} (2025: ${usd(b.m25[i])})</title></rect><text x="${x+9.5}" y="${H+16}" font-size="9" text-anchor="middle">${MON[i]}</text>`}).join('');
+  return `<svg viewBox="0 0 262 ${H+20}" role="img" aria-label="Monthly sales 2026 vs 2025">${bars}</svg>`;
+}
+function winsScreen(){
+  return `<h1>${ROUTES[2].q}</h1><p class="sub">Real branches. Copy the pattern, then find the lookalikes.</p>
+  <div class="wins">${WINS.map(([code,fn])=>{const b=B.find(x=>x.code===code);const g=b.lead;return `<div class="card win"><div class="top"><div><div class="name">${b.city}</div><div class="s" style="font-size:12px;color:var(--ink2)">${b.code}</div></div><span class="pill fill">${g}</span></div>
+  <div class="amt num">${usd(b.y26)}</div>${monthly(b)}
+  <div class="row" style="font-size:11px;color:var(--ink2);gap:12px"><span><i class="sw" style="background:var(--accent);border:0"></i> 2026</span><span><i class="sw" style="background:var(--muted-bar);border:0"></i> 2025</span></div>
+  <div class="line">${fn(b)}</div><div class="row"><button class="btn" data-act="lookalike" data-v="${g}">Find lookalikes for ${g}</button></div></div>`}).join('')}</div>`;
+}
+
+function portScreen(){
+  const maxN=ACT.length;
+  const rows=PEN.map(p=>{const c=ceil(p.g,S.excl);return `<button class="g" data-act="lookalike" data-v="${p.g}">${p.g}</button><div class="tr"><i style="width:${Math.max(p.n/maxN*100,1.5)}%"></i><b class="num" style="color:${p.n/maxN>.15?'#fff':'var(--ink)'};${p.n/maxN>.15?'':'left:'+(p.n/maxN*100+2)+'%'}">${p.n} of ${maxN}</b></div><div class="d num" title="Ceiling">${money(c.up)}</div>`}).join('');
+  const bk=S.bk; const arr=(breadth[bk]||[]).slice().sort((a,c)=>c.y26-a.y26);
+  const labels={1:'1 group',2:'2 groups',3:'3 groups',4:'4 groups'};
+  const mxc=Math.max(...[1,2,3,4].map(k=>(breadth[k]||[]).length));
+  const avg=k=>{const a=breadth[k]||[];return a.length?a.reduce((s,b)=>s+b.y26,0)/a.length:0};
+  return `<h1>${ROUTES[3].q}</h1><p class="sub">Most branches buy one thing. Every extra group is the opportunity.</p>
+  <div class="grid2"><div class="card"><h2>How many groups does each branch buy?</h2>
+    <div class="stairs">${[1,2,3,4].map(k=>`<button class="stair" data-act="bk" data-v="${k}" aria-pressed="${bk===k}"><span class="n num">${(breadth[k]||[]).length}</span><i style="height:${(breadth[k]||[]).length/mxc*100*.72}%"></i><span class="k">${labels[k]}</span><span class="k num">${money(avg(k))} avg</span></button>`).join('')}</div>
+    <div class="list scroll" style="margin-top:14px;max-height:320px">${arr.slice(0,bk===1?15:40).map(b=>`<div class="li"><div><div class="t">${b.city}</div><div class="s">${b.grp.join(', ')}${bk===1?' · easiest add: '+nextAdd(b):''}</div></div><div class="v num">${usd(b.y26)}</div></div>`).join('')}</div>
+    ${bk===1?'<p class="note">Easiest add = the most widely stocked group this branch does not buy yet. Top 15 single-group branches shown.</p>':''}
+  </div>
+  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h2 style="margin:0">Ladder: branches stocking each group</h2></div>
+    <div class="lad">${rows}</div>
+    <div class="row" style="margin-top:14px"><button class="tog" data-act="excl" aria-pressed="${S.excl}"><i></i>Leave out the top buyer</button></div>
+    <p class="note">Right column is the ceiling per group: branches not stocking × average per stocking branch. Not a forecast. Tap a group to get its call list.</p></div></div>`;
+}
+
+function strip(b){
+  const mx=Math.max(1,...b.m26);
+  return `<div class="strip">${b.m26.map((v,i)=>v>0?`<i class="on" style="background:color-mix(in srgb,var(--accent) ${25+75*v/mx}%,var(--card))" title="${MONL[i]}: ${usd(v)}"></i>`:`<i title="${MONL[i]}: none"></i>`).join('')}</div>`;
+}
+function rhythmScreen(){
+  const segs=[['due','Due to reorder'],['fading','Fading'],['lapsed','Lapsed'],['once','One and done'],['steady','Steady']];
+  const arr=CATS[S.seg]; const txt={due:'Ordered 3+ months this year, nothing in October. Call before they ask.',fading:'Down 50% or more vs 2025. Catch them while they are still buying.',lapsed:'Bought in 2025, nothing in 2026. Win-back list.',once:'Ordered in one month only. Convert to repeat.',steady:'Ordering regularly through October. Protect and expand.'}[S.seg];
+  const max=S.all?arr.length:25; const shown=arr.slice(0,max);
+  COPY.rhythm=segs.find(s=>s[0]===S.seg)[1]+' ('+arr.length+')\n'+arr.map(b=>`${b.code} ${b.city} | 2025 ${usd(b.y25)} | 2026 ${usd(b.y26)} | months ordered ${b.n26}`).join('\n');
+  return `<h1>${ROUTES[4].q}</h1><p class="sub">Each box is a month, January to October. Dark means a bigger order.</p>
+  <div class="seg" style="margin-bottom:14px;max-width:100%;overflow-x:auto" role="group">${segs.map(([k,l])=>`<button data-act="seg" data-v="${k}" aria-pressed="${S.seg===k}">${l} <b class="num">${CATS[k].length}</b></button>`).join('')}</div>
+  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:8px"><span style="font-weight:700">${txt}</span><button class="btn" data-act="copy" data-v="rhythm">Copy this list</button></div>
+  <div class="hrow" style="border:0;padding:0"><span></span><div class="mhead">${MON.map(m=>`<span>${m}</span>`).join('')}</div><span></span></div>
+  ${shown.map(b=>`<div class="hrow"><div><div style="font-weight:700;font-size:14px">${b.city}</div><div style="font-size:12px;color:var(--ink2)">${b.code} · 2025 ${money(b.y25)} → 2026 ${money(b.y26)}</div></div>${strip(b)}<div class="num" style="font-weight:800;min-width:56px;text-align:right">${money(S.seg==='lapsed'||S.seg==='fading'?b.y25:b.y26)}</div></div>`).join('')}
+  ${arr.length>25?`<div class="row" style="margin-top:10px"><button class="btn ghost" data-act="all">${S.all?'Show top 25':'Show all '+arr.length}</button></div>`:''}</div>`;
+}
+
+function cleanScreen(){
+  let arr=CLEAN.map((k,i)=>({k,rank:i+1,s:ST[k]||{sales:0,n:0,list:[]}}));
+  if(S.cmode==='gap')arr=arr.slice().sort((a,c)=>a.s.sales-c.s.sales);
+  const mx=Math.max(...arr.map(a=>a.s.sales));
+  const pill=s=>s.n===0?'<span class="pill">No branches</span>':s.sales<5000?'<span class="pill acc">Thin</span>':'<span class="pill fill">Building</span>';
+  const rows=arr.map(a=>`<button class="crrow${S.cst===a.k?' sel':''}" data-act="cst" data-v="${a.k}"><span class="rk">${a.rank}</span><span class="nm">${SNAME[a.k]}<small>${a.s.n} branch${a.s.n===1?'':'es'}</small></span><span class="tr"><i style="width:${a.s.sales/mx*100}%"></i></span><span class="ps num"><b>${money(a.s.sales)}</b><br>${pill(a.s)}</span></button>${S.cst===a.k?`<div style="padding:0 0 12px 38px">${stateDetail(a.k)}</div>`:''}`).join('');
+  return `<h1>${ROUTES[5].q}</h1><p class="sub">Top 14 cleanroom states by employment. Number is the rank you provided.</p>
+  <div class="hero"><div><div class="v num">${cleanAct.length} of ${usMapBr}</div><div class="l">active branches sit in these states</div></div><div><div class="v num" style="color:var(--accent)">${pct(crSales/usMapSales)}</div><div class="l">of sales come from them</div></div></div>
+  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:8px"><div class="seg" role="group"><button data-act="cmode" data-v="rank" aria-pressed="${S.cmode==='rank'}">By employment rank</button><button data-act="cmode" data-v="gap" aria-pressed="${S.cmode==='gap'}">Biggest gap first</button></div><span class="note" style="margin:0">Thin = under $5K. Tap a state for its branches.</span></div>${rows}</div>`;
+}
+
+/* ---------- router ---------- */
+function render(){
+  const h=(location.hash||'#home').slice(1);
+  const id=ROUTES.find(r=>r.id===h)?h:'home';
+  const fn={home,map:mapScreen,stock:stockScreen,wins:winsScreen,portfolio:portScreen,rhythm:rhythmScreen,cleanroom:cleanScreen}[id];
+  document.getElementById('view').innerHTML=fn();
+  document.getElementById('tabs').innerHTML=ROUTES.map((r,i)=>`<button class="tab" data-act="nav" data-v="${r.id}" ${r.id===id?'aria-current="page"':''}><b>${i+1}</b>${r.tab}</button>`).join('');
+  document.getElementById('foot').innerHTML=`Source: Fastenal Branch Report, ${D.asof}. Product sales shown before the $34,000 HQ trade credit (Oct 9). Cleanroom states as provided. Ceilings are best-case averages, not forecasts.`;
+}
+function go(id){S.all=false;if(location.hash==='#'+id){render()}else{location.hash=id}window.scrollTo(0,0)}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1400)}
+async function copy(key){
+  const text=COPY[key]||'';
+  try{await navigator.clipboard.writeText(text);toast('Copied')}
+  catch(e){const m=document.getElementById('modal'),ta=document.getElementById('ta');ta.value=text;m.classList.add('on');ta.focus();ta.select()}
+}
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const a=el.dataset.act,v=el.dataset.v;
+  if(a==='nav'){go(v);return}
+  if(a==='group'){S.group=v;S.all=false}
+  else if(a==='lookalike'){S.group=v;S.all=false;go('stock');return}
+  else if(a==='excl')S.excl=!S.excl;
+  else if(a==='clean')S.clean=!S.clean;
+  else if(a==='state')S.st=(S.st===v?null:v);
+  else if(a==='mapmode')S.mapMode=v;
+  else if(a==='seg'){S.seg=v;S.all=false}
+  else if(a==='bk')S.bk=+v;
+  else if(a==='cmode')S.cmode=v;
+  else if(a==='cst')S.cst=(S.cst===v?null:v);
+  else if(a==='all')S.all=!S.all;
+  else if(a==='copy'){copy(v);return}
+  else if(a==='closemodal'){document.getElementById('modal').classList.remove('on');return}
+  const y=window.scrollY;render();window.scrollTo(0,y);
+});
+window.addEventListener('hashchange',render);
+render();
+</script>
+</body>
+</html>
